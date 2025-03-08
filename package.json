@@ -17,7 +17,7 @@
     "postcss": "^8.5.3",
     "rollup": "^4.34.9",
     "source-map-js": "^1.2.1",
-    "tailwindcss": "^4.0.11",
+    "tailwindcss": "^4.0.12",
     "vite": "^6.2.0"
   },
   "description": "",
@@ -31,5 +31,8 @@
   "bugs": {
     "url": "https://github.com/haracedaily/renew_ice_clean/issues"
   },
-  "homepage": "https://github.com/haracedaily/renew_ice_clean#readme"
+  "homepage": "https://github.com/haracedaily/renew_ice_clean#readme",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.12"
+  }
 }
