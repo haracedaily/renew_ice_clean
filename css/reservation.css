@@ -14,6 +14,7 @@ nav {
     align-items: center;
     padding: 10px 20px;
     position: fixed;
+    background-color: white;
     top: 0;
     left: 0;
     width: 100%;
@@ -60,75 +61,53 @@ nav {
 .hamburger, .m-nav-links{
     display: none;
 }
-/* 모바일 화면 nav 미디어 */
-@media (max-width: 768px) {
-    /* 네비게이션 링크 숨기기 */
-    .nav-links {
-        display: none;
-    }
-    /* 햄버거 메뉴 표시 */
-    .hamburger {
-        display: block;
-        color: #006B99;
-        cursor: pointer;
-        font-size: 30px;
-    }
-    /* 슬라이더 메뉴 */
-    .m-nav-links {
-        display: block;
-        position: fixed;
-        top: 0;
-        right: -300px; /* 메뉴를 오른쪽으로 숨김 */
-        width: 300px;
-        height: 100%;
-        background-color: white;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-        transition: right 1s ease;
-        z-index: 1500;
-    }
-    .m-nav-links.active {
-        right: 0;
-    }
-    .m-nav-links ul {
-        list-style: none;
-        padding: 20px;
-        position: absolute;
-        top: 40px;
-        right: 180px;
-    }
-    .m-nav-links li {
-        margin: 20px 0;
-    }
-    .m-nav-links a {
-        color: black;
-        text-decoration: none;
-        font-size: 16px;
-        display: block;
-    }
-    .m-nav-links a:hover {
-        color: #006B99;
-        transform: translateX(3px);
-    }
-    .close-btn {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 30px;
-        color: #006B99;
-        cursor: pointer;
-    }
-    /* 배경 어둡게 */
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* 어두운 배경 */
-        display: none;
-        z-index: 1000;
-    }
-    .overlay.active {
-        display: block;
-    }
+
+.Q-txt{
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.r-date{
+    margin: 5rem auto;
+    display: flex;
+    justify-content: center;
+    gap: 7rem;
+}
+.r-date input{
+    display: none;
+}
+.r-time{
+    margin: 7rem auto;
+    display: flex;
+    justify-content: center;
+    gap: 10rem;
+}
+.time-select{
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+.time-select label{
+    cursor: pointer;
+    padding: 0.5rem;
+}
+.time-select div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+input[type = "radio"]{
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.r-info{
+    display: flex;
+    justify-content: center;
+}
+.info-select{
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
+
 }
