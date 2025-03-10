@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ICECARE 예약하기</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+  <link rel="stylesheet" href="./css/reservation.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <!-- 한국어 로케일 파일 -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/l10n/ko.js"></script>
+</head>
+<body>
+<nav>
+  <a href="reservation.html" class="logo">
+    <img src="image/logo.png" alt="로고 이미지">
+  </a>
+  <ul class="nav-links">
+    <!--링크연결하기-->
+    <li><a href="#">예약하기</a></li>
+    <li><a href="#">예약조회</a></li>
+    <li><a href="#">빠른상담</a></li>
+  </ul>
+  <div class="hamburger" onclick="slideMenu()">
+    <i class="fas fa-bars"></i> <!-- 햄버거 아이콘 -->
+  </div>
+</nav>
+<div class="m-nav-links">
+  <div class="close-btn" onclick="slideMenu()">
+    <i class="fas fa-times"></i> <!-- 닫기 아이콘 -->
+  </div>
+  <ul>
+    <!--링크연결하기-->
+    <li><a href="#">예약하기</a></li>
+    <li><a href="#">예약조회</a></li>
+    <li><a href="#">빠른상담</a></li>
+  </ul>
+</div>
+<div class="overlay"></div>
+<div id="container">
+  <div class="reservation-date">
+
+  </div>
+</div>
+
+<h1 class="bg-amber-400">안녕</h1>
+
+
+<script>
+  function slideMenu() {
+    const navLinks = document.querySelector('.m-nav-links');
+    const overlay = document.querySelector('.overlay');
+
+    navLinks.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+</script>
+</body>
+</html>
