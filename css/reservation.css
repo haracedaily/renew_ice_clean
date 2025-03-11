@@ -1,4 +1,3 @@
-/* 기본 스타일 */
 *{
     margin: 0;
     padding: 0;
@@ -23,9 +22,9 @@ nav {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
 }
 .logo img {
-    margin-top: 10px;
-    width: 70px;
-    height: 20px;
+    margin-top: 5px;
+    width: 143px;
+    height: 25px;
 }
 .nav-links {
     display: flex;
@@ -66,25 +65,43 @@ nav {
     font-weight: bold;
     font-size: 1.2rem;
 }
+#r-container {
+    margin: 0 auto;
+    max-width: 750px;
+    padding: 24px 30px 64px;
+    overflow-y: auto;
+    height: auto; /* 기본 스타일 */
+}
+
 .r-date{
-    margin: 5rem auto;
     display: flex;
     justify-content: center;
-    gap: 7rem;
+    margin-top: 4rem;
+}
+.r-date label{
+    flex: 0 0 auto;
+    width: 50%;
 }
 .r-date input{
     display: none;
+    flex: 0 0 auto;
+    width: 50%;
 }
 .r-time{
-    margin: 7rem auto;
+    margin-top: 5rem;
     display: flex;
     justify-content: center;
-    gap: 10rem;
+}
+.r-time h1{
+    flex: 0 0 auto;
+    width: 50%;
 }
 .time-select{
     gap: 1rem;
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
+    width: 50%;
 }
 .time-select label{
     cursor: pointer;
@@ -104,10 +121,187 @@ input[type = "radio"]{
 .r-info{
     display: flex;
     justify-content: center;
+    margin-top: 5rem;
+}
+.r-info h1{
+    flex: 0 0 auto;
+    width: 50%;
 }
 .info-select{
+    flex: 0 0 auto;
+    width: 50%;
     display: flex;
     flex-direction: column;
-    background-color: lightgray;
+    height: 150px;
+    gap: 1rem;
+}
+.info-group{
+    display: flex;
+    flex-direction: row;
+}
+.info-group label{
+    margin-right: 1rem;
+    font-weight: bold;
+    line-height: 30px;
+    cursor: pointer;
+}
+.info-group input{
+    height: 30px;
+    padding: 1px;
+    cursor: pointer;
+}
 
+.rf_input {
+    width: 300px;
+    padding: 8px;
+    margin: 5px 0;
+}
+.search-btn {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.r-addr{
+    margin-top: 5rem;
+    display: flex;
+    justify-content: center;
+}
+.r-addr h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.addr-input{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.addr-input div{
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    height: 11rem;
+    padding: 1rem;
+}
+.addr-input-top{
+    cursor: pointer;
+    margin : 0 auto 5px;
+    padding: 0.5rem;
+}
+.addr-input-top2{
+    cursor: pointer;
+    margin : 0 auto 5px;
+    padding: 0.5rem;
+    background-color: #006B99;
+    border-radius: 5px;
+    color: white;
+}
+.addr-input-bot{
+    cursor: pointer;
+    margin : 5px auto;
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+.r-model{
+    margin-top: 5rem;
+    display: flex;
+    justify-content: center;
+}
+.r-model h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.model-input{
+    flex: 0 0 auto;
+    width: 50%;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+.model-input input{
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+.r-selectServ{
+    display: flex;
+    justify-content: center;
+    margin-top: 5rem;
+}
+.r-selectServ h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.selectServ-input {
+    flex: 0 0 auto;
+    width: 50%;
+}
+.selectServ-input div{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.selectServ-input div label, .selectCyc-input div label, .selectAdd-input div label{
+    cursor: pointer;
+}
+.r-selectCyc {
+    margin-top: 5rem;
+    display: flex;
+    justify-content: center;
+}
+.r-selectCyc h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.selectCyc-input{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.selectCyc-input div{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.r-selectAdd{
+    margin-top: 5rem;
+    display: flex;
+    justify-content: center;
+}
+.r-selectAdd h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.selectAdd-input{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.selectAdd-input div{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.r-Special{
+    display: flex;
+    justify-content: center;
+    margin-top: 5rem;
+}
+.r-Special h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.special-input{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.special-input textarea{
+    width: 100%;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    height: 11rem;
+    text-align: center;
+    cursor: pointer;
+    padding: 0.5rem;
 }
