@@ -1,4 +1,13 @@
 @media (max-width: 768px) {
+    .Q-txt{
+        text-align: center;
+        font-size: 1rem;
+    }
+    .logo img {
+        margin-top: 5px;
+        width: 120px;
+        height: 20px;
+    }
     /* 네비게이션 링크 숨기기 */
     .nav-links {
         display: none;
@@ -74,10 +83,31 @@
         align-items: center;
         gap: 2rem;
     }
-    .r-time{
+    .r-time, .r-info, .r-addr, .r-model, .r-selectServ, .r-selectCyc, .r-selectAdd, .r-Special{
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 2rem;
     }
+    .info-group{
+        display: flex;
+        flex-direction: column;
+    }
+    .r-addr{
+        margin-top: 10rem;
+    }
+    .addr-input div{
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        height: 15rem;
+        padding: 1rem;
+    }
+    .time-select, .info-select, .addr-input, .model-input, .selectCyc-input,
+    .selectServ-input, .selectAdd-input, .special-input
+
+    {
+        width: 90%;
+    }
+
 }
+

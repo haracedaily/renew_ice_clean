@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="./css/common.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 
 
@@ -72,13 +73,100 @@
     </div>
   </div><!--  r-time-->
   <div class="r-info">
-    <h3 class="Q-txt">예약자 정보를 입력하세요</h3>
+    <h1 class="Q-txt">예약자 정보를 입력하세요</h1>
     <div class="info-select">
-      이름 : <input type="text" name="r-name" id="r-name">
-      연락처 : <input type="text" name="r-phone" id="r-phone">
-      E-mail : <input type="text" name="r-email" id="r-email">
+      <div class="info-group">
+        <label for="name">이름 : </label>
+        <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
+      </div>
+      <div class="info-group">
+        <label for="phone">연락처 : </label>
+        <input type="tel" id="phone" name="phone" placeholder="연락처를 입력하세요">
+      </div>
+      <div class="info-group">
+        <label for="email">이메일 : </label>
+        <input type="email" id="email" name="email" placeholder="이메일을 입력하세요">
+      </div>
     </div>
   </div><!--  r-info-->
+
+  <div class="r-addr">
+    <h1 class="Q-txt">주소를 입력하세요</h1>
+    <div class="addr-input">
+      <div>
+        <input class="addr-input-top" type="text" id="postcode" placeholder="우편번호" readonly>
+        <input class="addr-input-top2" type="button" onclick="openDaumPostcode()" value="🔍검색"><br>
+        <input class="addr-input-bot" type="text" id="address" placeholder="주소" readonly><br>
+        <input class="addr-input-bot" type="text" id="detailAddress" placeholder="상세주소">
+      </div>
+    </div>
+
+
+
+
+  </div><!--  r-addr-->
+  <div class="r-model">
+    <h1 class="Q-txt">제빙기 정보를 알려주세요</h1>
+    <div class="model-input">
+      <input type="text" name="modelname" id="modelname" placeholder="브랜드명 / 모델명">
+    </div>
+  </div><!--r-model-->
+
+  <div class="r-selectServ">
+    <h1 class="Q-txt">원하시는 서비스를 선택하세요</h1>
+    <div class="selectServ-input">
+      <div>
+        <input type="radio" name="serviceSelect" id="serviceSelect-clean">
+        <label for="serviceSelect-clean">청소</label>
+      </div>
+      <div>
+        <input type="radio" name="serviceSelect" id="serviceSelect-rep">
+        <label for="serviceSelect-rep">수리</label>
+      </div>
+    </div>
+  </div><!--  r-selectServ-->
+
+  <div class="r-selectCyc">
+    <h1 class="Q-txt">서비스 주기를 선택하세요</h1>
+    <div class="selectCyc-input">
+        <div>
+            <input type="radio" name="cycleSelect" id="cycleSelect-once">
+            <label for="cycleSelect-once" >이번 한 번만</label>
+        </div>
+        <div>
+            <input type="radio" name="cycleSelect" id="cycleSelect-month">
+            <label for="cycleSelect-month">한 달에 한 번</label>
+        </div>
+    </div>
+  </div><!--    r-selectCyc-->
+
+  <div class="r-selectAdd">
+      <h1 class="Q-txt">원하시는 추가 서비스를 선택하세요</h1>
+      <div class="selectAdd-input">
+          <div>
+              <input type="radio" name="addSelect" id="addSelect-deep">
+              <label for="addSelect-deep">심화 청소</label>
+          </div>
+          <div>
+              <input type="radio" name="addSelect" id="addSelect-tank">
+              <label for="addSelect-tank">물탱크 청소</label>
+          </div>
+          <div>
+              <input type="radio" name="addSelect" id="addSelect-filter">
+              <label for="addSelect-filter">필터 교체</label>
+          </div>
+      </div>
+  </div><!--    r-selectAdd-->
+
+  <div class="r-Special">
+    <h1 class="Q-txt">특별 요청사항을 입력하세요</h1>
+    <div class="special-input">
+        <textarea name="SpecialRequest" id="" cols="30" rows="10" placeholder="예 ) 제빙기 상태나 장소에 대한 설명"></textarea>
+    </div>  
+  </div><!--    r-Special-->
+
+
+
 
 
 
@@ -93,9 +181,8 @@
     navLinks.classList.toggle('active');
     overlay.classList.toggle('active');
   }
-</script>
 
-<script>
+
   flatpickr("#reservation-date", {
     locale: "ko",  // 한국어로 설정
     dateFormat: "Y-m-d",  // 날짜 포맷 설정
@@ -107,6 +194,31 @@
     //   console.log("선택한 날짜: " + dateStr);  // 선택한 날짜 출력
     // }
   });
+
+
+    function openDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        // 팝업에서 검색 결과 항목을 클릭했을 때 실행할 코드
+        var addr = ''; // 주소 변수
+
+        // 사용자가 선택한 주소 타입에 따라 주소 값을 가져옴
+        if (data.userSelectedType === 'R') { // 도로명 주소
+          addr = data.roadAddress;
+        } else { // 지번 주소
+          addr = data.jibunAddress;
+        }
+
+        // 우편번호와 주소 필드에 값 입력
+        document.getElementById('postcode').value = data.zonecode;
+        document.getElementById('address').value = addr;
+
+        // 상세주소 입력란으로 커서 이동
+        document.getElementById('detailAddress').focus();
+      }
+    }).open();
+  }
+
 </script>
 </body>
 </html>
