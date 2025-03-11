@@ -1,0 +1,19 @@
+img{
+    max-width: unset;
+}
+
+#symptoms .bg-gray-100:hover{
+    background-color: #1E51A7;
+    cursor:pointer;
+
+    .bg-white{
+    background-color: #5489DA;
+      .hidden{
+          display: flex;
+      }
+        .w-\[35px\]{
+        display:none;
+    }
+    }
+
+}
