@@ -3,11 +3,12 @@ img{
 }
 
 #symptoms .bg-gray-100:hover{
-    background-color: #1E51A7;
+    background: linear-gradient(150deg,#2A64BE,40%,#19499E);
+    color:white;
     cursor:pointer;
 
     .bg-white{
-    background-color: #5489DA;
+    background: linear-gradient(150deg,#ffffff,20%,#5489DA);
       .hidden{
           display: flex;
       }
@@ -15,5 +16,53 @@ img{
         display:none;
     }
     }
+
+}
+#process_status ul{
+    position:relative;
+    &::after{
+        content:"";
+        position:absolute;
+        width:1px;
+        height:80%;
+        background: rgb(200, 200, 200);
+    }
+
+}
+#process_status li div {
+    position: relative;
+    &::after{
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: rgb(200, 200, 200);
+        bottom: -40%;
+    }
+    span.status {
+        font-size: 14px;
+        width: 75px;
+        color: rgb(255, 255, 255);
+        line-height: 30px;
+        text-align: center;
+        display: inline-block;
+        border-radius: 3px;
+    }
+    .end{
+        background:#252525;
+    }
+    .new{
+        background:#00499a;
+    }
+    .start{
+        background:#999999;
+    }
+}
+
+#state{
+    background: url("../image/live_bg.jpg");
+    background-size: cover;
+    background-position: center;
+
 
 }
