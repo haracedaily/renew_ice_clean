@@ -27,8 +27,27 @@ img{
         height:80%;
         background: rgb(200, 200, 200);
     }
+    li{
+        animation-duration:1500ms;
+        animation-name:fadeInUp;
+    }
 
 }
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        -ms-transform: translateY(20px);
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        -ms-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
+
 #process_status li div {
     position: relative;
     &::after{
