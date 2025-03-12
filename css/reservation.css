@@ -7,6 +7,7 @@ body{
     margin: 0;
     padding: 60px 0 0;
 }
+
 nav {
     display: flex;
     justify-content: space-around;
@@ -88,7 +89,7 @@ nav {
     width: 50%;
 }
 .r-time{
-    margin-top: 5rem;
+    margin-top: 7rem;
     display: flex;
     justify-content: center;
 }
@@ -121,7 +122,7 @@ input[type = "radio"]{
 .r-info{
     display: flex;
     justify-content: center;
-    margin-top: 5rem;
+    margin-top: 7rem;
 }
 .r-info h1{
     flex: 0 0 auto;
@@ -151,11 +152,6 @@ input[type = "radio"]{
     cursor: pointer;
 }
 
-.rf_input {
-    width: 300px;
-    padding: 8px;
-    margin: 5px 0;
-}
 .search-btn {
     padding: 8px 12px;
     background-color: #007bff;
@@ -164,7 +160,7 @@ input[type = "radio"]{
     cursor: pointer;
 }
 .r-addr{
-    margin-top: 5rem;
+    margin-top: 7rem;
     display: flex;
     justify-content: center;
 }
@@ -204,7 +200,7 @@ input[type = "radio"]{
     border-radius: 5px;
 }
 .r-model{
-    margin-top: 5rem;
+    margin-top: 7rem;
     display: flex;
     justify-content: center;
 }
@@ -226,7 +222,7 @@ input[type = "radio"]{
 .r-selectServ{
     display: flex;
     justify-content: center;
-    margin-top: 5rem;
+    margin-top: 7rem;
 }
 .r-selectServ h1{
     flex: 0 0 auto;
@@ -246,7 +242,7 @@ input[type = "radio"]{
     cursor: pointer;
 }
 .r-selectCyc {
-    margin-top: 5rem;
+    margin-top: 7rem;
     display: flex;
     justify-content: center;
 }
@@ -265,7 +261,7 @@ input[type = "radio"]{
     margin-bottom: 1rem;
 }
 .r-selectAdd{
-    margin-top: 5rem;
+    margin-top: 7rem;
     display: flex;
     justify-content: center;
 }
@@ -286,7 +282,7 @@ input[type = "radio"]{
 .r-Special{
     display: flex;
     justify-content: center;
-    margin-top: 5rem;
+    margin-top: 7rem;
 }
 .r-Special h1{
     flex: 0 0 auto;
@@ -304,4 +300,8 @@ input[type = "radio"]{
     text-align: center;
     cursor: pointer;
     padding: 0.5rem;
+}
+
+.hidden2{
+    display: none;
 }

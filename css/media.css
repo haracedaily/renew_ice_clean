@@ -109,5 +109,11 @@
         width: 90%;
     }
 
+    .r-date label, .r-time h1, .r-info h1, .r-addr h1,
+    .r-model h1,.r-model h1, .r-selectServ h1, .r-selectCyc h1,
+    .r-selectAdd h1, .r-Special h1{
+        width: 100%;
+    }
+
 }
 

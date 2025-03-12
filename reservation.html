@@ -51,28 +51,28 @@
     <label for="reservation-date" class="Q-txt">예약 날짜를 선택하세요</label>
     <input type="text" id="reservation-date" name="reservation-date">
   </div><!--  r-date-->
-  <div class="r-time">
+  <div class="r-time hidden2" >
     <h1 class="Q-txt">예약 시간을 선택하세요</h1>
     <div class="time-select">
       <div>
-        <input type="radio" id="reservation-time1" name="reservation-time" value="">
+        <input class="reservationTime" type="radio" id="reservation-time1" name="reservation-time" value="1">
         <label for="reservation-time1">오전 10시 ~ 오후 1시</label>
       </div>
       <div>
-        <input type="radio" id="reservation-time2" name="reservation-time" value="">
+        <input class="reservationTime" type="radio" id="reservation-time2" name="reservation-time" value="2">
         <label for="reservation-time2">오후 2시 ~ 오후 5시</label>
       </div>
       <div>
-        <input type="radio" id="reservation-time3" name="reservation-time" value="">
+        <input class="reservationTime" type="radio" id="reservation-time3" name="reservation-time" value="3">
         <label for="reservation-time3">오후 4시 ~ 오후 7시</label>
       </div>
       <div>
-        <input type="radio" id="reservation-time4" name="reservation-time" value="">
+        <input class="reservationTime" type="radio" id="reservation-time4" name="reservation-time" value="4">
         <label for="reservation-time4">오후 6시 ~ 오후 9시</label>
       </div>
     </div>
   </div><!--  r-time-->
-  <div class="r-info">
+  <div class="r-info hidden2">
     <h1 class="Q-txt">예약자 정보를 입력하세요</h1>
     <div class="info-select">
       <div class="info-group">
@@ -90,7 +90,7 @@
     </div>
   </div><!--  r-info-->
 
-  <div class="r-addr">
+  <div class="r-addr hidden2">
     <h1 class="Q-txt">주소를 입력하세요</h1>
     <div class="addr-input">
       <div>
@@ -105,14 +105,14 @@
 
 
   </div><!--  r-addr-->
-  <div class="r-model">
+  <div class="r-model hidden2">
     <h1 class="Q-txt">제빙기 정보를 알려주세요</h1>
     <div class="model-input">
       <input type="text" name="modelname" id="modelname" placeholder="브랜드명 / 모델명">
     </div>
   </div><!--r-model-->
 
-  <div class="r-selectServ">
+  <div class="r-selectServ hidden2">
     <h1 class="Q-txt">원하시는 서비스를 선택하세요</h1>
     <div class="selectServ-input">
       <div>
@@ -126,7 +126,7 @@
     </div>
   </div><!--  r-selectServ-->
 
-  <div class="r-selectCyc">
+  <div class="r-selectCyc hidden2">
     <h1 class="Q-txt">서비스 주기를 선택하세요</h1>
     <div class="selectCyc-input">
         <div>
@@ -140,7 +140,7 @@
     </div>
   </div><!--    r-selectCyc-->
 
-  <div class="r-selectAdd">
+  <div class="r-selectAdd hidden2">
       <h1 class="Q-txt">원하시는 추가 서비스를 선택하세요</h1>
       <div class="selectAdd-input">
           <div>
@@ -158,7 +158,7 @@
       </div>
   </div><!--    r-selectAdd-->
 
-  <div class="r-Special">
+  <div class="r-Special hidden2">
     <h1 class="Q-txt">특별 요청사항을 입력하세요</h1>
     <div class="special-input">
         <textarea name="SpecialRequest" id="" cols="30" rows="10" placeholder="예 ) 제빙기 상태나 장소에 대한 설명"></textarea>
@@ -220,5 +220,6 @@
   }
 
 </script>
+<script src="js/reservation.js"></script>
 </body>
 </html>
