@@ -6,10 +6,12 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>IceCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 </head>
-<body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+<body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
 <header class="sticky top-0 z-40 w-full bg-gray-100 p-5">
     <nav class="flex items-center justify-evenly flex-wrap">
         <img src="./image/logo.png" onclick="location.href='./index.html'" alt="">
@@ -149,7 +151,7 @@
     </div>
     <!--처리현황 끝-->
     <!--시공 갤러리-->
-    <div id="gallery" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+    <div id="gallery" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%] relative">
         <h4 class="underline text-blue-900 font-bold">Gallery</h4>
         <h1 class="font-bold text-3xl">시공 갤러리</h1>
         <!--갤러리 게시판 부분-->
@@ -163,6 +165,29 @@
             </div>
 
         </div>
+        <!-- 글쓰기 editor 팝업 -->
+        <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+            <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
+            <div class="grid grid-cols-[100px_300px_100px_300px] gap-4 m-2">
+                <label>예약번호</label>
+                <input id="reserv_no" type="search" readonly>
+                <label>날짜</label>
+                <input id="re_date" type="date" readonly>
+                <label>제목</label>
+                <input id="re_title" class="col-span-3" type="text">
+                <label>첨부파일</label>
+                <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);"  multiple accept="image/*">
+                <div id="re_file_list" class="file-list col-span-4"></div>
+            </div>
+            <div id="editor" class="p-5">
+                <p></p>
+            </div>
+            <div class="flex justify-end gap-4">
+            <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
+                <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
+            </div>
+            </div>
+        </div>
         <!--갤러리 페이지네이션-->
         <div class="flex justify-around items-center w-[60%] h-full gap-3 relative">
             <div>
@@ -174,7 +199,7 @@
             <div>
 
             </div>
-            <button class="cursor-pointer p-2 bg-blue-700 text-white absolute right-0">글쓰기</button>
+            <button id="review_write" class="cursor-pointer p-2 bg-blue-700 text-white absolute right-0">글쓰기</button>
         </div>
     </div>
     <!--시공 갤러리 끝-->
@@ -358,6 +383,8 @@
         </div>
     </div>
     <!--프로세스 끝-->
+
+    <!--footer 시작-->
 <div class="h-[10vh] flex flex-col justify-center items-center">ccc</div>
 </main>
 </body>
