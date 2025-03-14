@@ -302,6 +302,66 @@ input[type = "radio"]{
     padding: 0.5rem;
 }
 
+
+.reserBtn{
+    display: flex;
+    justify-content: center;
+    margin-top: 7rem;
+}
+#confirm-reserve{
+    background: #427D9D;
+    width: 10rem;
+    height: 4rem;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    color: whitesmoke;
+    animation: bounce 1.2s infinite;
+    font-weight: bold;
+
+}
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-25px);
+    }
+}
+.reserBtn:hover{
+    transform: scale(1.05);
+}
+#confirm-reserve:hover {
+    background: #164863;
+    color: white;
+}
+.r-check{
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.r-check h1{
+    text-align: center;
+}
+.check-input{
+    background-color: #EBF4F6;
+    border-radius: 1rem;
+    width: 30rem;
+    margin: 2rem auto;
+    padding: 1.5rem;
+}
+.check-input div{
+    display: flex;
+    justify-content: center;
+}
+.check-input div label,div{
+    margin: 4px 8px;
+}
+.check-input div label{
+    font-weight: bold;
+}
+
 .hidden2{
     display: none;
 }
