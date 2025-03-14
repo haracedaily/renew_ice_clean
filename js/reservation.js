@@ -87,13 +87,24 @@ document.querySelectorAll('.selectAdd').forEach((node)=>{
     });
 })
 
+document.querySelector('#specialR').addEventListener('change', function() {
+    const ReserBtn = document.querySelector('.reserBtn');
+    if(this.value){
+        ReserBtn.classList.remove('hidden2')
+        ReserBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+})
 
 
 
-const CheckInfo = document.querySelector('.check-info');
+const CheckInfoName = document.querySelector('.check-info-name');
+const CheckInfoPhone = document.querySelector('.check-info-phone');
+const CheckInfoEmail = document.querySelector('.check-info-email');
 const CheckDate = document.querySelector('.check-date');
 const CheckTime = document.querySelector('.check-time');
-const CheckAddr = document.querySelector('.check-addr');
+const CheckAddrPost = document.querySelector('.check-addr-post');
+const CheckAddrAddr = document.querySelector('.check-addr-addr');
+const CheckAddrDeta = document.querySelector('.check-addr-deta');
 const CheckModel = document.querySelector('.check-model');
 const CheckSelectSer = document.querySelector('.check-select-ser');
 const CheckSelectCyc = document.querySelector('.check-select-cyc');
@@ -105,6 +116,7 @@ const OutputRTime = document.querySelectorAll('.reservationTime');
 const OutputName = document.getElementById('name');
 const OutputPhone = document.getElementById('phone');
 const OutputEmail = document.getElementById('email');
+const OutputModel = document.getElementById('modelname');
 const OutputPost = document.getElementById('postcode');
 const OutputAddress = document.getElementById('address');
 const OutputDetailAddress = document.getElementById('detailAddress');
@@ -117,10 +129,70 @@ const $confirmReserve = document.querySelector('#confirm-reserve');
 
 
 $confirmReserve.addEventListener('click', function(){
-    CheckInfo.innerHTML = `이름 : ${OutputName.value} 전화번호 : ${OutputPhone.value} 이메일 ${OutputEmail.value}`;
+    CheckInfoName.innerHTML = OutputName.value;
+    CheckInfoPhone.innerHTML = OutputPhone.value;
+    CheckInfoEmail.innerHTML = OutputEmail.value;
+    CheckDate.innerHTML = OutputRDate.value;
+
+    CheckAddrPost.innerHTML = OutputPost.value;
+    CheckAddrAddr.innerHTML = OutputAddress.value;
+    CheckAddrDeta.innerHTML = OutputDetailAddress.value;
+    CheckModel.innerHTML = OutputModel.value;
+    CheckSpecial.innerHTML = OutputSpecial.value;
+
+
+    const selectedTime = document.querySelector('.reservationTime:checked');
+    if (selectedTime) {
+        CheckTime.innerHTML = selectedTime.value;
+    }
+    const selectedSer = document.querySelector('.selectServ:checked');
+    if (selectedSer) {
+        CheckSelectSer.innerHTML = selectedSer.value;
+    }
+    const selectedCyc = document.querySelector('.selectCyc:checked');
+    if (selectedCyc) {
+        CheckSelectCyc.innerHTML = selectedCyc.value;
+    }
+    const selectedAdd = document.querySelector('.selectAdd:checked');
+    if (selectedAdd) {
+        CheckSelectAdd.innerHTML = selectedAdd.value;
+    }
+
+
 });
 
 
-
+OutputRTime.forEach((radio) => {
+    radio.addEventListener('change', function() {
+        const selectedTime = document.querySelector('.reservationTime:checked');
+        if (selectedTime) {
+            CheckTime.innerHTML = selectedTime.value;
+        }
+    });
+});
+OutputSelectServ.forEach((radio) => {
+    radio.addEventListener('change', function() {
+        const selectedSer = document.querySelector('.selectServ:checked');
+        if (selectedSer) {
+            CheckSelectSer.innerHTML = selectedSer.value;
+        }
+    });
+});
+OutputSelectCyc.forEach((radio) => {
+    radio.addEventListener('change', function() {
+        const selectedCyc = document.querySelector('.selectCyc:checked');
+        if (selectedCyc) {
+            CheckSelectCyc.innerHTML = selectedCyc.value;
+        }
+    });
+});
+OutputSelectAdd.forEach((radio) => {
+    radio.addEventListener('change', function() {
+        const selectedAdd = document.querySelector('.selectAdd:checked');
+        if (selectedAdd) {
+            CheckSelectAdd.innerHTML = selectedAdd.value;
+        }
+    });
+});
 
 
