@@ -114,3 +114,8 @@ img{
     color: #ff5353;
     margin-left: 5px;
 }
+
+.scroll_lock{
+    overflow: hidden;
+    touch-action: none;
+}

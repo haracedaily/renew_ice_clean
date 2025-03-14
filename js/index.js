@@ -3,32 +3,87 @@ setInterval(()=>{
     first_li.remove();
     document.querySelector("#process_ul").appendChild(first_li);
 },3000);
+class today{
+    constructor(date) {
+        this.year=date.getFullYear();
+        this.month=date.getMonth()+1;
+        this.date=date.getDate();
+    }
+    getDate(){
+        if(this.date<10){
+            return '0'+this.date;
+        }
+        return this.date;
+    }
+    getMonth(){
+        if(this.month<10){
+            return '0'+this.month;
+        }
+        return this.month;
+    }
+}
 let fileNo = 0;
 let filesArr = new Array();
 /*TODO 글쓰기 작성 닫을때 내부 내용 초기화 및 전역 변수 초기화,
 *  파일 정보들 초기화
 * 파일 전송 및 데이터 저장 */
 document.addEventListener("DOMContentLoaded", ()=>{
+    let $today = new today(new Date());
     let $body = document.querySelector("body");
-    document.querySelector("#review_write").addEventListener("click", ()=>{
-        document.querySelector("#re_popup").classList.toggle("hidden");
-        $body.style.touchAction="none";
-        $body.style.overflow="hidden";
-        document.querySelector("#re_title").focus();
-    })
-    document.querySelector("#can_re").addEventListener("click", ()=>{
-        document.querySelector("#re_popup").classList.toggle("hidden");
-
-
-    })
-        const quill = new Quill('#editor', {
+    let $reTitle = document.querySelector("#re_title");
+    let $reDate = document.querySelector("#re_date");
+    let $reservNo = document.querySelector("#reserv_no");
+    const quill = new Quill('#editor', {
         theme: 'snow'
     });
+    document.querySelector("#review_write").addEventListener("click", ()=>{
+        document.querySelector("#re_popup").classList.toggle("hidden");
+        $body.classList.toggle("scroll_lock");
+        $reDate.value = `${$today.year}-${$today.getMonth()}-${$today.getDate()}`;
+        $reTitle.focus();
+    })
+    document.querySelector("#can_re").addEventListener("click", ()=>{
+        $reTitle.value='';
+
+        document.querySelector("#re_popup").classList.toggle("hidden");
+        $body.classList.toggle("scroll_lock");
+
+        quill.deleteText(0, 9999999);
+    })
+
+    document.querySelector("#con_re").addEventListener("click", async ()=>{
+        let re_title = $reTitle.value;
+        let re_content = quill.getSemanticHTML(0, 9999999);
+        let reservNo = $reservNo.value;
+        let imagesNm=await re_upload(filesArr,reservNo);
+        let res = await supabase.from('review_gallery').insert([{title:re_title,content:re_content}]).select()
+        if(!res.error){
+            let result = await supabase.from('images').insert(imagesNm).select();
+            if(result.error){
+                console.log(result.error);
+            }else{
+                alert('저장 성공');
+            }
+
+        }
+    })
+
 })
 
 
 
-
+function re_upload(arr,reservNo){
+    let filesUrl=[];
+    arr.forEach(async (file)=>{
+        let filenm = crypto.randomUUID+file.name;
+          let res = await supabase.storage.from('iceCareBucket').upload(filenm,file);
+          if(!res.error){
+              let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
+              filesUrl.push({conn_no:reservNo,name:filenm,url:re_img_url});
+          }
+    })
+    return filesUrl;
+}
 
 /* 첨부파일 추가 */
 function addFile(obj){
@@ -57,7 +112,7 @@ function addFile(obj){
 
             // 목록 추가
             let htmlData = '';
-            htmlData += '<div id="file' + fileNo + '" class="filebox flex">';
+            htmlData += `<div id="file${fileNo}" data-files="${file}" class="filebox flex">`;
             htmlData += `   <p class="name" data-files="${file}"> ${file.name}  </p>`;
             htmlData += '   <a class="delete" onclick="deleteFile(' + fileNo + ');"><span class="cursor-pointer ml-2 pl-2 pr-2 rounded-sm border-[1px] border-red-400 text-red-600">-</span></a>';
             htmlData += '</div>';
