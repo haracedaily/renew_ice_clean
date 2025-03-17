@@ -71,13 +71,14 @@ nav {
     max-width: 750px;
     padding: 24px 30px 64px;
     overflow-y: auto;
-    height: auto; /* 기본 스타일 */
+    height: auto;
 }
 
 .r-date{
     display: flex;
     justify-content: center;
     margin-top: 4rem;
+    animation: fadein 2s
 }
 .r-date label{
     flex: 0 0 auto;
@@ -92,6 +93,7 @@ nav {
     margin-top: 7rem;
     display: flex;
     justify-content: center;
+    animation: fadein 2s
 }
 .r-time h1{
     flex: 0 0 auto;
@@ -123,6 +125,7 @@ input[type = "radio"]{
     display: flex;
     justify-content: center;
     margin-top: 7rem;
+    animation: fadein 2s
 }
 .r-info h1{
     flex: 0 0 auto;
@@ -163,6 +166,7 @@ input[type = "radio"]{
     margin-top: 7rem;
     display: flex;
     justify-content: center;
+    animation: fadein 2s
 }
 .r-addr h1{
     flex: 0 0 auto;
@@ -203,6 +207,7 @@ input[type = "radio"]{
     margin-top: 7rem;
     display: flex;
     justify-content: center;
+    animation: fadein 2s
 }
 .r-model h1{
     flex: 0 0 auto;
@@ -223,6 +228,7 @@ input[type = "radio"]{
     display: flex;
     justify-content: center;
     margin-top: 7rem;
+    animation: fadein 2s
 }
 .r-selectServ h1{
     flex: 0 0 auto;
@@ -245,6 +251,7 @@ input[type = "radio"]{
     margin-top: 7rem;
     display: flex;
     justify-content: center;
+    animation: fadein 2s
 }
 .r-selectCyc h1{
     flex: 0 0 auto;
@@ -264,6 +271,7 @@ input[type = "radio"]{
     margin-top: 7rem;
     display: flex;
     justify-content: center;
+    animation: fadein 2s
 }
 .r-selectAdd h1{
     flex: 0 0 auto;
@@ -283,6 +291,7 @@ input[type = "radio"]{
     display: flex;
     justify-content: center;
     margin-top: 7rem;
+    animation: fadein 2s
 }
 .r-Special h1{
     flex: 0 0 auto;
@@ -340,6 +349,7 @@ input[type = "radio"]{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 .r-check h1{
     text-align: center;
@@ -360,6 +370,53 @@ input[type = "radio"]{
 }
 .check-input div label{
     font-weight: bold;
+}
+.modal{
+    position: absolute;
+    top: 5rem;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    animation: fadein 2s;
+}
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.agree:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+.privacy-detail-btn:hover{
+    color: darkred;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.privacy-no,.privacy-ok{
+    width: 3.5rem;
+    border: gray solid 1px;
+    border-radius: 0.5rem;
+    margin: 1rem 1rem 5rem;
+    cursor: pointer;
+}
+
+.privacy-no:hover,.privacy-ok:hover{
+    background-color: #006B99;
+    border: none;
+    color: white;
+    width: 4rem;
+    transform: scale(1.05);
+}
+.privacy-details{
+    border: 1px solid lightgray;
+    padding: 2rem;
+    margin: 2rem auto;
+    width: 60rem;
+    display: none;
 }
 
 .hidden2{

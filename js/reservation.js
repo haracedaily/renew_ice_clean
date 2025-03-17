@@ -127,8 +127,15 @@ const OutputSpecial = document.getElementById('specialR');
 
 const $confirmReserve = document.querySelector('#confirm-reserve');
 
+const $Rcontainer = document.querySelector('#r-container');
+const $modal = document.querySelector('.modal');
+const $agreeInput = document.querySelector('#privacy');
 
+// 예약하기 버튼 눌렀을 때
 $confirmReserve.addEventListener('click', function(){
+    $Rcontainer.classList.add('hidden2');
+    $modal.classList.remove('hidden2');
+
     CheckInfoName.innerHTML = OutputName.value;
     CheckInfoPhone.innerHTML = OutputPhone.value;
     CheckInfoEmail.innerHTML = OutputEmail.value;
@@ -159,9 +166,10 @@ $confirmReserve.addEventListener('click', function(){
     }
 
 
+
 });
 
-
+// 라디오 버튼 value 가져오기
 OutputRTime.forEach((radio) => {
     radio.addEventListener('change', function() {
         const selectedTime = document.querySelector('.reservationTime:checked');
@@ -195,4 +203,49 @@ OutputSelectAdd.forEach((radio) => {
     });
 });
 
+// 개인정보 제공 보기 버튼 privacy-detail-btn privacy-details
 
+const $PdetailBtn = document.querySelector('.privacy-detail-btn');
+const $Pdetail = document.querySelector('.privacy-details');
+
+$PdetailBtn.addEventListener('click', () => {
+    const isVisible = $Pdetail.style.display === 'block';
+    $Pdetail.style.display = isVisible ? 'none' : 'block';
+});
+
+// 취소 버튼
+
+const PrivacyNo = document.querySelector('.privacy-no');
+PrivacyNo.addEventListener('click', () => {
+    Swal.fire({
+        title: "취소하시겠습니까?",
+        text: "취소 선택 시 예약 내용은 모두 사라집니다!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        cancelButtonText: "계속예약",
+        confirmButtonText: "예약취소"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = '../reservation.html'
+        }
+    });
+
+});
+
+// 확인 버튼
+const PrivacyOk = document.querySelector('.privacy-ok');
+PrivacyOk.addEventListener('click', async function(){
+    if(!($agreeInput.checked)){
+        Swal.fire({
+            icon: "error",
+            text: "개인정보 제공에 동의하셔야 합니다.",
+        });
+    }else{
+    Swal.fire({
+        title: "예약성공!",
+        icon: "success",
+        draggable: true
+    })}
+});
