@@ -114,6 +114,12 @@
     .r-selectAdd h1, .r-Special h1{
         width: 100%;
     }
+    .check-input{
+        width: 90%;
+    }
+    .privacy-details{
+        width: 90%;
+    }
 
 }
 
