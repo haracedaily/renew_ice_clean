@@ -1,0 +1,362 @@
+@charset "utf-8";
+
+
+
+@font-face {
+    font-family: 'GmarketSans'; 
+    src: url("../font/GmarketSansLight.woff") format("woff");
+    font-weight: 300;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'GmarketSans'; 
+    src: url("../font/GmarketSansMedium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'GmarketSans'; 
+    src: url("../font/GmarketSansBold.woff") format("woff");
+    font-weight: 700;
+    font-style: normal; }
+  
+
+
+
+/* Pretendard */
+@font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-Thin.woff") format("woff");
+    font-weight: 100;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-ExtraLight.woff") format("woff");
+    font-weight: 200;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-Light.woff") format("woff");
+    font-weight: 300;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-Bold.woff") format("woff");
+    font-weight: 700;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-ExtraBold.woff") format("woff");
+    font-weight: 800;
+    font-style: normal; }
+  
+  @font-face {
+    font-family: 'Pretendard';
+    src: url("../font/Pretendard-Black.woff") format("woff");
+    font-weight: 900;
+    font-style: normal; }
+  
+
+
+    
+/* font-family: 'Noto Sans KR', sans-serif */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+
+html {
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+/* font-family: 'NanumSquare', sans-serif; */
+/* @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap'); */
+
+/** * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/) * http://cssreset.com */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    letter-spacing: -0.04em;
+    /*세로모드에서 가로모드로 전환할때 텍스트가 약간 커지는 현상 방지*/
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-decoration: none;
+    -webkit-box-sizing: border-box;
+    -webkit-text-size-adjust: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+small.pc_only{
+    display: inline-block !important;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+body {
+    line-height: 1;
+    letter-spacing: -0.04em;
+    word-break: keep-all;
+    width: 100%;
+    height: 100%;
+}
+small {
+    display: inline-block;
+    margin: 0 0.5rem;
+    background-color: #707070;
+    width: 1px;
+    height: 0.5rem;
+    margin-top: -1px;
+    vertical-align: middle;
+}
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+button,
+a {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: inherit;
+}
+
+
+textarea,
+input,
+select,
+textarea {
+    padding: 0;
+    margin: 0;
+    outline: 0;
+    font-size: inherit;
+    font-family: 'Noto Sans KR', sans-serif;
+    border: 1px solid #d2d2d2;
+
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    /* 1 */
+    padding: 0;
+    /* 2 */
+}
+
+input[type=date]::-webkit-inner-spin-button,
+.top_wrap .input_wrap input[type=date]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    color: inherit;
+    /* 1 */
+    font: inherit;
+    /* 2 */
+    margin: 0;
+    /* 3 */
+}
+
+select {
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+input,
+select,
+textarea {
+    appearance: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+address,
+em,
+i {
+    font-style: normal;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* placeholder */
+::-webkit-input-placeholder {
+    /* Chrome/Opera/Safari */
+    color: #ccc;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    color: #ccc;
+}
+
+:-ms-input-placeholder {
+    /* IE 10+ */
+    color: #ccc;
+}
+
+:-moz-placeholder {
+    /* Firefox 18- */
+    color: #ccc;
+}
+
+/* 스크롤 */
+/* ::-webkit-scrollbar-track { background-color: #f5f5f5; }
+::-webkit-scrollbar { width: 0px;
+                      background: transparent;
+                      height: 0px !important; }
+::-webkit-scrollbar-thumb { background-color: #aaa; } */
+
+@media screen and (max-width: 850px) {
+    small.pc_only{
+        display: none !important;
+    }
+    small {
+        margin-top: -2px;
+    }
+    
+    
+}
