@@ -1,33 +1,37 @@
-setInterval(()=>{
+setInterval(() => {
     let first_li = document.querySelector("#process_ul").children[0];
     first_li.remove();
     document.querySelector("#process_ul").appendChild(first_li);
-},3000);
-class today{
+}, 3000);
+
+class today {
     constructor(date) {
-        this.year=date.getFullYear();
-        this.month=date.getMonth()+1;
-        this.date=date.getDate();
+        this.year = date.getFullYear();
+        this.month = date.getMonth() + 1;
+        this.date = date.getDate();
     }
-    getDate(){
-        if(this.date<10){
-            return '0'+this.date;
+
+    getDate() {
+        if (this.date < 10) {
+            return '0' + this.date;
         }
         return this.date;
     }
-    getMonth(){
-        if(this.month<10){
-            return '0'+this.month;
+
+    getMonth() {
+        if (this.month < 10) {
+            return '0' + this.month;
         }
         return this.month;
     }
 }
+
 let fileNo = 0;
 let filesArr = new Array();
 /*TODO 글쓰기 작성 닫을때 내부 내용 초기화 및 전역 변수 초기화,
 *  파일 정보들 초기화
 * 파일 전송 및 데이터 저장 */
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
     let $today = new today(new Date());
     let $body = document.querySelector("body");
     let $reTitle = document.querySelector("#re_title");
@@ -36,14 +40,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
-    document.querySelector("#review_write").addEventListener("click", ()=>{
+    document.querySelector("#review_write").addEventListener("click", () => {
         document.querySelector("#re_popup").classList.toggle("hidden");
         $body.classList.toggle("scroll_lock");
         $reDate.value = `${$today.year}-${$today.getMonth()}-${$today.getDate()}`;
         $reTitle.focus();
     })
-    document.querySelector("#can_re").addEventListener("click", ()=>{
-        $reTitle.value='';
+    document.querySelector("#can_re").addEventListener("click", () => {
+        $reTitle.value = '';
 
         document.querySelector("#re_popup").classList.toggle("hidden");
         $body.classList.toggle("scroll_lock");
@@ -51,42 +55,61 @@ document.addEventListener("DOMContentLoaded", ()=>{
         quill.deleteText(0, 9999999);
     })
 
-    document.querySelector("#con_re").addEventListener("click", async ()=>{
-        let re_title = $reTitle.value;
+    document.querySelector("#con_re").addEventListener("click", async () => {
+        /*let re_title = $reTitle.value;
         let re_content = quill.getSemanticHTML(0, 9999999);
-        let reservNo = $reservNo.value;
-        let imagesNm=await re_upload(filesArr,reservNo);
-        let res = await supabase.from('review_gallery').insert([{title:re_title,content:re_content}]).select()
-        if(!res.error){
-            let result = await supabase.from('images').insert(imagesNm).select();
-            if(result.error){
-                console.log(result.error);
-            }else{
-                alert('저장 성공');
-            }
+        let reservNo = $reservNo.value;*/
+        /*let res = await supabase.from('review_gallery').insert([{title: re_title, content: re_content}]).select()
+        if (!res.error) {
+            console.log(res);*/
+            //let res = await re_upload(filesArr, res.data[0].re_no);
+            let res = await re_upload(filesArr,quill);
+            console.log(res);
+            if (!res.error) {
+                document.querySelector("#re_file_list").innerHTML = '';
+                $reTitle.value = '';
 
-        }
+                document.querySelector("#re_popup").classList.toggle("hidden");
+                $body.classList.toggle("scroll_lock");
+
+                quill.deleteText(0, 9999999);
+            }
+       // }
     })
 
 })
+/*
 
+async function re_img_insert(ary) {
+    let res = await supabase.from('images').insert(ary).select();
+    if (!res.error) {
+        alert('이미지 테이블 저장 성공');
+    }
+    return res;
+}
+*/
 
+async function re_upload(arr, quill) {
+    let re_title =  document.querySelector("#re_title").value;
+    let re_content = quill.getSemanticHTML(0, 9999999);
 
-function re_upload(arr,reservNo){
-    let filesUrl=[];
-    arr.forEach(async (file)=>{
-        let filenm = crypto.randomUUID+file.name;
-          let res = await supabase.storage.from('iceCareBucket').upload(filenm,file);
-          if(!res.error){
-              let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
-              filesUrl.push({conn_no:reservNo,name:filenm,url:re_img_url});
-          }
-    })
-    return filesUrl;
+    let filesUrl = [];
+    for (const file of arr) {
+        let filenm = crypto.randomUUID() + file.name;
+        let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
+        if (!res.error) {
+            let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
+            // filesUrl.push({conn_no: conn_no, file_name: filenm, image_url: re_img_url});
+            filesUrl.push({file_name: filenm, image_url: re_img_url});
+        }
+    }
+    let res2 = await supabase.rpc("insert_gallery",{title: re_title,content:re_content,file_data:filesUrl});
+    // let res2 = await re_img_insert(filesUrl);
+    return res2;
 }
 
 /* 첨부파일 추가 */
-function addFile(obj){
+function addFile(obj) {
     var maxFileCnt = 10;   // 첨부파일 최대 개수
     var attFileCnt = document.querySelectorAll('.filebox').length;    // 기존 추가된 첨부파일 개수
     var remainFileCnt = maxFileCnt - attFileCnt;    // 추가로 첨부가능한 개수
@@ -116,7 +139,7 @@ function addFile(obj){
             htmlData += `   <p class="name" data-files="${file}"> ${file.name}  </p>`;
             htmlData += '   <a class="delete" onclick="deleteFile(' + fileNo + ');"><span class="cursor-pointer ml-2 pl-2 pr-2 rounded-sm border-[1px] border-red-400 text-red-600">-</span></a>';
             htmlData += '</div>';
-            document.querySelector("#re_file_list").innerHTML+=htmlData;
+            document.querySelector("#re_file_list").innerHTML += htmlData;
             fileNo++;
         } else {
             continue;
@@ -127,7 +150,7 @@ function addFile(obj){
 }
 
 /* 첨부파일 검증 */
-function validation(obj){
+function validation(obj) {
     const fileTypes = ['application/pdf', 'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tif', 'application/haansofthwp', 'application/x-hwp'];
     if (obj.name.length > 100) {
         alert("파일명이 100자 이상인 파일은 제외되었습니다.");
@@ -152,34 +175,23 @@ function deleteFile(num) {
     filesArr[num].is_delete = true;
 }
 
-/* 폼 전송 */
-/*
-function submitForm() {
-    // 폼데이터 담기
-    var form = document.querySelector("form");
-    var formData = new FormData(form);
-    for (var i = 0; i < filesArr.length; i++) {
-        // 삭제되지 않은 파일만 폼데이터에 담기
-        if (!filesArr[i].is_delete) {
-            formData.append("attach_file", filesArr[i]);
-        }
+async function fetchGallery(page){
+    let res = await supabase.rpc("fetch_gallery", {page});
+    if(!res.error){
+        console.log(res);
+        let htmlData = '';
+        res.data.forEach(item => {
+            htmlData+=`  <div class="rounded-2xl flex flex-col justify-baseline w-full h-full gap-4">
+                <div class="p-1 bg-gray-200 rounded-2xl">
+                    <div class="w-full h-[25vh] rounded-2xl" data-id="1"
+                         style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
+                </div>
+                <div class="text-2xl">${item.title}</div>
+                <div>${item.cpdt.slice(0,10)}</div>
+            </div>`;
+        })
+        document.querySelector("#galleryPage").innerHTML = htmlData;
     }
+}
 
-    $.ajax({
-        method: 'POST',
-        url: '/register',
-        dataType: 'json',
-        data: formData,
-        async: true,
-        timeout: 30000,
-        cache: false,
-        headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
-        success: function () {
-            alert("파일업로드 성공");
-        },
-        error: function (xhr, desc, err) {
-            alert('에러가 발생 하였습니다.');
-            return;
-        }
-    })
-}*/
+document.addEventListener("DOMContentLoaded", fetchGallery(0));
