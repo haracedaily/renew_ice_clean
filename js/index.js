@@ -28,9 +28,12 @@ class today {
 
 let fileNo = 0;
 let filesArr = new Array();
-/*TODO 글쓰기 작성 닫을때 내부 내용 초기화 및 전역 변수 초기화,
+/* 글쓰기 작성 닫을때 내부 내용 초기화 및 전역 변수 초기화,
 *  파일 정보들 초기화
-* 파일 전송 및 데이터 저장 */
+* 파일 전송 및 데이터 저장 완료
+* TODO 페이지네이션 o, 단일갤러리, 호출순서 o
+*  다음페이지 이전페이지
+*   */
 document.addEventListener("DOMContentLoaded", () => {
     let $today = new today(new Date());
     let $body = document.querySelector("body");
@@ -51,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.querySelector("#re_popup").classList.toggle("hidden");
         $body.classList.toggle("scroll_lock");
-
+        filesArr=[];
         quill.deleteText(0, 9999999);
     })
 
@@ -71,8 +74,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 document.querySelector("#re_popup").classList.toggle("hidden");
                 $body.classList.toggle("scroll_lock");
-
+                filesArr=[];
                 quill.deleteText(0, 9999999);
+
+                //갤러리 첫화면 재호출
+                fetchGallery(0);
+
             }
        // }
     })
@@ -175,6 +182,7 @@ function deleteFile(num) {
     filesArr[num].is_delete = true;
 }
 
+//갤러리 불러오기(페이지별)
 async function fetchGallery(page){
     let res = await supabase.rpc("fetch_gallery", {page});
     if(!res.error){
@@ -183,7 +191,7 @@ async function fetchGallery(page){
         res.data.forEach(item => {
             htmlData+=`  <div class="rounded-2xl flex flex-col justify-baseline w-full h-full gap-4">
                 <div class="p-1 bg-gray-200 rounded-2xl">
-                    <div class="w-full h-[25vh] rounded-2xl" data-id="1"
+                    <div onclick="openGallery('${item.re_no}')" class="w-full h-[25vh] rounded-2xl" data-id="1"
                          style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
                 </div>
                 <div class="text-2xl">${item.title}</div>
@@ -194,4 +202,32 @@ async function fetchGallery(page){
     }
 }
 
-document.addEventListener("DOMContentLoaded", fetchGallery(0));
+//갤러리 페이지네이션 구성하고 거기서 갤러리 열기로 변경 => 다음 넘길때 구성 변경형태
+document.addEventListener("DOMContentLoaded", galleryPagination(0));
+
+//단일 갤러리 열기
+async function openGallery(re_no){
+    let $gallery_popup = document.querySelector("#select_gallery");
+    let res = await supabase.rpc("select_gallery",{gallery_no:re_no});
+    console.log(res);
+    //     $gallery_popup.classList.remove("hidden");
+    // if(!res.error){
+    //     res.data.forEach(item => {
+    //
+    //     })
+    // }
+}
+
+//갤러리 페이지 구성하기
+async function galleryPagination(d){
+    let $pagination = document.querySelector("#gallery_pagination");
+    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d,d+89);
+    if(res.count>0) {
+        await fetchGallery(d);
+        let htmlData = '';
+        for(let i =0; i<Math.ceil(res.count / 9);i++){
+            htmlData+=` <div class="cursor-pointer" onclick="fetchGallery(${d+i})">${i+1}</div> `
+        }
+        $pagination.innerHTML = htmlData;
+    }
+}
