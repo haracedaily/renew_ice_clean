@@ -31,8 +31,8 @@ let filesArr = new Array();
 /* 글쓰기 작성 닫을때 내부 내용 초기화 및 전역 변수 초기화,
 *  파일 정보들 초기화
 * 파일 전송 및 데이터 저장 완료
-* TODO 페이지네이션 o, 단일갤러리, 호출순서 o
-*  다음페이지 이전페이지
+* 페이지네이션 o, 단일갤러리, 호출순서 o
+* TODO 다음페이지 이전페이지 단일갤러리 slicker
 *   */
 document.addEventListener("DOMContentLoaded", () => {
     let $today = new today(new Date());
@@ -208,20 +208,40 @@ document.addEventListener("DOMContentLoaded", galleryPagination(0));
 //단일 갤러리 열기
 async function openGallery(re_no){
     let $gallery_popup = document.querySelector("#select_gallery");
+    document.querySelector('body').classList.add("scroll_lock");
     let res = await supabase.rpc("select_gallery",{gallery_no:re_no});
     console.log(res);
-    //     $gallery_popup.classList.remove("hidden");
-    // if(!res.error){
-    //     res.data.forEach(item => {
-    //
-    //     })
-    // }
+        $gallery_popup.classList.remove("hidden");
+    if(!res.error){
+        document.querySelector("#gallery_date").innerHTML = res.data[0].cpdt.slice(0,10);
+        document.querySelector("#gallery_title").innerHTML = res.data[0].title;
+        document.querySelector("#gallery_content").innerHTML = res.data[0].content;
+        let htmlData = '';
+        res.data[0].image.forEach(url=>{
+            htmlData+=`<img src="${url}" style="height:400px" alt="">`;
+        })
+        document.querySelector("#select_galleries").innerHTML = htmlData;
+    }
+    $('#select_galleries').slick({
+        slide:'img',
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 2000,
+        prevArrow : "<button type='button' class='slick-prev absolute top-[40%] left-0 z-50'>prev</button>",		// 이전 화살표 모양 설정
+        nextArrow : "<button type='button' class='slick-next absolute top-[40%] right-0 z-50'>next</button>",
+    });
+}
+function close_gallery(){
+    let $gallery_popup = document.querySelector("#select_gallery");
+    $gallery_popup.classList.add("hidden");
+    document.querySelector('body').classList.remove("scroll_lock");
 }
 
 //갤러리 페이지 구성하기
 async function galleryPagination(d){
     let $pagination = document.querySelector("#gallery_pagination");
-    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d,d+89);
+    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,(d*9)+89);
     if(res.count>0) {
         await fetchGallery(d);
         let htmlData = '';
