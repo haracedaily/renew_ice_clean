@@ -83,7 +83,9 @@
         align-items: center;
         gap: 2rem;
     }
-    .r-time, .r-info, .r-addr, .r-model, .r-selectServ, .r-selectCyc, .r-selectAdd, .r-Special{
+    .r-time, .r-info, .r-addr, .r-model,
+    .r-selectServ, .r-selectCyc, .r-selectAdd,
+    .r-Special, .r-capacity{
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -103,7 +105,7 @@
         padding: 1rem;
     }
     .time-select, .info-select, .addr-input, .model-input, .selectCyc-input,
-    .selectServ-input, .selectAdd-input, .special-input
+    .selectServ-input, .selectAdd-input, .special-input, .capacity-input
 
     {
         width: 90%;
@@ -122,4 +124,6 @@
     }
 
 }
-
+.hidden2{
+    display: none;
+}

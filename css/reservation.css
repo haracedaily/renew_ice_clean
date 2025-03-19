@@ -247,6 +247,30 @@ input[type = "radio"]{
 .selectServ-input div label, .selectCyc-input div label, .selectAdd-input div label{
     cursor: pointer;
 }
+
+.r-capacity{
+    display: flex;
+    justify-content: center;
+    margin-top: 7rem;
+    animation: fadein 2s
+}
+.r-capacity h1{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.capacity-input{
+    flex: 0 0 auto;
+    width: 50%;
+}
+.capacity-input div{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.capacity-input div label{
+    cursor: pointer;
+}
 .r-selectCyc {
     margin-top: 7rem;
     display: flex;
@@ -311,12 +335,80 @@ input[type = "radio"]{
     padding: 0.5rem;
 }
 
+.table-body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 5rem auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+.table-tit {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+.table-body table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.table-body th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 0.8rem;
+}
+.table-body th {
+    background-color: #3498db;
+    color: white;
+}
+.table-body tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.table-body tr:hover {
+    background-color: #eef2f7;
+    cursor: pointer;
+}
+.total-cost, .notes {
+    background-color: #ecf0f1;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+.notes-toggle {
+    cursor: pointer;
+    color: #2980b9;
+    font-weight: bold;
+    text-align: right;
+}
+.notes-content {
+    display: none;
+    margin-top: 10px;
+}
 
 .reserBtn{
     display: flex;
-    justify-content: center;
+    align-items: center;
     margin-top: 7rem;
+    flex-direction: column;
+    gap: 2rem;
 }
+.resercheck-input{
+    cursor: pointer;
+}
+.resercheck-label{
+    cursor: pointer;
+}
+.resercheck-label:hover{
+    text-decoration: underline;
+    color: firebrick;
+}
+
 #confirm-reserve{
     background: #427D9D;
     width: 10rem;
@@ -337,7 +429,7 @@ input[type = "radio"]{
         transform: translateY(-25px);
     }
 }
-.reserBtn:hover{
+.reserBtn button:hover{
     transform: scale(1.05);
 }
 #confirm-reserve:hover {

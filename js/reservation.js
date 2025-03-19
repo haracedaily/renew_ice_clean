@@ -50,12 +50,25 @@ document.querySelectorAll('.reserAddr').forEach((node)=>{
 });
 
 document.getElementById('modelname').addEventListener('change', function() {
-    const Rselectserv = document.querySelector('.r-selectServ');
+    const Rcapacity = document.querySelector('.r-capacity');
     if(this.value) {
-        Rselectserv.classList.remove('hidden2');
-        Rselectserv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        Rcapacity.classList.remove('hidden2');
+        Rcapacity.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 });
+
+document.querySelectorAll('.capainput').forEach((node)=>{
+    node.addEventListener('change', function() {
+        const Rselectserv = document.querySelector('.r-selectServ');
+        if(this.checked) {
+            Rselectserv.classList.remove('hidden2');
+            Rselectserv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    })
+});
+
+
+
 
 document.querySelectorAll('.selectServ').forEach((node)=>{
     node.addEventListener('change', function() {
@@ -80,20 +93,19 @@ document.querySelectorAll('.selectCyc').forEach((node)=>{
 document.querySelectorAll('.selectAdd').forEach((node)=>{
     node.addEventListener('change', function() {
         const Rspecial = document.querySelector('.r-Special');
+        const ReserBtn = document.querySelector('.reserBtn');
+        const PriceTabel = document.querySelector('.price-table');
         if(this.checked) {
+
             Rspecial.classList.remove('hidden2');
+            ReserBtn.classList.remove('hidden2')
             Rspecial.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            PriceTabel.classList.remove('hidden2');
+
         }
     });
-})
+});
 
-document.querySelector('#specialR').addEventListener('change', function() {
-    const ReserBtn = document.querySelector('.reserBtn');
-    if(this.value){
-        ReserBtn.classList.remove('hidden2')
-        ReserBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-})
 
 
 
@@ -130,9 +142,19 @@ const $confirmReserve = document.querySelector('#confirm-reserve');
 const $Rcontainer = document.querySelector('#r-container');
 const $modal = document.querySelector('.modal');
 const $agreeInput = document.querySelector('#privacy');
+const $ReserCheck = document.getElementById('resercheck');
 
 // 예약하기 버튼 눌렀을 때
 $confirmReserve.addEventListener('click', function(){
+
+    if(!($ReserCheck.checked)){
+        Swal.fire({
+            icon: "error",
+            text: "모든 내용을 확인 후 예약 가능합니다.",
+        });
+
+    }else{
+
     $Rcontainer.classList.add('hidden2');
     $modal.classList.remove('hidden2');
 
@@ -163,6 +185,8 @@ $confirmReserve.addEventListener('click', function(){
     const selectedAdd = document.querySelector('.selectAdd:checked');
     if (selectedAdd) {
         CheckSelectAdd.innerHTML = selectedAdd.value;
+    }
+
     }
 
 
