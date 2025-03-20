@@ -153,3 +153,15 @@ img{
         margin-right: 1px;
     }
 }
+
+.pager_prev{
+    background:url('../image/pager_prev.png') no-repeat center / 14px auto;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:2px solid #d1d5dc;
+    &:hover{
+        background:url('../image/pager_prev_on.png') no-repeat center / 14px auto;
+        border:2px solid #00499a;
+    }
+}
