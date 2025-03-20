@@ -150,7 +150,7 @@ $confirmReserve.addEventListener('click', function(){
     if(!($ReserCheck.checked)){
         Swal.fire({
             icon: "error",
-            text: "모든 내용을 확인 후 예약 가능합니다.",
+            text: "모든 내용을 확인 후 예약을 진행해 주세요.",
         });
 
     }else{

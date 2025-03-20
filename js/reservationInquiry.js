@@ -19,21 +19,21 @@ $PdetailBtn.addEventListener('click', () => {
 
 // 예약확인 버튼 
 $Gobtn.addEventListener('click', async function(){
-    if(!($name.value==='')){
+    if(!($name.value)){
         Swal.fire({
             icon: "error",
             text: "이름을 입력하세요.",
         });
         return;
     }
-    if(!($phone.value==='')){
+    if(!($phone.value)){
         Swal.fire({
             icon: "error",
             text: "연락처를 입력하세요.",
         });
         return;
     }
-    if(!($email.value==='')){
+    if(!($email.value)){
         Swal.fire({
             icon: "error",
             text: "email 입력하세요.",

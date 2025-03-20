@@ -463,6 +463,9 @@ input[type = "radio"]{
 .check-input div label{
     font-weight: bold;
 }
+
+
+
 .modal{
     position: absolute;
     top: 5rem;
