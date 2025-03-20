@@ -119,3 +119,37 @@ img{
     overflow: hidden;
     touch-action: none;
 }
+#gallery_nav_slider .slick-current{
+    &::before{
+        content: " ";
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+        background:url("../image/slider_on.png");
+        background-size:cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 40px;
+        height: 40px;
+    }
+    &::after {
+        content: " ";
+        width:60px;
+        height:60px;
+        background-color: rgba(0, 73, 154, 0.4);
+        top:0;
+        position:absolute;
+        border-radius:10px;
+
+    }
+}
+
+#gallery_slider{
+    li{
+        padding: 6px;
+        border: 1px solid #989898;
+        border-radius: 3px;
+        margin-right: 1px;
+    }
+}

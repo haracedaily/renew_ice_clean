@@ -217,25 +217,77 @@ async function openGallery(re_no){
         document.querySelector("#gallery_title").innerHTML = res.data[0].title;
         document.querySelector("#gallery_content").innerHTML = res.data[0].content;
         let htmlData = '';
+        let htmlData2 = '';
         res.data[0].image.forEach(url=>{
-            htmlData+=`<img src="${url}" style="height:400px" alt="">`;
+            htmlData+=`<li>
+<img src="${url}" style="height:300px; width:100%;" alt="">
+</li>
+`;
+            htmlData2+=`<li class="relative cursor-pointer rounded-[10px]">
+<img src="${url}" style="height:60px; width:60px; border-radius:10px;"  alt="">
+</li>
+`;
         })
-        document.querySelector("#select_galleries").innerHTML = htmlData;
+        document.querySelector("#gallery_slider").innerHTML = htmlData;
+        document.querySelector("#gallery_nav_slider").innerHTML = htmlData2;
+        $("#gallery_slider").slick('refresh');
+        $("#gallery_nav_slider").slick('refresh');
+        $('#gallery_slider').trigger('resize');
+        $('#gallery_nav_slider').trigger('resize');
+        $('#gallery_nav_slider').slick('slickGoTo', 1);
+        $('#gallery_slider').slick('slickGoTo', 1);
     }
-    $('#select_galleries').slick({
-        slide:'img',
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 2000,
-        prevArrow : "<button type='button' class='slick-prev absolute top-[40%] left-0 z-50'>prev</button>",		// 이전 화살표 모양 설정
-        nextArrow : "<button type='button' class='slick-next absolute top-[40%] right-0 z-50'>next</button>",
-    });
+
 }
+
+$('#gallery_slider').slick({
+    slide: 'li',
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    asNavFor: '#gallery_nav_slider',
+    prevArrow : `<button type='button' style='background:url("../image/pop_prev.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-prev absolute top-[40%] left-2 cursor-pointer'></button>`,
+    nextArrow : `<button type='button' style='background:url("../image/pop_next.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-next absolute top-[40%] right-2 cursor-pointer'></button>`,
+    responsive: [
+        {
+            breakpoint: 850,
+            settings: {
+                slidesToShow: 1
+            }
+        },
+
+    ]
+});
+$('#gallery_nav_slider').slick({
+    arrows: false,
+    variableWidth: true,
+    slidesToShow: 'auto',
+    slidesToScroll: 1,
+    asNavFor: '#gallery_slider',
+    arrows: false,
+    // centerMode: true,
+    focusOnSelect: true,
+    responsive: [
+        {
+            breakpoint: 850,
+            settings: {
+                slidesToShow: 5,
+            }
+        },
+
+    ]
+});
 function close_gallery(){
     let $gallery_popup = document.querySelector("#select_gallery");
     $gallery_popup.classList.add("hidden");
     document.querySelector('body').classList.remove("scroll_lock");
+    $('#gallery_slider').slick('slickRemove', null, null, true)
+    $('#gallery_nav_slider').slick('slickRemove', null, null, true)
+    $('#gallery_slider').html("")
+    $('#gallery_nav_slider').html("")
 }
 
 //갤러리 페이지 구성하기
