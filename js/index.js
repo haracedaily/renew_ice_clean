@@ -293,13 +293,27 @@ function close_gallery(){
 //갤러리 페이지 구성하기
 async function galleryPagination(d){
     let $pagination = document.querySelector("#gallery_pagination");
-    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,(d*9)+89);
+    let $prev = document.querySelector("#gallery_prev");
+    let $next = document.querySelector("#gallery_next");
+    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,(d*9)+90);
     if(res.count>0) {
         await fetchGallery(d);
         let htmlData = '';
+        let prevData = '';
+        let nextData = '';
+        if(d>=10){
+            prevData=`<button class="pager_prev" onclick="galleryPagination(${d-10})"></button>`;
+        }
+        if(res.count===91){
+            nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination(${d+10})"></button>`;
+            res.count=90;
+        }
+
         for(let i =0; i<Math.ceil(res.count / 9);i++){
             htmlData+=` <div class="cursor-pointer" onclick="fetchGallery(${d+i})">${i+1}</div> `
         }
+        $prev.innerHTML = prevData;
+        $next.innerHTML = nextData;
         $pagination.innerHTML = htmlData;
     }
 }
