@@ -443,6 +443,59 @@
         </div>
     </footer>
     <!--footer 종료-->
+    <section class="receipt" id="receipt">
+ <!--       <button type="button" class="only_mo_flex member_btn gmarket_font">
+            멤버십 모집  <i></i>
+        </button>-->
+
+        <div class="inner flex flex-row">
+
+
+
+            <div class="text_box">
+                <h4 class="gmarket_font">멤버십 모집, 수질인증 문의</h4>
+                <a class="fix_bottom_a" href="tel:1666-9587"><i></i><span class="gmarket_font">1666-9587</span></a>
+            </div>
+
+            <form name="fwrite" id="fwrite" method="post" class="flex flex-row">
+                <div class="form_item">
+                    <div class="flex__c flex flex-row items-center">
+                        <dl>
+                            <dt>지역</dt>
+                            <dd>
+                                <select name="local" id="local">
+                                    <option value="대구광역시">대구광역시</option>
+                                    <option value="인천광역시">인천광역시</option>
+                                    <option value="경기도">경기도</option>
+                                </select>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>성함</dt>
+                            <dd>
+                                <input type="text" name="name" placeholder="성함을 입력해주세요">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>휴대전화</dt>
+                            <dd>
+                                <input type="tel" name="phone" placeholder="연락처를 ‘-’빼고 입력해주세요">
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <div class="flex__c">
+                        <div class="chk_box">
+                            <input type="checkbox" name="agree" id="agree" >
+                            <label for="agree">개인정보처리방침에 동의합니다</label>
+                        </div>
+                        <button type="button" class="agree_pop">[약관동의]</button>
+                    </div>
+                </div>
+                <button type="button" class="submit_btn gmarket_font" onclick="fast_inquiry_ok();" >상담신청</button>
+            </form>
+        </div>
+    </section>
 </main>
 </body>
 </html>
