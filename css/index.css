@@ -165,3 +165,48 @@ img{
         border:2px solid #00499a;
     }
 }
+
+footer{
+    color:#757575;
+    background-color: #252525;
+    padding-bottom:170px;
+    letter-spacing: -0.04em;
+    line-height:1.5;
+    width:100%;
+    .inner{
+        width:calc(100% - 30px);
+        margin:0 auto;
+        max-width:1300px;
+        .fnb {
+            border-bottom:1px solid #454545;
+            margin-bottom:15px;
+            .agree_pop {
+                font-size: 0.8em;
+                line-height: 60px;
+            }
+        }
+        .foot_info{
+            span{
+                line-height:1.8;
+                position:relative;
+                padding:0 10px;
+                &:nth-child(n+2){
+                    &::before{
+                    content:"";
+                    position:absolute;
+                    left:0;
+                    top:30%;
+                    width:1px;
+                    height:10px;
+                    background:#707070;
+                    }
+                }
+
+            }
+            .copy{
+                line-height:4;
+            }
+        }
+    }
+
+}

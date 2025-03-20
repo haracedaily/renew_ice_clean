@@ -102,7 +102,8 @@ async function re_upload(arr, quill) {
 
     let filesUrl = [];
     for (const file of arr) {
-        let filenm = crypto.randomUUID() + file.name;
+        //storage 폴더 경로 추가 예시
+        let filenm = "review_img/"+crypto.randomUUID()+'.' + file.name.split('.').pop();
         let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
         if (!res.error) {
             let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
@@ -219,8 +220,8 @@ async function openGallery(re_no){
         let htmlData = '';
         let htmlData2 = '';
         res.data[0].image.forEach(url=>{
-            htmlData+=`<li>
-<img src="${url}" style="height:300px; width:100%;" alt="">
+            htmlData+=`<li style="overflow:hidden;">
+<img src="${url}" style="height:300px; margin:0 auto;" alt="">
 </li>
 `;
             htmlData2+=`<li class="relative cursor-pointer rounded-[10px]">
