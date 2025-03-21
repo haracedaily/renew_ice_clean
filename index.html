@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>IceCare</title>
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/slick.css">
@@ -37,7 +37,9 @@
                 <a href="#process">프로세스</a>
             </li>
         </ul>
-        <button class="p-3 rounded-[10px] text-white bg-blue-700 cursor-pointer" onclick="location.href='./reservation.html'">예약하기</button>
+        <button class="p-3 rounded-[10px] text-white bg-blue-700 cursor-pointer"
+                onclick="location.href='./reservation.html'">예약하기
+        </button>
     </nav>
 </header>
 <main class="flex flex-col items-center justify-center w-full h-full gap-4">
@@ -45,7 +47,6 @@
     <div id="main_header" class="flex flex-col justify-center items-center w-full">
 
         <section class="main_visual wow fadeIn">
-
 
 
             <div class="main_inner color_W">
@@ -68,7 +69,7 @@
                                 <img src="./image/main_visual.jpg" alt="" class="only_web">
                             </figure>
                             <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
-                            <h2>아이스케어 제빙기  <br class="only_mo"> 세척&수리</h2>
+                            <h2>아이스케어 제빙기 <br class="only_mo"> 세척&수리</h2>
 
                             <a href="tel:1666-9587" class="call_btn color_W">
                                 <span>1666-9587</span>
@@ -79,7 +80,7 @@
                                 <img src="./image/main_visual.jpg" alt="" class="only_web">
                             </figure>
                             <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
-                            <h2>아이스케어 제빙기  <br class="only_mo">세척&수리</h2>
+                            <h2>아이스케어 제빙기 <br class="only_mo">세척&수리</h2>
 
                             <a href="tel:1666-9587" class="call_btn color_W">
                                 <span>1666-9587</span>
@@ -164,7 +165,8 @@
         <h4 class="underline font-bold">Processing status</h4>
         <h1 class="font-bold text-3xl">처리 현황</h1>
         <!--처리현황 리스트 8-->
-        <div id="process_status" class="bg-gray-50 rounded-2xl w-[70%] h-full flex justify-center items-center text-black">
+        <div id="process_status"
+             class="bg-gray-50 rounded-2xl w-[70%] h-full flex justify-center items-center text-black">
             <ul class="boxIn flex flex-col justify-center items-center w-full h-full gap-7" id="process_ul">
                 <li class="grid grid-cols-2 gap-12 wow fadeInUp">
                     <div class="grid grid-cols-[100px_400px] gap-1">
@@ -252,24 +254,25 @@
         <!-- 글쓰기 editor 팝업 -->
         <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
             <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
-            <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
-                <label>예약번호</label>
-                <input id="reserv_no" type="search" readonly>
-                <label>날짜</label>
-                <input id="re_date" type="date" readonly>
-                <label>제목</label>
-                <input id="re_title" class="col-span-3 border-[1px]" type="text">
-                <label>첨부파일</label>
-                <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);"  multiple accept="image/*">
-                <div id="re_file_list" class="file-list col-span-4"></div>
-            </div>
-            <div id="editor" class="p-5">
-                <p></p>
-            </div>
-            <div class="flex justify-end gap-4">
-            <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
-                <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
-            </div>
+                <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
+                    <label>예약번호</label>
+                    <input id="reserv_no" type="search" readonly>
+                    <label>날짜</label>
+                    <input id="re_date" type="date" readonly>
+                    <label>제목</label>
+                    <input id="re_title" class="col-span-3 border-[1px]" type="text">
+                    <label>첨부파일</label>
+                    <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);" multiple
+                           accept="image/*">
+                    <div id="re_file_list" class="file-list col-span-4"></div>
+                </div>
+                <div id="editor" class="p-5">
+                    <p></p>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
+                    <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
+                </div>
             </div>
         </div>
         <!--글쓰기 에디터 팝업 끝-->
@@ -278,15 +281,16 @@
             <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
                 <div class="flex flex-row justify-between items-center">
                     <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
-                <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer" style="background-image:url('./image/pop_close.png')"></div>
+                    <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer"
+                         style="background-image:url('./image/pop_close.png')"></div>
                 </div>
-            <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
-                <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
-                <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
-            </div>
-            <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
-                날짜
-            </div>
+                <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
+                    <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
+                    <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
+                </div>
+                <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
+                    날짜
+                </div>
                 <div id="gallery_content" class="max-h-[200px] overflow-y-scroll">
                     내용
                 </div>
@@ -316,7 +320,7 @@
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
                     <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>
-                <img src="./image/ice_bucket.png" class="w-[35px] h-[35px]" alt="">
+                    <img src="./image/ice_bucket.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start">
                     <p class="font-bold">작동 안됨</p>
@@ -472,30 +476,30 @@
             </div>-->
         </div>
         <div class="flex flex-row justify-start items-center w-[80%] p-[2%] bg-gray-100 rounded-lg gap-7">
-                <div class="flex flex-col justify-center items-center">
-                    <div class="rounded-[50%] border-[1px] w-[45px] h-[45px] border-gray-900 text-gray-900 text-3xl font-bold flex justify-center items-center">
-                        <p>!</p>
-                    </div>
-                    <p class="text-xl text-gray-900">참고사항</p>
+            <div class="flex flex-col justify-center items-center">
+                <div class="rounded-[50%] border-[1px] w-[45px] h-[45px] border-gray-900 text-gray-900 text-3xl font-bold flex justify-center items-center">
+                    <p>!</p>
                 </div>
-                <div class="flex flex-col justify-center items-center text-gray-700">
-                    <ul>
-                        <li>멤버쉽을 이용하시면 저렴한 가격으로 최상의 서비스를 제공받으실 수 있습니다.</li>
-                        <li>멤버쉽 서비스 상담은 홈피스 홈페이지 내의 멤버쉽견적 페이지를 이용해주세요.</li>
-                    </ul>
-                </div>
+                <p class="text-xl text-gray-900">참고사항</p>
+            </div>
+            <div class="flex flex-col justify-center items-center text-gray-700">
+                <ul>
+                    <li>멤버쉽을 이용하시면 저렴한 가격으로 최상의 서비스를 제공받으실 수 있습니다.</li>
+                    <li>멤버쉽 서비스 상담은 홈피스 홈페이지 내의 멤버쉽견적 페이지를 이용해주세요.</li>
+                </ul>
+            </div>
         </div>
     </div>
     <!--프로세스 끝-->
 
     <!--멤버쉽 시작-->
-    <div name="membership" id="membership" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
-                <h4 class="underline text-blue-900 font-bold">MEMBERSHIP</h4>
-                <h1 class="font-bold text-3xl">아이스케어 멤버십 혜택</h1>
+    <div name="membership" id="membership"
+         class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+        <h4 class="underline text-blue-900 font-bold">MEMBERSHIP</h4>
+        <h1 class="font-bold text-3xl">아이스케어 멤버십 혜택</h1>
 
 
-
-                    <div class="table-container" style="
+        <div class="table-container" style="
 width: 100%;
 display: flex;
 flex-direction: row;
@@ -503,63 +507,71 @@ justify-content: center;
 align-items: center;
 min-height: 300px;
 ">
-                        <table style="width: 1000px;">
-                            <thead>
-                            <tr>
-                                <th>항목</th>
-                                <th>내용</th>
-                                <th>방문 주기</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td style="border: 1px solid #c4cdd6;">제빙기 오버홀 세척</td>
-                                <td style="border: 1px solid #c4cdd6;">
-                                    - 수돗물 염소 성분으로 인한 물때와 스케일 제거<br>
-                                    - 곰팡이 및 세균 번식 억제<br>
-                                    - 친환경 세척 약품 사용 + 스팀 살균 청소
-                                </td>
-                                <td style="border: 1px solid #c4cdd6;">계약 후 최초 1회</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid #c4cdd6;">제빙기 정수 필터 관리</td>
-                                <td style="border: 1px solid #c4cdd6;">
-                                    - 세디먼트 필터 → 불순물 및 녹 제거, 오염물질 99% 제거<br>
-                                    - 카본 필터 → 불쾌한 맛과 냄새 제거, 음료 맛 향상
-                                </td>
-                                <td style="border: 1px solid #c4cdd6;">세디먼트 필터 월 1회 교체</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid #c4cdd6;">제빙기 얼음통 고압 스팀 세척</td>
-                                <td style="border: 1px solid #c4cdd6;">
-                                    - 얼음 저장 중 불순물 및 세균 번식 방지<br>
-                                    - 대장균, 살모넬라균 등 서식 방지<br>
-                                    - 고압 스팀 세척으로 깨끗하게 관리
-                                </td>
-                                <td style="border: 1px solid #c4cdd6;">월 1회 방문</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid #c4cdd6;">제빙기 열교환기 필터 세척</td>
-                                <td>
-                                    - 냉각 사이클의 원활한 가스 응축을 위해 필터 청소<br>
-                                    - 먼지와 이물질 제거 → 열효율 개선 및 고장 예방<br>
-                                    - 에너지 절약 효과
-                                </td>
-                                <td style="border: 1px solid #c4cdd6;">월 1회 방문</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid #c4cdd6;">수질 관리 인증마크 부착</td>
-                                <td>
-                                    - 대한수질관리인증협회에서 인증한 현판 및 마크 부착<br>
-                                    - QR코드를 통해 관리 현황 확인 가능
-                                </td>
-                                <td style="border: 1px solid #c4cdd6;">계약 시 최초 방문</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <table style="width: 1000px;">
+                <thead>
+                <tr>
+                    <th>항목</th>
+                    <th>내용</th>
+                    <th>방문 주기</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="border: 1px solid #c4cdd6;">제빙기 오버홀 세척</td>
+                    <td style="border: 1px solid #c4cdd6;">
+                        - 수돗물 염소 성분으로 인한 물때와 스케일 제거<br>
+                        - 곰팡이 및 세균 번식 억제<br>
+                        - 친환경 세척 약품 사용 + 스팀 살균 청소
+                    </td>
+                    <td style="border: 1px solid #c4cdd6;">계약 후 최초 1회</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #c4cdd6;">제빙기 정수 필터 관리</td>
+                    <td style="border: 1px solid #c4cdd6;">
+                        - 세디먼트 필터 → 불순물 및 녹 제거, 오염물질 99% 제거<br>
+                        - 카본 필터 → 불쾌한 맛과 냄새 제거, 음료 맛 향상
+                    </td>
+                    <td style="border: 1px solid #c4cdd6;">세디먼트 필터 월 1회 교체</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #c4cdd6;">제빙기 얼음통 고압 스팀 세척</td>
+                    <td style="border: 1px solid #c4cdd6;">
+                        - 얼음 저장 중 불순물 및 세균 번식 방지<br>
+                        - 대장균, 살모넬라균 등 서식 방지<br>
+                        - 고압 스팀 세척으로 깨끗하게 관리
+                    </td>
+                    <td style="border: 1px solid #c4cdd6;">월 1회 방문</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #c4cdd6;">제빙기 열교환기 필터 세척</td>
+                    <td>
+                        - 냉각 사이클의 원활한 가스 응축을 위해 필터 청소<br>
+                        - 먼지와 이물질 제거 → 열효율 개선 및 고장 예방<br>
+                        - 에너지 절약 효과
+                    </td>
+                    <td style="border: 1px solid #c4cdd6;">월 1회 방문</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #c4cdd6;">수질 관리 인증마크 부착</td>
+                    <td>
+                        - 대한수질관리인증협회에서 인증한 현판 및 마크 부착<br>
+                        - QR코드를 통해 관리 현황 확인 가능
+                    </td>
+                    <td style="border: 1px solid #c4cdd6;">계약 시 최초 방문</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--멤버쉽 가격-->
+    <div class="dis_info" style="display: inline-block; line-height:46px;">
+        <div class="discount" style="display: flex; justify-content: center; border: 1px solid #dbdbdb; border-radius:6px; overflow: hidden; align-items: center;">
+            <p class="dis_01" style="background: #fafafa; border-right: 1px solid #eee; padding:10px;">"1년 단위 선불입금시"<strong style="color:#1b4385; display: inline-block;">10%할인</strong></p>
+            <p class="dis_02" style="color:#454545; padding: 10px 20px; font-weight: 500; font-size:16px;">"(년)"<strong style="color:#252525;"> 54,000</strong>원<strong style="font-size:14px; color:#bbb; margin-left:5px;">60,000원</strong> </p>
 
+        </div>
+    </div>
+
+    </div>
     <!--멤버쉽 끝-->
 
     <!--footer 시작-->
@@ -567,14 +579,16 @@ min-height: 300px;
         <div class="inner">
             <nav class="fnb">
                 <ul>
-                    <li><button type="button" class="agree_pop">개인정보처리방침</button></li>
+                    <li>
+                        <button type="button" class="agree_pop">개인정보처리방침</button>
+                    </li>
                 </ul>
             </nav>
             <div class="">
                 <h1 class="foot_logo">
                     <a href="/">
                         <img src="./image/f_logo.png" alt="홈피스 로고" class="only_web">
-<!--                        <img src="image/f_logo_m.png" alt="홈피스 로고" class="only_mo">-->
+                        <!--                        <img src="image/f_logo_m.png" alt="홈피스 로고" class="only_mo">-->
                     </a>
                 </h1>
                 <div class="foot_info">
@@ -597,12 +611,11 @@ min-height: 300px;
     </footer>
     <!--footer 종료-->
     <section class="receipt" id="receipt">
- <!--       <button type="button" class="only_mo_flex member_btn gmarket_font">
-            멤버십 모집  <i></i>
-        </button>-->
+        <!--       <button type="button" class="only_mo_flex member_btn gmarket_font">
+                   멤버십 모집  <i></i>
+               </button>-->
 
         <div class="inner flex flex-row">
-
 
 
             <div class="text_box">
@@ -639,13 +652,13 @@ min-height: 300px;
 
                     <div class="flex__c">
                         <div class="chk_box">
-                            <input type="checkbox" name="agree" id="agree" >
+                            <input type="checkbox" name="agree" id="agree">
                             <label for="agree">개인정보처리방침에 동의합니다</label>
                         </div>
                         <button type="button" class="agree_pop">[약관동의]</button>
                     </div>
                 </div>
-                <button type="button" class="submit_btn gmarket_font" onclick="fast_inquiry_ok();" >상담신청</button>
+                <button type="button" class="submit_btn gmarket_font" onclick="">상담신청</button>
             </form>
         </div>
     </section>
