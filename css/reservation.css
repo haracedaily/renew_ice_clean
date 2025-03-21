@@ -22,6 +22,15 @@ nav {
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
 }
+.gomain{
+    width: 140px;
+    height: 40px;
+    background-color: #00499a;
+    border-radius: 50px;
+    font-weight: 500;
+    text-align: center;
+}
+
 .logo img {
     margin-top: 5px;
     width: 143px;
@@ -41,10 +50,10 @@ nav {
     position: relative;
     transition: color 0.3s ease;
 }
-.nav-links a:hover {
+.nav-links .hoho:hover {
     color: #006B99;
 }
-.nav-links a::after {
+.nav-links .hoho::after {
     content: "";
     position: absolute;
     width: 0;
@@ -54,10 +63,16 @@ nav {
     left: 50%;
     transition: width 0.3s ease, left 0.3s ease;
 }
-.nav-links a:hover::after {
+.nav-links .hoho:hover::after {
     width: 100%;
     left: 0;
 }
+
+
+
+
+
+
 .hamburger, .m-nav-links{
     display: none;
 }
@@ -451,19 +466,19 @@ input[type = "radio"]{
     border-radius: 1rem;
     width: 30rem;
     margin: 2rem auto;
-    padding: 1.5rem;
+    padding: 2rem;
 }
 .check-input div{
     display: flex;
-    justify-content: center;
 }
 .check-input div label,div{
     margin: 4px 8px;
 }
 .check-input div label{
     font-weight: bold;
+    text-align: left;
+    width: 125px;
 }
-
 
 
 .modal{

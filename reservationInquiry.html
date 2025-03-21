@@ -15,6 +15,13 @@
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = "https://fnlkxffpqrffrlovnmys.supabase.co";
+        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZubGt4ZmZwcXJmZnJsb3ZubXlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjQ5NzYsImV4cCI6MjA1NTAwMDk3Nn0.1Ova5eln8PKRQJaXi9kqUQdTzWzq5cpKRkxd9bykvsw";
+
+        var supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
+    </script>
 </head>
 <body>
     <nav>
@@ -75,9 +82,9 @@
                 <p><strong>4. 개인정보 제공</strong><br>
                     - 제공받는 자: ICECARE 협력업체, 제빙기 제조사<br>
                     - 목적: 예약 조율, 현장 서비스, 부품 수급<br>
-                    - 항목: 성명, 연락처, 주소, 모델명</p>
+                    - 항목: 성명, 연락처, 주소, 모델명 등</p>
                 <p><strong>5. 동의 철회</strong><br>
-                    언제든지 동의를 철회하거나 열람·정정을 요청할 수 있습니다 (고객센터: 1234-5678)</p>
+                    언제든지 동의를 철회하거나 열람·정정을 요청할 수 있습니다 <br/>(고객센터: 1234-5678)</p>
             </div>
             <button class="gobtn">예약확인</button>
         </div><!--step01-->

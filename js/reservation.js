@@ -273,3 +273,4 @@ PrivacyOk.addEventListener('click', async function(){
         draggable: true
     })}
 });
+

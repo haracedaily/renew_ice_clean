@@ -13,6 +13,13 @@
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://fnlkxffpqrffrlovnmys.supabase.co";
+    const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZubGt4ZmZwcXJmZnJsb3ZubXlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjQ5NzYsImV4cCI6MjA1NTAwMDk3Nn0.1Ova5eln8PKRQJaXi9kqUQdTzWzq5cpKRkxd9bykvsw";
+
+    var supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
+  </script>
 
 
 
@@ -24,9 +31,9 @@
   </a>
   <ul class="nav-links">
     <!--링크연결하기-->
-    <li><a href="reservation.html">예약하기</a></li>
-    <li><a href="reservationInquiry.html">예약조회</a></li>
-    <li><a href="#">홈페이지</a></li>
+    <li><a class="hoho" style="line-height: 40px" href="reservation.html">예약하기</a></li>
+    <li><a class="hoho" style="line-height: 40px" href="reservationInquiry.html">예약조회</a></li>
+    <li class="gomain"><a style="color: white; line-height: 40px; font-weight: 500;" href="#">MAIN PAGE</a></li>
   </ul>
   <div class="hamburger" onclick="slideMenu()">
     <i class="fas fa-bars"></i> <!-- 햄버거 아이콘 -->
@@ -47,11 +54,11 @@
 <div class="overlay"></div>
 
 <div id="r-container" >
-
   <div class="r-date">
     <label for="reservation-date" class="Q-txt">예약 날짜를 선택하세요</label>
     <input type="text" id="reservation-date" name="reservation-date">
   </div><!--  r-date-->
+
   <div class="r-time hidden2" >
     <h1 class="Q-txt">예약 시간을 선택하세요</h1>
     <div class="time-select">
@@ -277,6 +284,7 @@
         <label>이름</label>
         <div class="check-info-name"></div>
       </div>
+      <div class="underline"></div>
       <div>
         <label>연락처</label>
         <div class="check-info-phone"></div>
@@ -299,8 +307,10 @@
       </div>
       <div>
         <label>주소</label>
-        <div class="check-addr-addr"></div>
-        <div class="check-addr-deta"></div>
+        <div style="display: flex; flex-direction: column;">
+          <div class="check-addr-addr"></div>
+          <div class="check-addr-deta"></div>
+        </div>
       </div>
       <div>
         <label>제빙기 정보</label>
