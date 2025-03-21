@@ -318,3 +318,37 @@ async function galleryPagination(d){
         $pagination.innerHTML = htmlData;
     }
 }
+
+
+
+var swiper = new Swiper(".mySwiper", {
+    pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+    },
+    loop: true,
+    speed: 1500,
+    autoplay: true,
+});
+$('button.swiper-play').click(function () {
+    $(this).toggleClass('on')
+
+    if ($(this).hasClass('on')) {
+        swiper.autoplay.stop();
+    } else {
+        swiper.autoplay.start();
+    }
+})
+
+
+$(window).load(function () {
+    mobile();
+    swiper.autoplay.stop();
+    setTimeout(function () {
+        $(".main_visual").addClass("on");
+        swiper.autoplay.start()
+    }, 100);
+
+
+
+});
