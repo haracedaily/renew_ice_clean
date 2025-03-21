@@ -25,7 +25,7 @@
     </script>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
-<header class="sticky top-0 z-40 w-full bg-gray-100 p-5">
+<header class="sticky top-0 z-40 w-full bg-white p-5">
     <nav class="flex items-center justify-evenly flex-wrap">
         <img src="./image/logo.png" onclick="location.href='./index.html'" alt="">
         <ul>
@@ -37,9 +37,10 @@
                 <a href="#process">프로세스</a>
             </li>
         </ul>
+        <button class="p-3 rounded-[10px] text-white bg-blue-700 cursor-pointer">예약하기</button>
     </nav>
 </header>
-<main class="flex flex-col items-center justify-center w-full h-full gap-1">
+<main class="flex flex-col items-center justify-center w-full h-full gap-4">
     <!--메인헤더 시작-->
     <div id="main_header" class="flex flex-col justify-center items-center w-full">
 
@@ -486,6 +487,80 @@
         </div>
     </div>
     <!--프로세스 끝-->
+
+    <!--멤버쉽 시작-->
+    <div name="membership" id="membership" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+                <h4 class="underline text-blue-900 font-bold">MEMBERSHIP</h4>
+                <h1 class="font-bold text-3xl">아이스케어 멤버십 혜택</h1>
+
+
+
+                    <div class="table-container" style="
+width: 100%;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+min-height: 300px;
+">
+                        <table style="width: 1000px;">
+                            <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th>내용</th>
+                                <th>방문 주기</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td style="border: 1px solid #c4cdd6;">제빙기 오버홀 세척</td>
+                                <td style="border: 1px solid #c4cdd6;">
+                                    - 수돗물 염소 성분으로 인한 물때와 스케일 제거<br>
+                                    - 곰팡이 및 세균 번식 억제<br>
+                                    - 친환경 세척 약품 사용 + 스팀 살균 청소
+                                </td>
+                                <td style="border: 1px solid #c4cdd6;">계약 후 최초 1회</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #c4cdd6;">제빙기 정수 필터 관리</td>
+                                <td style="border: 1px solid #c4cdd6;">
+                                    - 세디먼트 필터 → 불순물 및 녹 제거, 오염물질 99% 제거<br>
+                                    - 카본 필터 → 불쾌한 맛과 냄새 제거, 음료 맛 향상
+                                </td>
+                                <td style="border: 1px solid #c4cdd6;">세디먼트 필터 월 1회 교체</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #c4cdd6;">제빙기 얼음통 고압 스팀 세척</td>
+                                <td style="border: 1px solid #c4cdd6;">
+                                    - 얼음 저장 중 불순물 및 세균 번식 방지<br>
+                                    - 대장균, 살모넬라균 등 서식 방지<br>
+                                    - 고압 스팀 세척으로 깨끗하게 관리
+                                </td>
+                                <td style="border: 1px solid #c4cdd6;">월 1회 방문</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #c4cdd6;">제빙기 열교환기 필터 세척</td>
+                                <td>
+                                    - 냉각 사이클의 원활한 가스 응축을 위해 필터 청소<br>
+                                    - 먼지와 이물질 제거 → 열효율 개선 및 고장 예방<br>
+                                    - 에너지 절약 효과
+                                </td>
+                                <td style="border: 1px solid #c4cdd6;">월 1회 방문</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #c4cdd6;">수질 관리 인증마크 부착</td>
+                                <td>
+                                    - 대한수질관리인증협회에서 인증한 현판 및 마크 부착<br>
+                                    - QR코드를 통해 관리 현황 확인 가능
+                                </td>
+                                <td style="border: 1px solid #c4cdd6;">계약 시 최초 방문</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+    <!--멤버쉽 끝-->
 
     <!--footer 시작-->
     <footer id="footer">
