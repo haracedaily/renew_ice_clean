@@ -296,7 +296,7 @@ async function galleryPagination(d){
     let $pagination = document.querySelector("#gallery_pagination");
     let $prev = document.querySelector("#gallery_prev");
     let $next = document.querySelector("#gallery_next");
-    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,(d*9)+90);
+    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,90);
     if(res.count>0) {
         await fetchGallery(d);
         let htmlData = '';
@@ -328,6 +328,7 @@ var swiper = new Swiper(".mySwiper", {
     loop: true,
     speed: 1500,
     autoplay: true,
+    slidesPerView: 'auto'
 });
 $('button.swiper-play').click(function () {
     $(this).toggleClass('on')
@@ -341,7 +342,6 @@ $('button.swiper-play').click(function () {
 
 
 $(window).load(function () {
-    mobile();
     swiper.autoplay.stop();
     setTimeout(function () {
         $(".main_visual").addClass("on");
