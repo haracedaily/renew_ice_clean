@@ -320,7 +320,6 @@ async function galleryPagination(d){
 }
 
 
-
 var swiper = new Swiper(".mySwiper", {
     pagination: {
         el: ".swiper-pagination",
@@ -351,4 +350,28 @@ $(window).load(function () {
 
 
 
+});
+
+var partnerSwiper = new Swiper(".partners_row", {
+    loop: true,
+    slidesPerView: 5.8,
+    spaceBetween: 120,
+    autoplay: {
+        delay: 5000,
+    },
+    breakpoints: {
+        1200: {
+            slidesPerView: 5.8,
+            spaceBetween: 60,
+        },
+        1080: {
+            slidesPerView: 4.5,
+            spaceBetween: 60,
+        },
+        850: {
+            slidesPerView: 2.5,
+            spaceBetween: 0,
+        },
+
+    },
 });
