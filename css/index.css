@@ -253,7 +253,8 @@ footer {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-
+            margin-right: 50px;
+            min-width:270px;
             .gmarket_font {
                 font-size: 22px;
                 font-weight: 500;
@@ -268,6 +269,20 @@ footer {
                     font-size: 34px;
                     font-weight: 700;
                     line-height: 1;
+                    &::before{
+                        content: "";
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        background-color: #00499a !important;
+                        background: url(/image/call_ico_sm.png);
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        margin-right: 10px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        margin-top: -10px;
+                    }
                 }
             }
         }
@@ -309,6 +324,7 @@ footer {
                         display:flex;
                         font-size: 15px;
                         color: #757575;
+                        margin-top: 10px;
                     }
                 }
 
