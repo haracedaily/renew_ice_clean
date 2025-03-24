@@ -296,8 +296,8 @@ async function galleryPagination(d){
     let $pagination = document.querySelector("#gallery_pagination");
     let $prev = document.querySelector("#gallery_prev");
     let $next = document.querySelector("#gallery_next");
-    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,90);
-    if(res.count>0) {
+    let res = await supabase.from("review_gallery").select('re_no').range(d*9,90);
+    if(res.data?.length>0) {
         await fetchGallery(d);
         let htmlData = '';
         let prevData = '';
@@ -305,12 +305,12 @@ async function galleryPagination(d){
         if(d>=10){
             prevData=`<button class="pager_prev" onclick="galleryPagination(${d-10})"></button>`;
         }
-        if(res.count===91){
+        if(res.data?.length===91){
             nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination(${d+10})"></button>`;
-            res.count=90;
+            res.data.length=90;
         }
 
-        for(let i =0; i<Math.ceil(res.count / 9);i++){
+        for(let i =0; i<Math.ceil(res.data.length / 9);i++){
             htmlData+=` <div class="cursor-pointer" onclick="fetchGallery(${d+i})">${i+1}</div> `
         }
         $prev.innerHTML = prevData;
@@ -375,3 +375,15 @@ var partnerSwiper = new Swiper(".partners_row", {
 
     },
 });
+
+/*개인정보취급 팝업 닫기*/
+function close_popup(){
+    document.querySelector("#personal_popup").classList.add("hidden");
+    document.querySelector('body').classList.remove("scroll_lock");
+}
+
+/*개인정보취급 팝업 열기*/
+function open_popup(){
+    document.querySelector("#personal_popup").classList.remove("hidden");
+    document.querySelector('body').classList.add("scroll_lock");
+}

@@ -60,7 +60,7 @@
                             <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
                             <h2>아이스케어 제빙기 <br class="only_mo"> 세척&수리</h2>
 
-                            <a href="tel:1666-9587" class="call_btn color_W">
+                            <a href="#" class="call_btn color_W">
                                 <span>1666-9587</span>
                             </a>
                         </div>
@@ -71,7 +71,7 @@
                             <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
                             <h2>아이스케어 제빙기 <br class="only_mo"> 세척&수리</h2>
 
-                            <a href="tel:1666-9587" class="call_btn color_W">
+                            <a href="#" class="call_btn color_W">
                                 <span>1666-9587</span>
                             </a>
                         </div>
@@ -82,7 +82,7 @@
                             <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
                             <h2>아이스케어 제빙기 <br class="only_mo">세척&수리</h2>
 
-                            <a href="tel:1666-9587" class="call_btn color_W">
+                            <a href="#" class="call_btn color_W"><!-- href="tel:1666-9587"-->
                                 <span>1666-9587</span>
                             </a>
                         </div>
@@ -563,13 +563,17 @@ min-height: 300px;
             </table>
         </div>
         <!--멤버쉽 가격-->
-    <div class="dis_info" style="display: inline-block; line-height:46px;">
-        <div class="discount" style="display: flex; justify-content: center; border: 1px solid #dbdbdb; border-radius:6px; overflow: hidden; align-items: center;">
-            <p class="dis_01" style="background: #fafafa; border-right: 1px solid #eee; padding:10px;">"1년 단위 선불입금시"<strong style="color:#1b4385; display: inline-block;">10%할인</strong></p>
-            <p class="dis_02" style="color:#454545; padding: 10px 20px; font-weight: 500; font-size:16px;">"(년)"<strong style="color:#252525;"> 54,000</strong>원<strong style="font-size:14px; color:#bbb; margin-left:5px;">60,000원</strong> </p>
+        <div class="dis_info" style="display: inline-block; line-height:46px;">
+            <div class="discount"
+                 style="display: flex; justify-content: center; border: 1px solid #dbdbdb; border-radius:6px; overflow: hidden; align-items: center;">
+                <p class="dis_01" style="background: #fafafa; border-right: 1px solid #eee; padding:10px;">"1년 단위 선불입금시"<strong
+                        style="color:#1b4385; display: inline-block;">10%할인</strong></p>
+                <p class="dis_02" style="color:#454545; padding: 10px 20px; font-weight: 500; font-size:16px;">
+                    "(년)"<strong style="color:#252525;"> 54,000</strong>원<strong
+                        style="font-size:14px; color:#bbb; margin-left:5px;">60,000원</strong></p>
 
+            </div>
         </div>
-    </div>
 
     </div>
     <!--멤버쉽 끝-->
@@ -580,7 +584,7 @@ min-height: 300px;
             <nav class="fnb">
                 <ul>
                     <li>
-                        <button type="button" class="agree_pop">개인정보처리방침</button>
+                        <button type="button" class="agree_pop cursor-pointer" onclick="open_popup()">개인정보처리방침</button>
                     </li>
                 </ul>
             </nav>
@@ -655,13 +659,55 @@ min-height: 300px;
                             <input type="checkbox" name="agree" id="agree">
                             <label for="agree">개인정보처리방침에 동의합니다</label>
                         </div>
-                        <button type="button" class="agree_pop">[약관동의]</button>
+                        <button type="button" class="agree_pop cursor-pointer" onclick="open_popup()">[약관동의]</button>
                     </div>
                 </div>
                 <button type="button" class="submit_btn gmarket_font" onclick="">상담신청</button>
             </form>
         </div>
     </section>
+    <!--개인정보처리방침 팝업-->
+    <div id="personal_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
+                <div class="flex">
+                    <h2 id="pop_title" class="text-center font-bold text-[30px] p-[0_40px] w-[95%]">개인정보처리방침</h2>
+                    <div onclick="close_popup()" class="w-[40px] h-[40px] cursor-pointer"
+                         style="background-image:url('./image/pop_close.png')"></div>
+                </div>
+            <hr class="mb-2">
+                <ul class="collection-content">
+                    <li class="overflow-y-scroll text-[18px] h-[60vh] p-3 leading-9">
+                        <h3><strong>개인정보 수집 및 이용에 대한 동의</strong></h3>
+                        아래와 같이 개인정보를 수집합니다.<br>
+                        <br>
+                        <strong>개인정보 제공에 대한 동의</strong><br>
+                        홈피스 요청하신 대해 개인정보보호법 제15조에 따라 아래와 같은 사항을 알리고 동의를 받아 귀하의 개인정보를 수집합니다.<br>
+                        <strong>제공하는 개인정보 항목</strong><br>
+                        지역, 성함, 휴대전화, 주소 등 세부 개인정보<br>
+                        <strong>개인정보를 제공받는 자의 이용 목적</strong><br>
+                        요청하신 문의에 대한 답변 및 관련 제반 업무 지원<br>
+                        <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
+                        문의 종료 시점으로부터 1년간<br>
+                        <strong>동의 거부권에 대한 고지</strong><br>
+                        본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.<br>
+                        <br>
+                        <h3 class="text-[20px]"><strong>개인정보 제3자 제공에 대한 동의</strong></h3><br>
+                        <strong>개인정보를 제공받는 자</strong><br>
+                        홈피스 제휴 영업조직<br>
+                        <strong>개인정보를 제공받는 자의 개인정보 이용 목적</strong><br>
+                        홈피스 주식회사로 부터 위임받은 상담 및 제반 업무 지원<br>
+                        <strong>제공하는 개인정보의 항목</strong><br>
+                        지역, 성함, 휴대전화, 주소 등 문의에 관련한 세부 개인정보<br>
+                        <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
+                        문의 종료 시점으로부터 1년간<br>
+                        <strong>동의 거부권에 대한 고지</strong><br>
+                        본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.
+                    </li>
+
+                </ul>
+        </div>
+    </div>
+    <!--개인정보처리방침 팝업 끝-->
 </main>
 </body>
 </html>
