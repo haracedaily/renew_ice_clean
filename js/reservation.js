@@ -117,10 +117,12 @@ const CheckAddrPost = document.querySelector('.check-addr-post');
 const CheckAddrAddr = document.querySelector('.check-addr-addr');
 const CheckAddrDeta = document.querySelector('.check-addr-deta');
 const CheckModel = document.querySelector('.check-model');
+const CheckCapacity = document.querySelector('.check-capacity');
 const CheckSelectSer = document.querySelector('.check-select-ser');
 const CheckSelectCyc = document.querySelector('.check-select-cyc');
 const CheckSelectAdd = document.querySelector('.check-select-add');
 const CheckSpecial = document.querySelector('.check-special');
+const CheckDeposit = document.querySelector('.check-deposit');
 
 const OutputRDate = document.getElementById('reservation-date');
 const OutputRTime = document.querySelectorAll('.reservationTime');
@@ -128,6 +130,7 @@ const OutputName = document.getElementById('name');
 const OutputPhone = document.getElementById('phone');
 const OutputEmail = document.getElementById('email');
 const OutputModel = document.getElementById('modelname');
+const OutputCapacity = document.querySelectorAll('.capainput');
 const OutputPost = document.getElementById('postcode');
 const OutputAddress = document.getElementById('address');
 const OutputDetailAddress = document.getElementById('detailAddress');
@@ -186,45 +189,90 @@ $confirmReserve.addEventListener('click', function(){
         CheckSelectAdd.innerHTML = selectedAdd.value;
     }
 
+        function updateCapacity() {
+            const selectedCapacity = document.querySelector('.capainput:checked');
+            if (selectedCapacity) {
+                let capacityText;
+                if (selectedCapacity.value === '1') {
+                    capacityText = '20~50kg';
+                } else if (selectedCapacity.value === '2') {
+                    capacityText = '50~100kg';
+                } else if (selectedCapacity.value === '3') {
+                    capacityText = '100kg 이상';
+                } else {
+                    capacityText = selectedCapacity.value;
+                }
+                CheckCapacity.innerHTML = capacityText;
+            }
+        }
+    updateCapacity();
+
+        function deposit() {
+            const selectedCapacity = document.querySelector('.capainput:checked');
+            if (selectedCapacity) {
+                let depositText;
+                if (selectedCapacity.value === '1') {
+                    depositText = '2만 원';
+                } else if (selectedCapacity.value === '2') {
+                    depositText = '3만 원';
+                } else if (selectedCapacity.value === '3') {
+                    depositText = '4만 원';
+                } else {
+                    depositText = '미정';
+                }
+                CheckDeposit.innerHTML = depositText;
+            }
+        }
+    deposit();
+
+
     }
 
 
-
 });
 
-// 라디오 버튼 value 가져오기
-OutputRTime.forEach((radio) => {
-    radio.addEventListener('change', function() {
-        const selectedTime = document.querySelector('.reservationTime:checked');
-        if (selectedTime) {
-            CheckTime.innerHTML = selectedTime.value;
-        }
-    });
-});
-OutputSelectServ.forEach((radio) => {
-    radio.addEventListener('change', function() {
-        const selectedSer = document.querySelector('.selectServ:checked');
-        if (selectedSer) {
-            CheckSelectSer.innerHTML = selectedSer.value;
-        }
-    });
-});
-OutputSelectCyc.forEach((radio) => {
-    radio.addEventListener('change', function() {
-        const selectedCyc = document.querySelector('.selectCyc:checked');
-        if (selectedCyc) {
-            CheckSelectCyc.innerHTML = selectedCyc.value;
-        }
-    });
-});
-OutputSelectAdd.forEach((radio) => {
-    radio.addEventListener('change', function() {
-        const selectedAdd = document.querySelector('.selectAdd:checked');
-        if (selectedAdd) {
-            CheckSelectAdd.innerHTML = selectedAdd.value;
-        }
-    });
-});
+// // 실시간 변경 라디오 버튼 value 가져오기
+// OutputRTime.forEach((radio) => {
+//     radio.addEventListener('change', function() {
+//         const selectedTime = document.querySelector('.reservationTime:checked');
+//         if (selectedTime) {
+//             CheckTime.innerHTML = selectedTime.value;
+//         }
+//     });
+// });
+// OutputSelectServ.forEach((radio) => {
+//     radio.addEventListener('change', function() {
+//         const selectedSer = document.querySelector('.selectServ:checked');
+//         if (selectedSer) {
+//             CheckSelectSer.innerHTML = selectedSer.value;
+//         }
+//     });
+// });
+// OutputSelectCyc.forEach((radio) => {
+//     radio.addEventListener('change', function() {
+//         const selectedCyc = document.querySelector('.selectCyc:checked');
+//         if (selectedCyc) {
+//             CheckSelectCyc.innerHTML = selectedCyc.value;
+//         }
+//     });
+// });
+// OutputSelectAdd.forEach((radio) => {
+//     radio.addEventListener('change', function() {
+//         const selectedAdd = document.querySelector('.selectAdd:checked');
+//         if (selectedAdd) {
+//             CheckSelectAdd.innerHTML = selectedAdd.value;
+//         }
+//     });
+// });
+//
+// OutputCapacity.forEach((radio) => {
+//     radio.addEventListener('change', updateCapacity);
+// });
+
+
+
+
+
 
 // 개인정보 제공 보기 버튼 privacy-detail-btn privacy-details
 
@@ -283,30 +331,31 @@ PrivacyOk.addEventListener('click', async function(){
         cycle : document.querySelector('.check-select-cyc').innerHTML,
         add : document.querySelector('.check-select-add').innerHTML,
         remark : document.querySelector('.check-special').innerHTML,
-        // deposit : parseInt(document.querySelector('.check-deposit').innerHTML),
+        deposit : parseInt(document.querySelector('.check-deposit').innerHTML),
     }
 
 
     const data = await supabase
         .from('ice_res')
         .insert([reservationData]);
-        console.log(data);
+        // console.log(data);
+        if(data.status === 201 ){
+                Swal.fire({
+                    title: '예약성공!',
+                    icon: 'success',
+                    draggable: true,
+                }).then(() => {
+                    location.href = '../reservation.html';
+                });
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: '예약 실패',
+                text: '예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+            });
+        }
 
-    // if (error) {
-    //     Swal.fire({
-    //         icon: 'error',
-    //         title: '예약 실패',
-    //         text: '예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
-    //     });
-    // } else {
-    //     Swal.fire({
-    //         title: '예약성공!',
-    //         icon: 'success',
-    //         draggable: true,
-    //     }).then(() => {
-    //         location.href = '../reservation.html';
-    //     });
-    // }
+
 
 
 });

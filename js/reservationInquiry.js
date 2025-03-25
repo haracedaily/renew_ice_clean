@@ -51,8 +51,10 @@ $Gobtn.addEventListener('click', async function(){
         $Step02.classList.remove('hidden2');    
         const $Qtxt = document.querySelector('.Q-txt');
         $Qtxt.innerHTML = '예약 정보를 확인하세요';
-
     }
+
+
+
 
 });
 
