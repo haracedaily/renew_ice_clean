@@ -59,6 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     document.querySelector("#con_re").addEventListener("click", async () => {
+        let btn = document.querySelector("#con_re");
+        let btn2 = document.querySelector("#can_re");
+        btn.disabled=true;
+        btn2.disabled=true;
         /*let re_title = $reTitle.value;
         let re_content = quill.getSemanticHTML(0, 9999999);
         let reservNo = $reservNo.value;*/
@@ -81,6 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 fetchGallery(0);
 
             }
+        btn.disabled=false;
+        btn2.disabled=false;
        // }
     })
 
@@ -104,9 +110,9 @@ async function re_upload(arr, quill) {
     for (const file of arr) {
         //storage 폴더 경로 추가 예시
         let filenm = "review_img/"+crypto.randomUUID()+'.' + file.name.split('.').pop();
-        let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
+        let res = await supabase.storage.from('icecarebucket').upload(filenm, file);
         if (!res.error) {
-            let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
+            let re_img_url = await supabase.storage.from('icecarebucket').getPublicUrl(filenm).data.publicUrl;
             // filesUrl.push({conn_no: conn_no, file_name: filenm, image_url: re_img_url});
             filesUrl.push({file_name: filenm, image_url: re_img_url});
         }
@@ -185,12 +191,22 @@ function deleteFile(num) {
 
 //갤러리 불러오기(페이지별)
 async function fetchGallery(page){
+    let page_children = document.querySelector("#gallery_pagination").children;
+    for(let i = 0; i<page_children.length; i++) {
+        if(i===page){
+            page_children[i].style.color='red';
+        }else{
+            page_children[i].style.color='black';
+        }
+    }
+
+
     let res = await supabase.rpc("fetch_gallery", {page});
     if(!res.error){
         console.log(res);
         let htmlData = '';
         res.data.forEach(item => {
-            htmlData+=`  <div class="rounded-2xl flex flex-col justify-baseline w-full h-full gap-4">
+            htmlData+=`  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
                 <div class="p-1 bg-gray-200 rounded-2xl">
                     <div onclick="openGallery('${item.re_no}')" class="w-full h-[25vh] rounded-2xl" data-id="1"
                          style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
@@ -298,7 +314,7 @@ async function galleryPagination(d){
     let $next = document.querySelector("#gallery_next");
     let res = await supabase.from("review_gallery").select('re_no').range(d*9,90);
     if(res.data?.length>0) {
-        await fetchGallery(d);
+
         let htmlData = '';
         let prevData = '';
         let nextData = '';
@@ -311,11 +327,12 @@ async function galleryPagination(d){
         }
 
         for(let i =0; i<Math.ceil(res.data.length / 9);i++){
-            htmlData+=` <div class="cursor-pointer" onclick="fetchGallery(${d+i})">${i+1}</div> `
+            htmlData+=` <div class="cursor-pointer page" onclick="fetchGallery(${d+i})">${i+1}</div> `
         }
         $prev.innerHTML = prevData;
         $next.innerHTML = nextData;
         $pagination.innerHTML = htmlData;
+        await fetchGallery(d);
     }
 }
 
