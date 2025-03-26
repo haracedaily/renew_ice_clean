@@ -28,7 +28,7 @@
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
 <header class="sticky top-0 z-40 w-full bg-white p-5">
     <nav class="flex items-center justify-evenly flex-wrap">
-        <img src="./image/logo.png" onclick="location.href='./index.html'" alt="">
+        <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
         <ul>
             <li>
                 <a href="#advantage">특장점</a>
@@ -300,17 +300,17 @@
             </div>
         </div>
         <div class="flex flex-row justify-between w-full">
-            <div class="flex flex-row justify-center items-center gap-2 ml-[150px]">
+            <div class="flex flex-row justify-center items-center gap-2 ml-[180px]">
                 <select id="search_gallery_select" class="h-[40px]">
                     <option value="1">제목+내용</option>
                     <option value="2">제목</option>
                     <option value="3">내용</option>
                 </select>
-                <input class="h-[40px] border rounded-lg p-[3px]" type="search" id="search_gallery">
+                <input class="h-[40px] border rounded-lg p-[3px]" type="search" id="search_gallery" onkeydown="search_chk(event)">
                 <!--TODO 검색 기능 넣기-->
                 <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick="gallery_search()"></span>
             </div>
-        <button id="review_write" class="cursor-pointer p-2 bg-[#194A9C] text-white mr-[150px]">글쓰기</button>
+        <button id="review_write" class="cursor-pointer p-2 bg-[#194A9C] text-white mr-[180px]">글쓰기</button>
         </div>
         <!--갤러리 페이지네이션-->
 
@@ -653,7 +653,7 @@ min-height: 300px;
                 </ul>
             </nav>
             <div class="">
-                <h1 class="foot_logo">
+                <h1 class="foot_logo mb-[10px]">
                     <a href="/">
                         <img src="./image/f_logo.png" alt="홈피스 로고" class="only_web">
                         <!--                        <img src="image/f_logo_m.png" alt="홈피스 로고" class="only_mo">-->
