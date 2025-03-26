@@ -302,13 +302,13 @@
         <div class="flex flex-row justify-between w-full">
             <div class="flex flex-row justify-center items-center gap-2 ml-[150px]">
                 <select id="search_gallery_select" class="h-[40px]">
-                    <option value="title&content">제목+내용</option>
-                    <option value="title">제목</option>
-                    <option value="content">내용</option>
+                    <option value="1">제목+내용</option>
+                    <option value="2">제목</option>
+                    <option value="3">내용</option>
                 </select>
                 <input class="h-[40px] border rounded-lg p-[3px]" type="search" id="search_gallery">
                 <!--TODO 검색 기능 넣기-->
-                <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick=""></span>
+                <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick="gallery_search()"></span>
             </div>
         <button id="review_write" class="cursor-pointer p-2 bg-[#194A9C] text-white mr-[150px]">글쓰기</button>
         </div>
@@ -340,11 +340,11 @@
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
                     <p class="font-bold">작동 안됨</p>
-                    <p>제빙기가 작동하지 않습니다</p>
+                    <p>제빙기가 전원을 눌러도 작동하지 않습니다</p>
                 </div>
                 <div class="hidden flex-col justify-center itmes-start symtoms-conserve">
                     <p class="font-bold">작동 안됨</p>
-                    <p>제빙기 전원부, PCB기판, 급수라인 확인 요망</p>
+                    <p>제빙기 전원부, PCB기판, 급수라인 확인이 필요합니다</p>
                 </div>
             </div>
             <!--작동 큰소음 증상-->
@@ -370,7 +370,7 @@
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
                     <p class="font-bold">작동시 탄냄새</p>
-                    <p>제빙기를 켜면 탄냄새가 나요</p>
+                    <p>제빙기를 전원이 켜져있으면 타는 냄새가 나요</p>
                 </div>
                 <div class="hidden flex-col justify-center itmes-start symtoms-conserve">
                     <p class="font-bold">작동시 탄냄새</p>
@@ -449,7 +449,7 @@
                 </div>
                 <div class="hidden flex-col justify-center itmes-start symtoms-conserve">
                     <p class="font-bold">빈얼음 / 뭉친 얼음</p>
-                    <p>에바센서 조정 또는 냉매, 냉판 확인 요망</p>
+                    <p>에바센서 조정 또는 냉매, 냉판 확인이 필요합니다</p>
                 </div>
             </div>
             <!--물넘침-->
