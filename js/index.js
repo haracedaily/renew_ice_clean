@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let $reTitle = document.querySelector("#re_title");
     let $reDate = document.querySelector("#re_date");
     let $reservNo = document.querySelector("#reserv_no");
+    let $symptoms = document.querySelector("#symptoms");
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
@@ -89,6 +90,11 @@ document.addEventListener("DOMContentLoaded", () => {
         btn2.disabled=false;
        // }
     })
+    for(let item of $symptoms.children) {
+        item.addEventListener("click", () => {
+            location.href = './reservation.html';
+        })
+    }
 
 })
 /*
@@ -110,9 +116,11 @@ async function re_upload(arr, quill) {
     for (const file of arr) {
         //storage 폴더 경로 추가 예시
         let filenm = "review_img/"+crypto.randomUUID()+'.' + file.name.split('.').pop();
-        let res = await supabase.storage.from('icecarebucket').upload(filenm, file);
+        // let res = await supabase.storage.from('icecarebucket').upload(filenm, file);
+        let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
         if (!res.error) {
-            let re_img_url = await supabase.storage.from('icecarebucket').getPublicUrl(filenm).data.publicUrl;
+            // let re_img_url = await supabase.storage.from('icecarebucket').getPublicUrl(filenm).data.publicUrl;
+             let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
             // filesUrl.push({conn_no: conn_no, file_name: filenm, image_url: re_img_url});
             filesUrl.push({file_name: filenm, image_url: re_img_url});
         }
@@ -361,15 +369,15 @@ async function galleryPagination_search(d,keyword,key){
         let prevData = '';
         let nextData = '';
         if(d>=10){
-            prevData=`<button class="pager_prev" onclick="galleryPagination_search(${d-10},${keyword},${key})"></button>`;
+            prevData=`<button class="pager_prev" onclick="galleryPagination_search(${d-10},'${keyword}',${key})"></button>`;
         }
         if(res.data?.length===91){
-            nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination_search(${d+10},${keyword},${key})"></button>`;
+            nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination_search(${d+10},'${keyword}',${key})"></button>`;
             res.data.length=90;
         }
 
         for(let i =0; i<Math.ceil(res.data.length / 9);i++){
-            htmlData+=` <div class="cursor-pointer page" onclick="fetchGallery_search(${d+i},${keyword},${key})">${i+1}</div> `
+            htmlData+=` <div class="cursor-pointer page" onclick="fetchGallery_search(${d+i},'${keyword}',${key})">${i+1}</div> `
         }
         $prev.innerHTML = prevData;
         $next.innerHTML = nextData;
@@ -473,4 +481,9 @@ function close_popup(){
 function open_popup(){
     document.querySelector("#personal_popup").classList.remove("hidden");
     document.querySelector('body').classList.add("scroll_lock");
+}
+function search_chk(ev){
+    if(ev.keyCode == 13){
+        gallery_search();
+    }
 }
