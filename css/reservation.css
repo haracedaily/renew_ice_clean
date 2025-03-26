@@ -2,6 +2,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: iceFont, sans-serif;
+
+}
+@font-face {
+    font-family: 'iceFont';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 body{
     margin: 0;
@@ -83,7 +91,7 @@ nav {
 }
 #r-container {
     margin: 0 auto;
-    max-width: 750px;
+    max-width: 900px;
     padding: 24px 30px 64px;
     overflow-y: auto;
     height: auto;
@@ -91,7 +99,6 @@ nav {
 
 .r-date{
     display: flex;
-    justify-content: center;
     margin-top: 4rem;
     animation: fadein 2s
 }
@@ -531,4 +538,14 @@ input[type = "radio"]{
 
 .hidden2{
     display: none;
+}
+
+.flatpickr-current-month .numInputWrapper {
+    width:115px;
+}
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month{
+    top:5%;
+}
+.flatpickr-calendar.inline{
+    width: auto;
 }
