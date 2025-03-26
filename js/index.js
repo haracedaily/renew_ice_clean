@@ -190,7 +190,7 @@ function deleteFile(num) {
 }
 
 //갤러리 불러오기(페이지별)
-async function fetchGallery(page){
+async function fetchGallery_search(page,keyword,key){
     let page_children = document.querySelector("#gallery_pagination").children;
     for(let i = 0; i<page_children.length; i++) {
         if(i===page){
@@ -199,24 +199,50 @@ async function fetchGallery(page){
             page_children[i].style.color='black';
         }
     }
-
-
-    let res = await supabase.rpc("fetch_gallery", {page});
-    if(!res.error){
+    let res = await supabase.rpc("fetch_gallery_search", {page,keyword,key});
+    if (!res.error) {
         console.log(res);
         let htmlData = '';
         res.data.forEach(item => {
-            htmlData+=`  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
+            htmlData += `  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
                 <div class="p-1 bg-gray-200 rounded-2xl">
                     <div onclick="openGallery('${item.re_no}')" class="w-full h-[25vh] rounded-2xl" data-id="1"
                          style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
                 </div>
                 <div class="text-2xl">${item.title}</div>
-                <div>${item.cpdt.slice(0,10)}</div>
+                <div>${item.cpdt.slice(0, 10)}</div>
             </div>`;
         })
         document.querySelector("#galleryPage").innerHTML = htmlData;
     }
+}
+
+//갤러리 불러오기(페이지별)
+async function fetchGallery(page,keyword=''){
+    let page_children = document.querySelector("#gallery_pagination").children;
+    for(let i = 0; i<page_children.length; i++) {
+        if(i===page){
+            page_children[i].style.color='red';
+        }else{
+            page_children[i].style.color='black';
+        }
+    }
+        let res = await supabase.rpc("fetch_gallery", {page});
+        if (!res.error) {
+            console.log(res);
+            let htmlData = '';
+            res.data.forEach(item => {
+                htmlData += `  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
+                <div class="p-1 bg-gray-200 rounded-2xl">
+                    <div onclick="openGallery('${item.re_no}')" class="w-full h-[25vh] rounded-2xl" data-id="1"
+                         style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
+                </div>
+                <div class="text-2xl">${item.title}</div>
+                <div>${item.cpdt.slice(0, 10)}</div>
+            </div>`;
+            })
+            document.querySelector("#galleryPage").innerHTML = htmlData;
+        }
 }
 
 //갤러리 페이지네이션 구성하고 거기서 갤러리 열기로 변경 => 다음 넘길때 구성 변경형태
@@ -306,13 +332,57 @@ function close_gallery(){
     $('#gallery_slider').html("")
     $('#gallery_nav_slider').html("")
 }
+function gallery_search(){
+    let $keyword = document.querySelector("#search_gallery").value;
+    let $key = document.querySelector("#search_gallery_select").value;
+    if($keyword.trim().length>0){
+        galleryPagination_search(0,$keyword,$key);
+    }else{
+        galleryPagination(0);
+    }
 
+}
+//갤러리 검색 페이지 구성하기
+async function galleryPagination_search(d,keyword,key){
+    let $pagination = document.querySelector("#gallery_pagination");
+    let $prev = document.querySelector("#gallery_prev");
+    let $next = document.querySelector("#gallery_next");
+    let res;
+    if(key==1) {
+        res = await supabase.from("review_gallery").select('re_no').or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`).range(d * 9, (d * 9) + 90);
+    }else if(key==2){
+        res = await supabase.from("review_gallery").select('re_no').ilike('title',`%${keyword}%`).range(d * 9, (d * 9) + 90);
+    }else{
+        res = await supabase.from("review_gallery").select('re_no').ilike('content',`%${keyword}%`).range(d * 9, (d * 9) + 90);
+    }
+    if(res.data?.length>0) {
+
+        let htmlData = '';
+        let prevData = '';
+        let nextData = '';
+        if(d>=10){
+            prevData=`<button class="pager_prev" onclick="galleryPagination_search(${d-10},${keyword},${key})"></button>`;
+        }
+        if(res.data?.length===91){
+            nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination_search(${d+10},${keyword},${key})"></button>`;
+            res.data.length=90;
+        }
+
+        for(let i =0; i<Math.ceil(res.data.length / 9);i++){
+            htmlData+=` <div class="cursor-pointer page" onclick="fetchGallery_search(${d+i},${keyword},${key})">${i+1}</div> `
+        }
+        $prev.innerHTML = prevData;
+        $next.innerHTML = nextData;
+        $pagination.innerHTML = htmlData;
+        await fetchGallery_search(d,keyword,key);
+    }
+}
 //갤러리 페이지 구성하기
 async function galleryPagination(d){
     let $pagination = document.querySelector("#gallery_pagination");
     let $prev = document.querySelector("#gallery_prev");
     let $next = document.querySelector("#gallery_next");
-    let res = await supabase.from("review_gallery").select('re_no').range(d*9,90);
+    let res = await supabase.from("review_gallery").select('re_no').range(d*9,(d*9)+90);
     if(res.data?.length>0) {
 
         let htmlData = '';
