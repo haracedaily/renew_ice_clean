@@ -26,6 +26,7 @@
     </script>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
+
 <header class="sticky top-0 z-40 w-full bg-white p-5">
     <nav class="flex items-center justify-evenly flex-wrap">
         <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
@@ -43,8 +44,12 @@
                 onclick="location.href='./reservation.html'"><div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"> </div>예약하기
         </button>
     </nav>
+    <div id="notice_btn" class="rounded-[25px] w-[50px] h-[50px] absolute right-[5%] top-48 z-50 flex justify-center items-center" onclick="location.href='./contact_us.html'">
+        <p>공지사항</p>
+    </div>
 </header>
 <main class="flex flex-col items-center justify-center w-full h-full gap-4">
+
     <!--메인헤더 시작-->
     <div id="main_header" class="flex flex-col justify-center items-center w-full">
 

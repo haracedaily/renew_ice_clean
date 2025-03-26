@@ -35,6 +35,29 @@
     font-style: normal;
 }
 
+#notice_btn{
+    transition-duration: 0.8s;
+    background-color:#F9B500;
+    cursor:pointer;
+
+    &:hover{
+        width:150px;
+        background-color:#2C9900;
+        p{
+
+            display:inline;
+            color:white;
+            font-weight:900;
+        }
+    }
+    p{
+        overflow:hidden;
+        white-space:nowrap;
+        cursor:pointer;
+        display:none;
+    }
+}
+
 img {
     max-width: unset;
 }
