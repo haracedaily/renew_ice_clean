@@ -34,6 +34,9 @@
     font-weight: normal;
     font-style: normal;
 }
+#arrow_up_btn:hover{
+    background-color: #19499E;
+}
 #side_btn_group {
 #kakaoBot_btn{
     transition-duration: 0.8s;
@@ -743,5 +746,13 @@ body {
 
 
 
-
+.non-opacity{
+    opacity: 0;
+}
+.opacity{
+    opacity: 1;
+}
+.fade-in-animation{
+    animation: fadeInUp 1500ms forwards 1;
+}
 
