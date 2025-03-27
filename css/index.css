@@ -34,41 +34,63 @@
     font-weight: normal;
     font-style: normal;
 }
-
-#notice_btn{
+#side_btn_group {
+#kakaoBot_btn{
     transition-duration: 0.8s;
-    background-color:#F9B500;
-    cursor:pointer;
+    background-color: #F9B500;
+    width:0px;
+    cursor: pointer;
+    p {
+        overflow: hidden;
+        white-space: nowrap;
+        display: none;
+    }
 
-    &:hover{
-        width:150px;
-        background-color:#19499E;
-        p{
-
-            display:inline;
-            color:white;
-            font-weight:900;
-        }
-        span{
-            display:none;
-        }
-    }
-    p{
-        overflow:hidden;
-        white-space:nowrap;
-        cursor:pointer;
-        display:none;
-    }
-    span{
-        color:white;
-        font-size:1.8rem;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 3px solid white;
-    }
 }
 
+    #notice_btn {
+        transition-duration: 0.8s;
+        background-color: #F9B500;
+        cursor: pointer;
+        padding: 5px;
+        p {
+            overflow: hidden;
+            white-space: nowrap;
+            display: none;
+        }
+        span {
+            color: white;
+            font-size: 1.8rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+    }
+        &:hover {
+            #kakaoBot_btn{
+                display:flex;
+            }
+            #notice_btn, #kakaoBot_btn {
+                padding:0;
+            width: 150px;
+            background-color: #19499E;
+
+            p {
+                padding : 10px 0;
+                display: inline;
+                color: white;
+                font-weight: 900;
+            }
+
+            span {
+                display: none;
+            }
+        }
+
+
+    }
+}
 img {
     max-width: unset;
 }
