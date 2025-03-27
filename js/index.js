@@ -487,3 +487,48 @@ function search_chk(ev){
         gallery_search();
     }
 }
+
+window.addEventListener("scroll", ()=>{
+    let $advantage = document.querySelector("#advantage")
+    let $state = document.querySelector("#state");
+    let $gallery = document.querySelector("#gallery");
+    let $symptom = document.querySelector("#symptom");
+    let $process = document.querySelector("#process");
+    let $membership = document.querySelector("#membership");
+    if(document.documentElement.scrollTop>=$advantage.offsetTop-600){
+        $advantage.classList.add("fade-in-animation");
+    }else{
+        $advantage.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$state.offsetTop-600){
+        $state.classList.add("fade-in-animation");
+    }else{
+        $state.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$gallery.offsetTop-600){
+        $gallery.classList.add("fade-in-animation");
+    }else{
+        $gallery.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$symptom.offsetTop-600){
+        $symptom.classList.add("fade-in-animation");
+    }else{
+        $symptom.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$process.offsetTop-600){
+        $process.classList.add("fade-in-animation");
+    }else{
+        $process.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$membership.offsetTop-600){
+        $membership.classList.add("fade-in-animation");
+    }else{
+        $membership.classList.remove("fade-in-animation");
+    }
+
+});

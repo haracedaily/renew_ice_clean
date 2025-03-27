@@ -54,6 +54,12 @@
     </div>
     </div>
 
+    <div id="arrow_up_btn" class="w-[40px] h-[40px] rounded-[50%] bg-[#F9B500] z-50 absolute top-[80vh] right-10  flex justify-center items-center cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <span class="w-[35px] h-[35px] rounded-[50%] border border-white  flex justify-center items-center">
+            <p class="text-white text-xl">⬆</p>
+        </span>
+    </div>
+
 </header>
 <main class="flex flex-col items-center justify-center w-full h-full gap-4">
 
@@ -138,44 +144,44 @@
     </div>
     <!--메인헤더 끝-->
     <!--장단점 div-->
-    <div id="advantage" class="flex flex-col justify-center items-center p-[10%] w-full h-[60vh] gap-7">
+    <div id="advantage" class="non-opacity flex flex-col justify-center items-center p-[10%] w-full h-[60vh] gap-7">
         <h4 class="underline text-blue-900 font-bold">Advantage</h4>
         <h1 class="font-bold text-3xl">ICECARE가 특별한 이유</h1>
         <!--이미지 시작점-->
-        <div class="flex justify-around items-baseline w-full h-full">
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+        <div class="flex justify-center items-baseline w-full h-full gap-14">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-3">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/book.png" alt="">
                 </div>
-                <h5 class="font-bold">숙련된 노하우로 관리</h5>
+                <h5 class="font-bold text-xl">숙련된 노하우로 관리</h5>
                 <p class="text-gray-500">세척부터 수리까지 완벽한 서비스를 제공합니다</p>
             </div>
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-4">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/knowledge.png" alt="">
                 </div>
-                <h5 class="font-bold">제품에 대한 이해도</h5>
+                <h5 class="font-bold text-xl">제품에 대한 이해도</h5>
                 <p class="text-gray-500">제품에 대한상세한 이해도로 꼼꼼한 서비스를 제공합니다</p>
             </div>
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-4">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/touch_screen.png" alt="">
                 </div>
-                <h5 class="font-bold">관리상황 확인</h5>
+                <h5 class="font-bold text-xl">관리상황 확인</h5>
                 <p class="text-gray-500">QR코드를 스캔하면 현재 관리 상황 확인이 가능합니다</p>
             </div>
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-4">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/money_pocket.png" alt="">
                 </div>
-                <h5 class="font-bold">합리적인 비용</h5>
+                <h5 class="font-bold text-xl">합리적인 비용</h5>
                 <p class="text-gray-500">멤버쉽 서비스로 저렴한 가격에 훌륭한 서비스를 제공해드립니다</p>
             </div>
         </div>
     </div>
     <!--특장점 끝-->
     <!--처리현황-->
-    <div id="state" class="flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[3%] text-white">
+    <div id="state" class="non-opacity flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[3%] text-white">
         <h4 class="underline font-bold">Processing status</h4>
         <h1 class="font-bold text-3xl">처리 현황</h1>
         <!--처리현황 리스트 8-->
@@ -258,7 +264,7 @@
     </div>
     <!--처리현황 끝-->
     <!--시공 갤러리-->
-    <div id="gallery" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%] relative">
+    <div id="gallery" class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%] relative">
         <h4 class="underline text-blue-900 font-bold">Gallery</h4>
         <h1 class="font-bold text-3xl">시공 갤러리</h1>
         <!--갤러리 게시판 부분-->
@@ -340,7 +346,7 @@
     </div>
     <!--시공 갤러리 끝-->
     <!--고장 증상-->
-    <div id="symptom" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+    <div id="symptom" class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">Symptom</h4>
         <h1 class="font-bold text-3xl">고장 증상</h1>
         <div id="symptoms" class="w-[80%] h-full grid grid-cols-3 gap-3">
@@ -529,7 +535,7 @@
     </div>
     <!--고장 증상 끝-->
     <!--프로세스 시작-->
-    <div id="process" class="flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[10%]">
+    <div id="process" class="non-opacity flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">Process</h4>
         <h1 class="font-bold text-3xl">고객센터 1666-9587</h1>
         <div id="Processes" class="w-[80%] h-[35vh] flex flex-row justify-center items-center">
@@ -570,7 +576,7 @@
 
     <!--멤버쉽 시작-->
     <div name="membership" id="membership"
-         class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+         class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">MEMBERSHIP</h4>
         <h1 class="font-bold text-3xl">아이스케어 멤버쉽 혜택</h1>
 
