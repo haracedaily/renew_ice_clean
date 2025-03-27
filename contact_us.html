@@ -18,58 +18,119 @@
         var supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
     </script>
 </head>
-<body>
+<body class="scroll-lock">
 <div id="container">
     <header class="navbar">
         <img src="./image/logo.png" alt="아이스케어 로고">
-        <nav>
-            <button>MAIN PAGE</button>
-        </nav>
+
+        <div class="category">
+            <div class="sub-category">
+                <button onclick="noticeSelect(1);">공지사항</button>
+            </div>
+            <div class="sub-category">
+                <button onclick="noticeSelect(2);">FAQ</button>
+            </div>
+            <div class="sub-category">
+                <button onclick="noticeSelect(3);">Q&A</button>
+            </div>
+            <nav>
+                <button>MAIN PAGE</button>
+            </nav>
+        </div>
     </header>
 
     <div class="main_text">
-        <p>공지사항</p>
-    </div>
-    <div class="category">
-        <div class="sub_category">
-            <button onclick="noticeSelect();">공지사항</button>
-        </div>
-        <div class="sub_category">
-            <button>FAQ</button>
-        </div>
-        <div class="sub_category">
-            <button>Q&A</button>
-        </div>
-    </div>
-    <div class="post_list">
-        <div id="board-div" class="content"></div>
-        <button class="post_writing">글쓰기</button>
+        <p id="changeText">공지사항</p>
     </div>
 
-    <div id="postModal" class="post_modal hidden"> <!--class="hidden"-->
-        <div class="post_modal_content">
-            <div class="post_detail_div">
+    <div class="post_list">
+        <div id="board-div" class="content"></div>
+        <button onclick="postClick()" class="post-writing">글쓰기</button>
+    </div>
+
+    <div id="post-modal" class="post-modal-c hidden">
+        <div class="post-modal-content">
+            <div class="post-detail">
                 <p>글작성</p>
-                제목<input type="text" id="post-title" placeholder="Please enter a title."/>
+
+                <label for="post-title">제목</label>
+                <input type="text" id="post-title" placeholder="Please enter a title."/>
+
+                <label for="post-category">카테고리</label>
                 <select id="post-category">
-                    <option value="공지">공지</option>
-                    <option value="FAQ">FAQ</option>
-                    <option value="Q&A">Q&A</option>
+                    <option value="1">공지</option>
+                    <option value="2">FAQ</option>
+                    <option value="3">Q&A</option>
                 </select>
-                작성자<input type="text" id="update-name" placeholder="Please enter the author name."/><br/>
-                <textarea id="postContent" placeholder="Please enter the contents."></textarea>
-                <input type="password" id="post-password" value="password">
-                <input type="file" id="postImage" accept="image/*">
+
+                <label for="post-name">작성자</label>
+                <input type="text" id="post-name" placeholder="Please enter the author name."/>
+
+                <label for="post-content">내용</label>
+                <textarea id="post-content" placeholder="Please enter the contents."></textarea>
+
+                <label for="post-image-url" class="file-upload-label"> 📁 파일 선택</label>
+                <input type="file" id="post-image-url" name="file" accept="image/*"/>
+                <span id="file-name">선택된 파일 없음</span>
+                <img id="image-preview" style="max-width: 100%; margin-top: 10px; display: none;" alt="미리보기 이미지"/>
+
+                <label for="post-password">비밀번호</label>
+                <input type="password" id="post-password" value=""/>
+
                 <div>
-                    <div class="post-button">
-                        <button id="submitPost">등록✅</button>
-                        <button id="cancelPost">취소❌</button>
-                        <!--                        <button onclick="postmodalClose();"></button>-->
+                    <div class="button-container">
+                        <button id="submit-post">등록</button>
+                        <button onclick="cancelModalClose()" id="cancel-post">취소</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 글 조회 -->
+    <div id="notice-modal" class="update-notice hidden">
+        <div class="modal-div post-modal-content post-detail">
+            <div>
+                <h1>글수정</h1>
+            </div>
+            <div>
+                <div>
+                    <span>No.<h3 id="update-id"></h3></span>
+
+                    <span>날짜<h3 id="update-date"></h3></span>
+
+                    <span>조회수<h3 id="update-views"></h3></span>
+                </div>
+                제목 <input id="update-title" type="text" class="update-input">
+
+                내용<textarea id="update-content"></textarea>
+
+                작성자<input type="text" id="update-name"/>
+
+                비밀번호 <input type="password" id="update-password"/>
+
+                카테고리
+                <select id="update-category">
+                    <option value="1">공지</option>
+                    <option value="2">FAQ</option>
+                    <option value="3">Q&A</option>
+                </select>
+
+                <p>업로드된 파일</p>
+                <label for="post-image-url" class="file-upload-label"> 📁 파일 선택</label>
+                <img id="update-image" src="" alt="Uploaded Image"/>
+                <p id="update-file"></p>
+
+            </div>
+            <div class="button-container">
+                <button id="submit-update">수정</button>
+                <button onclick="noticemodalClose();" id="cancel-update">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="paging-container" class="post-paging"></div>
+
 </div>
 </body>
 </html>
