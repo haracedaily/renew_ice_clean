@@ -18,10 +18,10 @@
     <script src="./js/swiper.min.js"></script>
     <script src="./js/slick.min.js"></script>
     <script>
-        const supabaseUrl = "https://embqgdrxfblyczbenvie.supabase.co";
-        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYnFnZHJ4ZmJseWN6YmVudmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjUwMDcsImV4cCI6MjA1NTAwMTAwN30.ZsuAX5G-wfxGLCmNKOniR2t4Ia2ErMj0jjJUlTRjEFo";
-        /*const supabaseUrl = "https://wqetnltlnsvjidubewia.supabase.co";
-        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";*/
+        // const supabaseUrl = "https://embqgdrxfblyczbenvie.supabase.co";
+        // const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYnFnZHJ4ZmJseWN6YmVudmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjUwMDcsImV4cCI6MjA1NTAwMTAwN30.ZsuAX5G-wfxGLCmNKOniR2t4Ia2ErMj0jjJUlTRjEFo";
+        const supabaseUrl = "https://wqetnltlnsvjidubewia.supabase.co";
+        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
         const supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
     </script>
 </head>
@@ -271,52 +271,8 @@
         <div id="galleryPage" class="w-[80%] min-h-[1040px] h-full grid grid-cols-3 gap-4">
 
         </div>
-        <!-- 글쓰기 editor 팝업 -->
-        <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
-            <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
-                <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
-                    <label>예약번호</label>
-                    <input id="reserv_no" type="search" readonly>
-                    <label>날짜</label>
-                    <input id="re_date" type="date" readonly>
-                    <label>제목</label>
-                    <input id="re_title" class="col-span-3 border-[1px]" type="text">
-                    <label>첨부파일</label>
-                    <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);" multiple
-                           accept="image/*">
-                    <div id="re_file_list" class="file-list col-span-4"></div>
-                </div>
-                <div id="editor" class="p-5">
-                    <p></p>
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
-                    <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
-                </div>
-            </div>
-        </div>
-        <!--글쓰기 에디터 팝업 끝-->
-        <!--단일 갤러리 팝업-->
-        <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
-            <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
-                <div class="flex flex-row justify-between items-center">
-                    <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
-                    <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer"
-                         style="background-image:url('./image/pop_close.png')"></div>
-                </div>
-                <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
-                    <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
-                    <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
-                </div>
-                <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
-                    날짜
-                </div>
-                <div id="gallery_content" class="max-h-[200px] overflow-y-scroll">
-                    내용
-                </div>
 
-            </div>
-        </div>
+        <!--페이지 내비게이션-->
         <div class="flex flex-row justify-between w-full">
             <div class="flex flex-row justify-center items-center gap-2 ml-[180px]">
                 <select id="search_gallery_select" class="h-[40px]">
@@ -790,6 +746,53 @@ min-height: 300px;
         </div>
     </div>
     <!--개인정보처리방침 팝업 끝-->
+    <!-- 글쓰기 editor 팝업 -->
+    <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
+            <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
+                <label>예약번호</label>
+                <input id="reserv_no" type="search" readonly>
+                <label>날짜</label>
+                <input id="re_date" type="date" readonly>
+                <label>제목</label>
+                <input id="re_title" class="col-span-3 border-[1px]" type="text">
+                <label>첨부파일</label>
+                <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);" multiple
+                       accept="image/*">
+                <div id="re_file_list" class="file-list col-span-4"></div>
+            </div>
+            <div id="editor" class="p-5">
+                <p></p>
+            </div>
+            <div class="flex justify-end gap-4">
+                <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
+                <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
+            </div>
+        </div>
+    </div>
+    <!--글쓰기 에디터 팝업 끝-->
+    <!--단일 갤러리 팝업-->
+    <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
+            <div class="flex flex-row justify-between items-center">
+                <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
+                <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer"
+                     style="background-image:url('./image/pop_close.png')"></div>
+            </div>
+            <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
+                <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
+                <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
+            </div>
+            <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
+                날짜
+            </div>
+            <div id="gallery_content" class="max-h-[200px] overflow-y-scroll">
+                내용
+            </div>
+
+        </div>
+    </div>
+    <!--단일 갤러리 팝업 끝-->
 </main>
 </body>
 </html>

@@ -116,11 +116,11 @@ async function re_upload(arr, quill) {
     for (const file of arr) {
         //storage 폴더 경로 추가 예시
         let filenm = "review_img/"+crypto.randomUUID()+'.' + file.name.split('.').pop();
-        // let res = await supabase.storage.from('icecarebucket').upload(filenm, file);
-        let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
+        let res = await supabase.storage.from('icecarebucket').upload(filenm, file);
+        // let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
         if (!res.error) {
-            // let re_img_url = await supabase.storage.from('icecarebucket').getPublicUrl(filenm).data.publicUrl;
-             let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
+            let re_img_url = await supabase.storage.from('icecarebucket').getPublicUrl(filenm).data.publicUrl;
+             // let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
             // filesUrl.push({conn_no: conn_no, file_name: filenm, image_url: re_img_url});
             filesUrl.push({file_name: filenm, image_url: re_img_url});
         }
@@ -495,6 +495,7 @@ window.addEventListener("scroll", ()=>{
     let $symptom = document.querySelector("#symptom");
     let $process = document.querySelector("#process");
     let $membership = document.querySelector("#membership");
+
     if(document.documentElement.scrollTop>=$advantage.offsetTop-600){
         $advantage.classList.add("fade-in-animation");
     }else{
