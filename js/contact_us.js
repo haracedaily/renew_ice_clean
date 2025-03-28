@@ -10,7 +10,7 @@ document.querySelector('#submit-post').addEventListener('click', async function 
     const image_url = document.querySelector('#post-image-url').files[0];
 
     const passwordInput = document.querySelector('#post-password'); // 사용자가 입력한 password값 가져옴
-    passwordInput.addEventListener('input', function(){
+    passwordInput.addEventListener('input', function () {
         const passwordValue = passwordInput.value;
         console.log(passwordValue);
     })
@@ -110,15 +110,16 @@ async function noticeSelect(categoryId) {
     };
     document.getElementById("changeText").innerHTML = texts[categoryId];
 
+
     const params = new URLSearchParams(window.location.search);
     const pageNum = parseInt(params.get("pageNum")) || 1;
     const itemsPerPage = 15; // 페이지 글 개수 15개
     const totalItems = 150;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-
+    
     const from = (pageNum - 1) * itemsPerPage;
     const to = from + itemsPerPage - 1;
-
+    
     const pagingContainer = document.getElementById("paging-container");
     pagingContainer.innerHTML = "";
     let pageFrom = parseInt((pageNum - 1) / 10);
@@ -131,14 +132,14 @@ async function noticeSelect(categoryId) {
         const pageLink = document.createElement("a"); // a태그 생성
         pageLink.href = `?pageNum=${i}`;
         pageLink.textContent = i;
-
+    
         pageLink.style.fontFamily = 'pageNum3';
         // 현재 페이지라면 스타일 변경
         if (i === pageNum) {
             pageLink.style.fontWeight = "bold";
             pageLink.style.color = "#B8001F";
         }
-
+    
         pagingContainer.appendChild(pageLink);
     }
 
@@ -151,7 +152,9 @@ async function noticeSelect(categoryId) {
         .select()
         .eq('category_id', categoryId)
         .order('updated_at', {ascending: true})
-        .range(from, to);
+        // .range(from, to)
+        ;
+    ;
 
     let rows = '';
     for (let i = 0; i < res.data.length; i++) {
