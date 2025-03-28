@@ -40,6 +40,7 @@
     font-style: normal;
 }
 #side_btn_group{
+    background-color:rgba(217,217,217,0.7);
     span{
         &:hover {
             &:first-child {
@@ -65,8 +66,8 @@
 
         &:nth-child(n+2){
             p{
-                font-family:"Lora-Bold",sans-serif;
-                font-weight:200;
+                font-family:"pageNum5",sans-serif;
+                font-weight:500;
             }
         }
 
