@@ -154,11 +154,9 @@ $confirmReserve.addEventListener('click', function(){
             icon: "error",
             text: "모든 내용을 확인 후 예약을 진행해 주세요.",
         });
+        return;
+    }
 
-    }else{
-
-    $Rcontainer.classList.add('hidden2');
-    $modal.classList.remove('hidden2');
 
     CheckInfoName.innerHTML = OutputName.value;
     CheckInfoPhone.innerHTML = OutputPhone.value;
@@ -170,6 +168,36 @@ $confirmReserve.addEventListener('click', function(){
     CheckAddrDeta.innerHTML = OutputDetailAddress.value;
     CheckModel.innerHTML = OutputModel.value;
     CheckSpecial.innerHTML = OutputSpecial.value;
+
+    // 정규식 정의
+    const phoneRegex = /^\d{3}-\d{3,4}-\d{4}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const phone = OutputPhone.value;
+    const email = OutputEmail.value;
+
+    // 전화번호 유효성 검사
+    if (!phoneRegex.test(phone)) {
+        Swal.fire({
+            icon: 'error',
+            text: '유효한 전화번호 형식이 아닙니다.\n ex) 010-1234-5678',
+        })
+        OutputPhone.focus();
+        return;
+    }
+
+    // 이메일 유효성 검사
+    if (!emailRegex.test(email)) {
+        Swal.fire({
+            icon: 'error',
+            text: '유효한 이메일 형식이 아닙니다. \n ex) example@domain.com',
+        });
+        OutputEmail.focus();
+        return;
+    }
+
+    $Rcontainer.classList.add('hidden2');
+    $modal.classList.remove('hidden2');
 
 
     const selectedTime = document.querySelector('.reservationTime:checked');
@@ -226,7 +254,7 @@ $confirmReserve.addEventListener('click', function(){
     deposit();
 
 
-    }
+
 
 
 });
