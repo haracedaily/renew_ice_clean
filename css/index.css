@@ -79,8 +79,12 @@ header{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     nav{
         a{
-            margin-right: 3rem;
+            padding: 1.5rem;
+            margin-right: 1.5rem;
             font-weight: bold;
+            &:hover{
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
         }
     }
 }
