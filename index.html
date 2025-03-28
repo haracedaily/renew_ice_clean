@@ -42,10 +42,11 @@
             </li>
         </ul>
         <button class="flex gap-2 align-middle p-3 rounded-[10px] text-white bg-[#194A9C] cursor-pointer"
-                onclick="location.href='./reservation.html'"><div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"> </div>예약하기
+                onclick="location.href='./reservation.html'"><div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"> </div>
+            <div class="pt-[3px]">예약하기</div>
         </button>
     </nav>
-    <div id="side_btn_group" class="h-full absolute right-[5%] top-60 z-50 flex flex-col justify-between items-center">
+  <!--  <div id="side_btn_group" class="h-full absolute right-[5%] top-60 z-50 flex flex-col justify-between items-center">
     <div id="notice_btn" class="rounded-[25px] w-[50px] h-[50px] mb-10 z-50 flex justify-center items-center" onclick="location.href='./contact_us.html'">
         <span class="flex justify-center items-center"><h5 class="h-[38px]">&lt;</h5></span>
         <p>공지사항</p>
@@ -54,11 +55,18 @@
         <p>카카오챗봇</p>
     </div>
     </div>
-
-    <div id="arrow_up_btn" class="w-[40px] h-[40px] rounded-[50%] bg-[#F9B500] z-50 absolute top-[80vh] right-10  flex justify-center items-center cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-        <span class="w-[35px] h-[35px] rounded-[50%] border border-white  flex justify-center items-center">
-            <p class="text-white text-xl">⬆</p>
+-->
+    <div id="side_btn_group" class="w-[45px] h-[140px] rounded-[20px] bg-[#D9D9D9] z-50 absolute top-[70vh] right-10  flex flex-col justify-around items-center">
+        <span class="w-[35px] h-[35px] rounded-[50%] border border-white flex justify-start items-center cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
         </span>
+        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/whiteBalloon.png')] bg-no-repeat cursor-pointer" onclick="location.href='./contact_us.html'">
+            <p class="text-black text-xs font-bold tracking-[-1.2px] pb-[3px]">Q&A</p>
+        </span>
+        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer" onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
+            <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[4px]">Ch+</p>
+        </span>
+
     </div>
 
 </header>

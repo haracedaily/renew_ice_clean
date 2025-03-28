@@ -4,6 +4,11 @@
     font-weight: normal;
 }
 @font-face {
+    font-family: 'Lora-Bold';
+    src: url('../font/Lora-Bold.ttf') format('truetype');
+    font-weight: normal;
+}
+@font-face {
     font-family: 'pageNum2';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
     font-weight: normal;
@@ -34,63 +39,36 @@
     font-weight: normal;
     font-style: normal;
 }
-#arrow_up_btn:hover{
-    background-color: #19499E;
-}
-#side_btn_group {
-#kakaoBot_btn{
-    transition-duration: 0.8s;
-    background-color: #F9B500;
-    width:0px;
-    cursor: pointer;
-    p {
-        overflow: hidden;
-        white-space: nowrap;
-        display: none;
-    }
-
-}
-
-    #notice_btn {
-        transition-duration: 0.8s;
-        background-color: #F9B500;
-        cursor: pointer;
-        padding: 5px;
-        p {
-            overflow: hidden;
-            white-space: nowrap;
-            display: none;
-        }
-        span {
-            color: white;
-            font-size: 1.8rem;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 3px solid white;
-        }
-    }
+#side_btn_group{
+    span{
         &:hover {
-            #kakaoBot_btn{
-                display:flex;
-            }
-            #notice_btn, #kakaoBot_btn {
-                padding:0;
-            width: 150px;
-            background-color: #19499E;
+            &:first-child {
+                border: 1px solid #19499E;
 
-            p {
-                padding : 10px 0;
-                display: inline;
-                color: white;
-                font-weight: 900;
+                p {
+                    color: #19499E;
+                }
             }
-
-            span {
-                display: none;
+            &:nth-child(2) {
+                background-image:url("../image/seablueBalloon.png");
+                p{
+                    color:white;
+                }
+            }
+            &:nth-child(3) {
+                background-image:url("../image/yellowBalloon.png");
+                p{
+                    color:black;
+                }
             }
         }
 
+        &:nth-child(n+2){
+            p{
+                font-family:"Lora-Bold",sans-serif;
+                font-weight:200;
+            }
+        }
 
     }
 }
