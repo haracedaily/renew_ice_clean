@@ -411,7 +411,7 @@ footer {
                         height: 40px;
                         border-radius: 50%;
                         background-color: #00499a !important;
-                        background: url(/image/call_ico_sm.png);
+                        background: url(../image/call_ico_sm.png);
                         background-repeat: no-repeat;
                         background-position: center;
                         margin-right: 10px;
