@@ -496,37 +496,37 @@ window.addEventListener("scroll", ()=>{
     let $process = document.querySelector("#process");
     let $membership = document.querySelector("#membership");
 
-    if(document.documentElement.scrollTop>=$advantage.offsetTop-600){
+    if(document.documentElement.scrollTop>=$advantage.offsetTop-500){
         $advantage.classList.add("fade-in-animation");
     }else{
         $advantage.classList.remove("fade-in-animation");
     }
 
-    if(document.documentElement.scrollTop>=$state.offsetTop-600){
+    if(document.documentElement.scrollTop>=$state.offsetTop-500){
         $state.classList.add("fade-in-animation");
     }else{
         $state.classList.remove("fade-in-animation");
     }
 
-    if(document.documentElement.scrollTop>=$gallery.offsetTop-600){
+    if(document.documentElement.scrollTop>=$gallery.offsetTop-500){
         $gallery.classList.add("fade-in-animation");
     }else{
         $gallery.classList.remove("fade-in-animation");
     }
 
-    if(document.documentElement.scrollTop>=$symptom.offsetTop-600){
+    if(document.documentElement.scrollTop>=$symptom.offsetTop-500){
         $symptom.classList.add("fade-in-animation");
     }else{
         $symptom.classList.remove("fade-in-animation");
     }
 
-    if(document.documentElement.scrollTop>=$process.offsetTop-600){
+    if(document.documentElement.scrollTop>=$process.offsetTop-500){
         $process.classList.add("fade-in-animation");
     }else{
         $process.classList.remove("fade-in-animation");
     }
 
-    if(document.documentElement.scrollTop>=$membership.offsetTop-600){
+    if(document.documentElement.scrollTop>=$membership.offsetTop-500){
         $membership.classList.add("fade-in-animation");
     }else{
         $membership.classList.remove("fade-in-animation");
