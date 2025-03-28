@@ -163,7 +163,31 @@ nav {
         transform: translateY(-25px);
     }
 }
+.view{
+    animation: fadein 2s;
+    background-color: #F5F5F5;
+    padding: 2rem;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    width: 80%;
+}
+.view p{
+    margin: 8px 25px;
+}
+.state_explain{
+    margin: 8px auto;
+    color: darkred;
+    font-weight: bold;
+}
+.none-txt{
+    text-align: center;
+}
+
 
 .hidden2{
     display: none;
 }
+
+
