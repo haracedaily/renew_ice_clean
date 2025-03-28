@@ -539,3 +539,27 @@ window.addEventListener("scroll", ()=>{
     }
 
 });
+
+function counseling(){
+    const form = document.getElementById('fwrite');
+
+    const formData = new FormData(form);
+    let counseler=true;
+    let counseling = '';
+    let counsel_info = {name:'성함',phone:'휴대전화'};
+    if(!formData.has('agree')){
+        Swal.fire({icon: 'error', title: `개인정보처리방침 미동의`, text: `개인정보처리방침을 동의하지 않으셨습니다.`});
+    }else {
+        formData.forEach((value, key) => {
+            if (value.trim().length === 0) {
+                counseling.length === 0 ? counseling += counsel_info[key] : counseling += ', ' + counsel_info[key];
+                counseler = false;
+            }
+        });
+        if (counseler) {
+            Swal.fire({icon: 'success', title: '상담신청완료', text: '상담신청이 완료 되었습니다.'});
+        } else {
+            Swal.fire({icon: 'error', title: `${counseling} 미입력`, text: `미입력하신 내용을 입력해주세요.`});
+        }
+    }
+}
