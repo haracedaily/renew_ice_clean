@@ -383,6 +383,12 @@ async function galleryPagination_search(d,keyword,key){
         $next.innerHTML = nextData;
         $pagination.innerHTML = htmlData;
         await fetchGallery_search(d,keyword,key);
+    }else{
+        $prev.innerHTML = '';
+        $next.innerHTML = '';
+        $pagination.innerHTML = '';
+        document.querySelector("#galleryPage").innerHTML = `<div>조회 결과가 없습니다.</div>`;
+        Swal.fire({icon:'error',title:'실패',text:'조회된 결과가 없습니다.'});
     }
 }
 //갤러리 페이지 구성하기
