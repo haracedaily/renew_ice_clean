@@ -33,6 +33,33 @@ $Gobtn.addEventListener('click', async function () {
         return;
     }
 
+    const phoneRegex = /^\d{3}-\d{3,4}-\d{4}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const phone = $phone.value;
+    const email = $email.value;
+
+    // 전화번호 유효성 검사
+    if (!phoneRegex.test(phone)) {
+        Swal.fire({
+            icon: 'error',
+            html: `유효한 전화번호 형식이 아닙니다.<br> ex) 010-1234-5678`
+        });
+        return;
+    }
+
+    // 이메일 유효성 검사
+    if (!emailRegex.test(email)) {
+        Swal.fire({
+            icon: 'error',
+            html: '유효한 이메일 형식이 아닙니다.<br> ex) example@domain.com'
+        });
+        return;
+    }
+
+
+
+
     $Step01.style.display = 'none';
     $Step02.classList.remove('hidden2');
     const $Qtxt = document.querySelector('.Q-txt');
