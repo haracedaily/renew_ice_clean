@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/slick.css">
     <link rel="stylesheet" href="./css/swiper.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -18,17 +19,18 @@
     <script src="./js/swiper.min.js"></script>
     <script src="./js/slick.min.js"></script>
     <script>
-        const supabaseUrl = "https://embqgdrxfblyczbenvie.supabase.co";
-        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYnFnZHJ4ZmJseWN6YmVudmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjUwMDcsImV4cCI6MjA1NTAwMTAwN30.ZsuAX5G-wfxGLCmNKOniR2t4Ia2ErMj0jjJUlTRjEFo";
-        /*const supabaseUrl = "https://wqetnltlnsvjidubewia.supabase.co";
-        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";*/
+        // const supabaseUrl = "https://embqgdrxfblyczbenvie.supabase.co";
+        // const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYnFnZHJ4ZmJseWN6YmVudmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjUwMDcsImV4cCI6MjA1NTAwMTAwN30.ZsuAX5G-wfxGLCmNKOniR2t4Ia2ErMj0jjJUlTRjEFo";
+        const supabaseUrl = "https://wqetnltlnsvjidubewia.supabase.co";
+        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
         const supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
     </script>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
+
 <header class="sticky top-0 z-40 w-full bg-white p-5">
     <nav class="flex items-center justify-evenly flex-wrap">
-        <img src="./image/logo.png" onclick="location.href='./index.html'" alt="">
+        <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
         <ul>
             <li>
                 <a href="#advantage">특장점</a>
@@ -40,11 +42,41 @@
             </li>
         </ul>
         <button class="flex gap-2 align-middle p-3 rounded-[10px] text-white bg-[#194A9C] cursor-pointer"
-                onclick="location.href='./reservation.html'"><div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"> </div>예약하기
+                onclick="location.href='./reservation.html'">
+            <div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"></div>
+            <div class="pt-[3px]">예약하기</div>
         </button>
     </nav>
+    <!--  <div id="side_btn_group" class="h-full absolute right-[5%] top-60 z-50 flex flex-col justify-between items-center">
+      <div id="notice_btn" class="rounded-[25px] w-[50px] h-[50px] mb-10 z-50 flex justify-center items-center" onclick="location.href='./contact_us.html'">
+          <span class="flex justify-center items-center"><h5 class="h-[38px]">&lt;</h5></span>
+          <p>공지사항</p>
+      </div>
+      <div id="kakaoBot_btn" class="rounded-[25px] w-[50px] h-[50px] z-50 flex justify-center items-center" onclick="location.href='#'">
+          <p>카카오챗봇</p>
+      </div>
+      </div>
+  -->
+    <div id="side_btn_group"
+         class="w-[45px] h-[140px] rounded-[20px] z-50 absolute top-[70vh] right-10  flex flex-col justify-around items-center">
+        <span class="w-[35px] h-[35px] rounded-[50%] border border-white flex justify-start items-center cursor-pointer"
+              onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
+        </span>
+        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/whiteBalloon.png')] bg-no-repeat cursor-pointer"
+              onclick="location.href='./contact_us.html'">
+            <p class="text-black text-xs font-bold tracking-[-1.2px] pb-[1.5px]">Q&A</p>
+        </span>
+        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer"
+              onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
+            <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[2px]">Ch+</p>
+        </span>
+
+    </div>
+
 </header>
 <main class="flex flex-col items-center justify-center w-full h-full gap-4">
+
     <!--메인헤더 시작-->
     <div id="main_header" class="flex flex-col justify-center items-center w-full">
 
@@ -126,44 +158,45 @@
     </div>
     <!--메인헤더 끝-->
     <!--장단점 div-->
-    <div id="advantage" class="flex flex-col justify-center items-center p-[10%] w-full h-[60vh] gap-7">
+    <div id="advantage" class="non-opacity flex flex-col justify-center items-center p-[10%] w-full h-[60vh] gap-7">
         <h4 class="underline text-blue-900 font-bold">Advantage</h4>
         <h1 class="font-bold text-3xl">ICECARE가 특별한 이유</h1>
         <!--이미지 시작점-->
-        <div class="flex justify-around items-baseline w-full h-full">
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+        <div class="flex justify-center items-baseline w-full h-full gap-14">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-3">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/book.png" alt="">
                 </div>
-                <h5 class="font-bold">숙련된 노하우로 관리</h5>
+                <h5 class="font-bold text-xl">숙련된 노하우로 관리</h5>
                 <p class="text-gray-500">세척부터 수리까지 완벽한 서비스를 제공합니다</p>
             </div>
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-4">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/knowledge.png" alt="">
                 </div>
-                <h5 class="font-bold">제품에 대한 이해도</h5>
+                <h5 class="font-bold text-xl">제품에 대한 이해도</h5>
                 <p class="text-gray-500">제품에 대한상세한 이해도로 꼼꼼한 서비스를 제공합니다</p>
             </div>
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-4">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/touch_screen.png" alt="">
                 </div>
-                <h5 class="font-bold">관리상황 확인</h5>
+                <h5 class="font-bold text-xl">관리상황 확인</h5>
                 <p class="text-gray-500">QR코드를 스캔하면 현재 관리 상황 확인이 가능합니다</p>
             </div>
-            <div class="flex flex-col justify-center items-center w-[15%]">
-                <div class="w-30 h-[30] flex rounded-[50%] bg-gray-200 p-6">
+            <div class="flex flex-col justify-center items-center w-[15%] gap-4">
+                <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/money_pocket.png" alt="">
                 </div>
-                <h5 class="font-bold">합리적인 비용</h5>
+                <h5 class="font-bold text-xl">합리적인 비용</h5>
                 <p class="text-gray-500">멤버쉽 서비스로 저렴한 가격에 훌륭한 서비스를 제공해드립니다</p>
             </div>
         </div>
     </div>
     <!--특장점 끝-->
     <!--처리현황-->
-    <div id="state" class="flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[3%] text-white">
+    <div id="state"
+         class="non-opacity flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[3%] text-white">
         <h4 class="underline font-bold">Processing status</h4>
         <h1 class="font-bold text-3xl">처리 현황</h1>
         <!--처리현황 리스트 8-->
@@ -246,71 +279,29 @@
     </div>
     <!--처리현황 끝-->
     <!--시공 갤러리-->
-    <div id="gallery" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%] relative">
+    <div id="gallery"
+         class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%] relative">
         <h4 class="underline text-blue-900 font-bold">Gallery</h4>
         <h1 class="font-bold text-3xl">시공 갤러리</h1>
         <!--갤러리 게시판 부분-->
         <div id="galleryPage" class="w-[80%] min-h-[1040px] h-full grid grid-cols-3 gap-4">
 
         </div>
-        <!-- 글쓰기 editor 팝업 -->
-        <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
-            <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
-                <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
-                    <label>예약번호</label>
-                    <input id="reserv_no" type="search" readonly>
-                    <label>날짜</label>
-                    <input id="re_date" type="date" readonly>
-                    <label>제목</label>
-                    <input id="re_title" class="col-span-3 border-[1px]" type="text">
-                    <label>첨부파일</label>
-                    <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);" multiple
-                           accept="image/*">
-                    <div id="re_file_list" class="file-list col-span-4"></div>
-                </div>
-                <div id="editor" class="p-5">
-                    <p></p>
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
-                    <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
-                </div>
-            </div>
-        </div>
-        <!--글쓰기 에디터 팝업 끝-->
-        <!--단일 갤러리 팝업-->
-        <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
-            <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
-                <div class="flex flex-row justify-between items-center">
-                    <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
-                    <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer"
-                         style="background-image:url('./image/pop_close.png')"></div>
-                </div>
-                <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
-                    <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
-                    <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
-                </div>
-                <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
-                    날짜
-                </div>
-                <div id="gallery_content" class="max-h-[200px] overflow-y-scroll">
-                    내용
-                </div>
 
-            </div>
-        </div>
+        <!--페이지 내비게이션-->
         <div class="flex flex-row justify-between w-full">
-            <div class="flex flex-row justify-center items-center gap-2 ml-[150px]">
+            <div class="flex flex-row justify-center items-center gap-2 ml-[180px]">
                 <select id="search_gallery_select" class="h-[40px]">
-                    <option value="title&content">제목+내용</option>
-                    <option value="title">제목</option>
-                    <option value="content">내용</option>
+                    <option value="1">제목+내용</option>
+                    <option value="2">제목</option>
+                    <option value="3">내용</option>
                 </select>
-                <input class="h-[40px] border rounded-lg p-[3px]" type="search" id="search_gallery">
-                <!--TODO 검색 기능 넣기-->
-                <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick=""></span>
+                <input class="h-[40px] border rounded-lg p-[3px]" type="search" id="search_gallery"
+                       onkeydown="search_chk(event)">
+                <!--갤러리 검색-->
+                <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick="gallery_search()"></span>
             </div>
-        <button id="review_write" class="cursor-pointer p-2 bg-[#194A9C] text-white mr-[150px]">글쓰기</button>
+            <button id="review_write" class="cursor-pointer p-2 bg-[#194A9C] text-white mr-[180px]">글쓰기</button>
         </div>
         <!--갤러리 페이지네이션-->
 
@@ -328,7 +319,7 @@
     </div>
     <!--시공 갤러리 끝-->
     <!--고장 증상-->
-    <div id="symptom" class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+    <div id="symptom" class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">Symptom</h4>
         <h1 class="font-bold text-3xl">고장 증상</h1>
         <div id="symptoms" class="w-[80%] h-full grid grid-cols-3 gap-3">
@@ -340,17 +331,17 @@
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
                     <p class="font-bold">작동 안됨</p>
-                    <p>제빙기가 작동하지 않습니다</p>
+                    <p>제빙기가 전원을 눌러도 작동하지 않습니다</p>
                 </div>
                 <div class="hidden flex-col justify-center itmes-start symtoms-conserve">
                     <p class="font-bold">작동 안됨</p>
-                    <p>제빙기 전원부, PCB기판, 급수라인 확인 요망</p>
+                    <p>제빙기 전원부, PCB기판, 급수라인 확인이 필요합니다</p>
                 </div>
             </div>
             <!--작동 큰소음 증상-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/sound.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -365,12 +356,12 @@
             <!--작동시 탄냄새-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/smell.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
                     <p class="font-bold">작동시 탄냄새</p>
-                    <p>제빙기를 켜면 탄냄새가 나요</p>
+                    <p>제빙기를 전원이 켜져있으면 타는 냄새가 나요</p>
                 </div>
                 <div class="hidden flex-col justify-center itmes-start symtoms-conserve">
                     <p class="font-bold">작동시 탄냄새</p>
@@ -380,7 +371,7 @@
             <!--차단기-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/button.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -395,7 +386,7 @@
             <!--물공급 불가-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/supply_water.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -410,7 +401,7 @@
             <!--얼음 저장통-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/icewater.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -425,7 +416,7 @@
             <!--물 떨어짐-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/waterdrop.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -440,7 +431,7 @@
             <!--빈얼음 / 뭉친 얼음-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/flat_ice.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -449,13 +440,13 @@
                 </div>
                 <div class="hidden flex-col justify-center itmes-start symtoms-conserve">
                     <p class="font-bold">빈얼음 / 뭉친 얼음</p>
-                    <p>에바센서 조정 또는 냉매, 냉판 확인 요망</p>
+                    <p>에바센서 조정 또는 냉매, 냉판 확인이 필요합니다</p>
                 </div>
             </div>
             <!--물넘침-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/drop_water.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -470,7 +461,7 @@
             <!--얼음 나오는 속도-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/drop_ice.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -485,7 +476,7 @@
             <!--얼음 공급 불가-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/danger_flat_ice.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -500,7 +491,7 @@
             <!--빨간 경고등-->
             <div class="bg-gray-100 rounded-2xl flex justify-start items-center gap-3 p-7 w-full">
                 <div class="rounded-[50%] p-2 w-[60px] h-[60px] bg-white flex justify-center items-center text-white">
-<!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
+                    <!--                    <div class="hidden text-5xl w-[36px] h-[36px] items-end justify-center">+</div>-->
                     <img src="./image/danger.png" class="w-[35px] h-[35px]" alt="">
                 </div>
                 <div class="flex flex-col justify-center items-start symtoms-start">
@@ -517,7 +508,7 @@
     </div>
     <!--고장 증상 끝-->
     <!--프로세스 시작-->
-    <div id="process" class="flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[10%]">
+    <div id="process" class="non-opacity flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">Process</h4>
         <h1 class="font-bold text-3xl">고객센터 1666-9587</h1>
         <div id="Processes" class="w-[80%] h-[35vh] flex flex-row justify-center items-center">
@@ -557,8 +548,8 @@
     <!--프로세스 끝-->
 
     <!--멤버쉽 시작-->
-    <div name="membership" id="membership"
-         class="flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+    <div id="membership"
+         class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">MEMBERSHIP</h4>
         <h1 class="font-bold text-3xl">아이스케어 멤버쉽 혜택</h1>
 
@@ -653,8 +644,8 @@ min-height: 300px;
                 </ul>
             </nav>
             <div class="">
-                <h1 class="foot_logo">
-                    <a href="/">
+                <h1 class="foot_logo mb-[10px]">
+                    <a href="./">
                         <img src="./image/f_logo.png" alt="홈피스 로고" class="only_web">
                         <!--                        <img src="image/f_logo_m.png" alt="홈피스 로고" class="only_mo">-->
                     </a>
@@ -726,52 +717,99 @@ min-height: 300px;
                         <button type="button" class="agree_pop cursor-pointer" onclick="open_popup()">[약관동의]</button>
                     </div>
                 </div>
-                <button type="button" class="submit_btn gmarket_font" onclick="">상담신청</button>
+                <button type="button" class="submit_btn gmarket_font" onclick="counseling()">상담신청</button>
             </form>
         </div>
     </section>
     <!--개인정보처리방침 팝업-->
     <div id="personal_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
         <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
-                <div class="flex">
-                    <h2 id="pop_title" class="text-center font-bold text-[30px] p-[0_40px] w-[95%]">개인정보처리방침</h2>
-                    <div onclick="close_popup()" class="w-[40px] h-[40px] cursor-pointer"
-                         style="background-image:url('./image/pop_close.png')"></div>
-                </div>
+            <div class="flex">
+                <h2 id="pop_title" class="text-center font-bold text-[30px] p-[0_40px] w-[95%]">개인정보처리방침</h2>
+                <div onclick="close_popup()" class="w-[40px] h-[40px] cursor-pointer"
+                     style="background-image:url('./image/pop_close.png')"></div>
+            </div>
             <hr class="mb-2">
-                <ul class="collection-content">
-                    <li class="overflow-y-scroll text-[18px] h-[60vh] p-3 leading-9">
-                        <h3><strong>개인정보 수집 및 이용에 대한 동의</strong></h3>
-                        아래와 같이 개인정보를 수집합니다.<br>
-                        <br>
-                        <strong>개인정보 제공에 대한 동의</strong><br>
-                        홈피스 요청하신 대해 개인정보보호법 제15조에 따라 아래와 같은 사항을 알리고 동의를 받아 귀하의 개인정보를 수집합니다.<br>
-                        <strong>제공하는 개인정보 항목</strong><br>
-                        지역, 성함, 휴대전화, 주소 등 세부 개인정보<br>
-                        <strong>개인정보를 제공받는 자의 이용 목적</strong><br>
-                        요청하신 문의에 대한 답변 및 관련 제반 업무 지원<br>
-                        <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
-                        문의 종료 시점으로부터 1년간<br>
-                        <strong>동의 거부권에 대한 고지</strong><br>
-                        본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.<br>
-                        <br>
-                        <h3 class="text-[20px]"><strong>개인정보 제3자 제공에 대한 동의</strong></h3><br>
-                        <strong>개인정보를 제공받는 자</strong><br>
-                        홈피스 제휴 영업조직<br>
-                        <strong>개인정보를 제공받는 자의 개인정보 이용 목적</strong><br>
-                        홈피스 주식회사로 부터 위임받은 상담 및 제반 업무 지원<br>
-                        <strong>제공하는 개인정보의 항목</strong><br>
-                        지역, 성함, 휴대전화, 주소 등 문의에 관련한 세부 개인정보<br>
-                        <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
-                        문의 종료 시점으로부터 1년간<br>
-                        <strong>동의 거부권에 대한 고지</strong><br>
-                        본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.
-                    </li>
+            <ul class="collection-content">
+                <li class="overflow-y-scroll text-[18px] h-[60vh] p-3 leading-9">
+                    <h3><strong>개인정보 수집 및 이용에 대한 동의</strong></h3>
+                    아래와 같이 개인정보를 수집합니다.<br>
+                    <br>
+                    <strong>개인정보 제공에 대한 동의</strong><br>
+                    홈피스 요청하신 대해 개인정보보호법 제15조에 따라 아래와 같은 사항을 알리고 동의를 받아 귀하의 개인정보를 수집합니다.<br>
+                    <strong>제공하는 개인정보 항목</strong><br>
+                    지역, 성함, 휴대전화, 주소 등 세부 개인정보<br>
+                    <strong>개인정보를 제공받는 자의 이용 목적</strong><br>
+                    요청하신 문의에 대한 답변 및 관련 제반 업무 지원<br>
+                    <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
+                    문의 종료 시점으로부터 1년간<br>
+                    <strong>동의 거부권에 대한 고지</strong><br>
+                    본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.<br>
+                    <br>
+                    <h3 class="text-[20px]"><strong>개인정보 제3자 제공에 대한 동의</strong></h3><br>
+                    <strong>개인정보를 제공받는 자</strong><br>
+                    홈피스 제휴 영업조직<br>
+                    <strong>개인정보를 제공받는 자의 개인정보 이용 목적</strong><br>
+                    홈피스 주식회사로 부터 위임받은 상담 및 제반 업무 지원<br>
+                    <strong>제공하는 개인정보의 항목</strong><br>
+                    지역, 성함, 휴대전화, 주소 등 문의에 관련한 세부 개인정보<br>
+                    <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
+                    문의 종료 시점으로부터 1년간<br>
+                    <strong>동의 거부권에 대한 고지</strong><br>
+                    본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.
+                </li>
 
-                </ul>
+            </ul>
         </div>
     </div>
     <!--개인정보처리방침 팝업 끝-->
+    <!-- 글쓰기 editor 팝업 -->
+    <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10">
+            <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
+                <label>예약번호</label>
+                <input id="reserv_no" type="search" readonly>
+                <label>날짜</label>
+                <input id="re_date" type="date" readonly>
+                <label>제목</label>
+                <input id="re_title" class="col-span-3 border-[1px]" type="text">
+                <label>첨부파일</label>
+                <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);" multiple
+                       accept="image/*">
+                <div id="re_file_list" class="file-list col-span-4"></div>
+            </div>
+            <div id="editor" class="p-5">
+                <p></p>
+            </div>
+            <div class="flex justify-end gap-4">
+                <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
+                <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
+            </div>
+        </div>
+    </div>
+    <!--글쓰기 에디터 팝업 끝-->
+    <!--단일 갤러리 팝업-->
+    <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(20vw,20%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
+            <div class="flex flex-row justify-between items-center">
+                <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
+                <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer"
+                     style="background-image:url('./image/pop_close.png')"></div>
+            </div>
+            <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
+                <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
+                <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
+            </div>
+            <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
+                날짜
+            </div>
+            <div id="gallery_content" class="max-h-[200px] overflow-y-scroll">
+                내용
+            </div>
+
+        </div>
+    </div>
+    <!--단일 갤러리 팝업 끝-->
 </main>
 </body>
 </html>

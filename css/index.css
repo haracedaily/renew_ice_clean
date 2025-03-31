@@ -4,6 +4,11 @@
     font-weight: normal;
 }
 @font-face {
+    font-family: 'Lora-Bold';
+    src: url('../font/Lora-Bold.ttf') format('truetype');
+    font-weight: normal;
+}
+@font-face {
     font-family: 'pageNum2';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
     font-weight: normal;
@@ -28,6 +33,46 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'iceFont';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+#side_btn_group{
+    background-color:rgba(217,217,217,0.7);
+    span{
+        &:hover {
+            &:first-child {
+                border: 1px solid #19499E;
+
+                p {
+                    color: #19499E;
+                }
+            }
+            &:nth-child(2) {
+                background-image:url("../image/seablueBalloon.png");
+                p{
+                    color:white;
+                }
+            }
+            &:nth-child(3) {
+                background-image:url("../image/yellowBalloon.png");
+                p{
+                    color:black;
+                }
+            }
+        }
+
+        &:nth-child(n+2){
+            p{
+                font-family:"pageNum5",sans-serif;
+                font-weight:500;
+            }
+        }
+
+    }
+}
 img {
     max-width: unset;
 }
@@ -35,8 +80,12 @@ header{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     nav{
         a{
-            margin-right: 3rem;
+            padding: 1.5rem;
+            margin-right: 1.5rem;
             font-weight: bold;
+            &:hover{
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
         }
     }
 }
@@ -111,7 +160,7 @@ header{
     }
 
     .end {
-        background: #252525;
+        background: #2C9900;
     }
 
     .new {
@@ -119,7 +168,7 @@ header{
     }
 
     .start {
-        background: #999999;
+        background: #F9B500;
     }
 }
 
@@ -345,7 +394,7 @@ footer {
                         height: 40px;
                         border-radius: 50%;
                         background-color: #00499a !important;
-                        background: url(/image/call_ico_sm.png);
+                        background: url(../image/call_ico_sm.png);
                         background-repeat: no-repeat;
                         background-position: center;
                         margin-right: 10px;
@@ -631,7 +680,7 @@ footer {
 
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'iceFont',sans-serif;
     color: #333;
 }
 
@@ -680,5 +729,13 @@ body {
 
 
 
-
+.non-opacity{
+    opacity: 0;
+}
+.opacity{
+    opacity: 1;
+}
+.fade-in-animation{
+    animation: fadeInUp 1500ms forwards 1;
+}
 
