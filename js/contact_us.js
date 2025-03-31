@@ -152,7 +152,7 @@ async function noticeSelect(categoryId) {
         .select()
         .eq('category_id', categoryId)
         .order('updated_at', {ascending: true})
-        // .range(from, to)
+        .range(from, to)
         ;
     ;
 
