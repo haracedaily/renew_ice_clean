@@ -72,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(res);*/
             //let res = await re_upload(filesArr, res.data[0].re_no);
             let res = await re_upload(filesArr,quill);
-            console.log(res);
             if (!res.error) {
                 document.querySelector("#re_file_list").innerHTML = '';
                 $reTitle.value = '';
@@ -209,7 +208,6 @@ async function fetchGallery_search(page,keyword,key){
     }
     let res = await supabase.rpc("fetch_gallery_search", {page,keyword,key});
     if (!res.error) {
-        console.log(res);
         let htmlData = '';
         res.data.forEach(item => {
             htmlData += `  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
@@ -237,7 +235,6 @@ async function fetchGallery(page,keyword=''){
     }
         let res = await supabase.rpc("fetch_gallery", {page});
         if (!res.error) {
-            console.log(res);
             let htmlData = '';
             res.data.forEach(item => {
                 htmlData += `  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
@@ -261,7 +258,6 @@ async function openGallery(re_no){
     let $gallery_popup = document.querySelector("#select_gallery");
     document.querySelector('body').classList.add("scroll_lock");
     let res = await supabase.rpc("select_gallery",{gallery_no:re_no});
-    console.log(res);
         $gallery_popup.classList.remove("hidden");
     if(!res.error){
         document.querySelector("#gallery_date").innerHTML = res.data[0].cpdt.slice(0,10);
