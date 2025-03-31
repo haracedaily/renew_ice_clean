@@ -1,111 +1,108 @@
-document.getElementById('reservation-date').addEventListener('change', function() {
+document.getElementById('reservation-date').addEventListener('change', function () {
     const RTime = document.querySelector('.r-time');
     if (this.value) {
         RTime.classList.remove('hidden2')
-        RTime.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        RTime.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 });
 
-document.querySelectorAll('.reservationTime').forEach((node)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.reservationTime').forEach((node) => {
+    node.addEventListener('change', function () {
         const Rinfo = document.querySelector('.r-info');
-        if(this.checked) {
+        if (this.checked) {
             Rinfo.classList.remove('hidden2');
-            Rinfo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Rinfo.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
     })
 });
 
-document.querySelectorAll('.reserInfo').forEach((node,idx)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.reserInfo').forEach((node, idx) => {
+    node.addEventListener('change', function () {
 
         const Raddr = document.querySelector('.r-addr');
-        if(idx==0){
-            if(document.querySelectorAll('.reserInfo')[1].value&&!!document.querySelectorAll('.reserInfo')[2].value&&!!this.value){
+        if (idx == 0) {
+            if (document.querySelectorAll('.reserInfo')[1].value && !!document.querySelectorAll('.reserInfo')[2].value && !!this.value) {
                 Raddr.classList.remove('hidden2');
-                Raddr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                Raddr.scrollIntoView({behavior: 'smooth', block: 'start'});
             }
-        }else if(idx==1){
-            if(!!document.querySelectorAll('.reserInfo')[0].value&&!!document.querySelectorAll('.reserInfo')[2].value&&!!this.value){
+        } else if (idx == 1) {
+            if (!!document.querySelectorAll('.reserInfo')[0].value && !!document.querySelectorAll('.reserInfo')[2].value && !!this.value) {
                 Raddr.classList.remove('hidden2');
-                Raddr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                Raddr.scrollIntoView({behavior: 'smooth', block: 'start'});
             }
-        }else{
-            if(!!document.querySelectorAll('.reserInfo')[1].value&&!!document.querySelectorAll('.reserInfo')[0].value&&!!this.value){
+        } else {
+            if (!!document.querySelectorAll('.reserInfo')[1].value && !!document.querySelectorAll('.reserInfo')[0].value && !!this.value) {
                 Raddr.classList.remove('hidden2');
-                Raddr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                Raddr.scrollIntoView({behavior: 'smooth', block: 'start'});
             }
         }
     })
 });
 
-document.querySelectorAll('.reserAddr').forEach((node)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.reserAddr').forEach((node) => {
+    node.addEventListener('change', function () {
         const Rmodel = document.querySelector('.r-model');
-        if(this.value) {
+        if (this.value) {
             Rmodel.classList.remove('hidden2');
-            Rmodel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Rmodel.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
     })
 });
 
-document.getElementById('modelname').addEventListener('change', function() {
+document.getElementById('modelname').addEventListener('change', function () {
     const Rcapacity = document.querySelector('.r-capacity');
-    if(this.value) {
+    if (this.value) {
         Rcapacity.classList.remove('hidden2');
-        Rcapacity.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        Rcapacity.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 });
 
-document.querySelectorAll('.capainput').forEach((node)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.capainput').forEach((node) => {
+    node.addEventListener('change', function () {
         const Rselectserv = document.querySelector('.r-selectServ');
-        if(this.checked) {
+        if (this.checked) {
             Rselectserv.classList.remove('hidden2');
-            Rselectserv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Rselectserv.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
     })
 });
 
 
-
-
-document.querySelectorAll('.selectServ').forEach((node)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.selectServ').forEach((node) => {
+    node.addEventListener('change', function () {
         const Rselectcyc = document.querySelector('.r-selectCyc');
-        if(this.value) {
+        if (this.value) {
             Rselectcyc.classList.remove('hidden2');
-            Rselectcyc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Rselectcyc.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
     })
 });
 
-document.querySelectorAll('.selectCyc').forEach((node)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.selectCyc').forEach((node) => {
+    node.addEventListener('change', function () {
         const Rselectadd = document.querySelector('.r-selectAdd');
-        if(this.checked) {
+        if (this.checked) {
             Rselectadd.classList.remove('hidden2');
-            Rselectadd.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Rselectadd.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
     })
 });
 
-document.querySelectorAll('.selectAdd').forEach((node)=>{
-    node.addEventListener('change', function() {
+document.querySelectorAll('.selectAdd').forEach((node) => {
+    node.addEventListener('change', function () {
         const Rspecial = document.querySelector('.r-Special');
         const ReserBtn = document.querySelector('.reserBtn');
         const PriceTabel = document.querySelector('.price-table');
-        if(this.checked) {
+        if (this.checked) {
 
             Rspecial.classList.remove('hidden2');
             ReserBtn.classList.remove('hidden2')
-            Rspecial.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Rspecial.scrollIntoView({behavior: 'smooth', block: 'start'});
             PriceTabel.classList.remove('hidden2');
 
         }
     });
 });
-
 
 
 const CheckInfoName = document.querySelector('.check-info-name');
@@ -147,9 +144,9 @@ const $agreeInput = document.querySelector('#privacy');
 const $ReserCheck = document.getElementById('resercheck');
 
 // 예약하기 버튼 눌렀을 때
-$confirmReserve.addEventListener('click', function(){
+$confirmReserve.addEventListener('click', async function () {
 
-    if(!($ReserCheck.checked)){
+    if (!($ReserCheck.checked)) {
         Swal.fire({
             icon: "error",
             text: "모든 내용을 확인 후 예약을 진행해 주세요.",
@@ -180,42 +177,50 @@ $confirmReserve.addEventListener('click', function(){
     if (!phoneRegex.test(phone)) {
         Swal.fire({
             icon: 'error',
-            text: '유효한 전화번호 형식이 아닙니다.\n ex) 010-1234-5678',
+            html: `유효한 전화번호 형식이 아닙니다.<br> ex) 010-1234-5678`,
+            didClose: () => {
+                OutputPhone.focus();
+            }
         })
-        OutputPhone.focus();
-        return;
+
+
+
     }
 
     // 이메일 유효성 검사
-    if (!emailRegex.test(email)) {
+    else if (!emailRegex.test(email)) {
         Swal.fire({
             icon: 'error',
-            text: '유효한 이메일 형식이 아닙니다. \n ex) example@domain.com',
+            html: '유효한 이메일 형식이 아닙니다.<br> ex) example@domain.com',
+            didClose: () => {
+                OutputEmail.focus();
+            }
         });
+
         OutputEmail.focus();
-        return;
-    }
+        console.log("Test");
+    } else {
 
-    $Rcontainer.classList.add('hidden2');
-    $modal.classList.remove('hidden2');
+        $Rcontainer.classList.add('hidden2');
+        $modal.classList.remove('hidden2');
 
 
-    const selectedTime = document.querySelector('.reservationTime:checked');
-    if (selectedTime) {
-        CheckTime.innerHTML = selectedTime.value;
-    }
-    const selectedSer = document.querySelector('.selectServ:checked');
-    if (selectedSer) {
-        CheckSelectSer.innerHTML = selectedSer.value;
-    }
-    const selectedCyc = document.querySelector('.selectCyc:checked');
-    if (selectedCyc) {
-        CheckSelectCyc.innerHTML = selectedCyc.value;
-    }
-    const selectedAdd = document.querySelector('.selectAdd:checked');
-    if (selectedAdd) {
-        CheckSelectAdd.innerHTML = selectedAdd.value;
-    }
+        const selectedTime = document.querySelector('.reservationTime:checked');
+        if (selectedTime) {
+            CheckTime.innerHTML = selectedTime.value;
+        }
+        const selectedSer = document.querySelector('.selectServ:checked');
+        if (selectedSer) {
+            CheckSelectSer.innerHTML = selectedSer.value;
+        }
+        const selectedCyc = document.querySelector('.selectCyc:checked');
+        if (selectedCyc) {
+            CheckSelectCyc.innerHTML = selectedCyc.value;
+        }
+        const selectedAdd = document.querySelector('.selectAdd:checked');
+        if (selectedAdd) {
+            CheckSelectAdd.innerHTML = selectedAdd.value;
+        }
 
         function updateCapacity() {
             const selectedCapacity = document.querySelector('.capainput:checked');
@@ -233,7 +238,8 @@ $confirmReserve.addEventListener('click', function(){
                 CheckCapacity.innerHTML = capacityText;
             }
         }
-    updateCapacity();
+
+        updateCapacity();
 
         function deposit() {
             const selectedCapacity = document.querySelector('.capainput:checked');
@@ -251,11 +257,11 @@ $confirmReserve.addEventListener('click', function(){
                 CheckDeposit.innerHTML = depositText;
             }
         }
-    deposit();
+
+        deposit();
 
 
-
-
+    }
 
 });
 
@@ -298,10 +304,6 @@ $confirmReserve.addEventListener('click', function(){
 // });
 
 
-
-
-
-
 // 개인정보 제공 보기 버튼 privacy-detail-btn privacy-details
 
 const $PdetailBtn = document.querySelector('.privacy-detail-btn');
@@ -335,8 +337,8 @@ PrivacyNo.addEventListener('click', () => {
 
 // 확인 버튼
 const PrivacyOk = document.querySelector('.privacy-ok');
-PrivacyOk.addEventListener('click', async function(){
-    if(!($agreeInput.checked)){
+PrivacyOk.addEventListener('click', async function () {
+    if (!($agreeInput.checked)) {
         Swal.fire({
             icon: "error",
             text: "개인정보 제공에 동의하셔야 합니다.",
@@ -346,44 +348,42 @@ PrivacyOk.addEventListener('click', async function(){
 
     const reservationData = {
         name: document.querySelector('.check-info-name').innerHTML,
-        tel : document.querySelector('.check-info-phone').innerHTML,
-        email : document.querySelector('.check-info-email').innerHTML,
-        addr : `${document.querySelector('.check-addr-post').innerHTML},
+        tel: document.querySelector('.check-info-phone').innerHTML,
+        email: document.querySelector('.check-info-email').innerHTML,
+        addr: `${document.querySelector('.check-addr-post').innerHTML},
                 ${document.querySelector('.check-addr-addr').innerHTML},
                 ${document.querySelector('.check-addr-deta').innerHTML}`,
-        date : document.querySelector('.check-date').innerHTML,
-        time : document.querySelector('.check-time').innerHTML,
-        model : document.querySelector('.check-model').innerHTML,
-        capacity : document.querySelector('.check-capacity').innerHTML,
-        service : document.querySelector('.check-select-ser').innerHTML,
-        cycle : document.querySelector('.check-select-cyc').innerHTML,
-        add : document.querySelector('.check-select-add').innerHTML,
-        remark : document.querySelector('.check-special').innerHTML,
-        deposit : parseInt(document.querySelector('.check-deposit').innerHTML),
+        date: document.querySelector('.check-date').innerHTML,
+        time: document.querySelector('.check-time').innerHTML,
+        model: document.querySelector('.check-model').innerHTML,
+        capacity: document.querySelector('.check-capacity').innerHTML,
+        service: document.querySelector('.check-select-ser').innerHTML,
+        cycle: document.querySelector('.check-select-cyc').innerHTML,
+        add: document.querySelector('.check-select-add').innerHTML,
+        remark: document.querySelector('.check-special').innerHTML,
+        deposit: parseInt(document.querySelector('.check-deposit').innerHTML),
     }
 
 
     const data = await supabase
         .from('ice_res')
         .insert([reservationData]);
-        // console.log(data);
-        if(data.status === 201 ){
-                Swal.fire({
-                    title: '예약성공!',
-                    icon: 'success',
-                    draggable: true,
-                }).then(() => {
-                    location.href = '../reservation.html';
-                });
-        }else{
-            Swal.fire({
-                icon: 'error',
-                title: '예약 실패',
-                text: '예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
-            });
-        }
-
-
+    // console.log(data);
+    if (data.status === 201) {
+        Swal.fire({
+            title: '예약성공!',
+            icon: 'success',
+            draggable: true,
+        }).then(() => {
+            location.href = '../reservation.html';
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: '예약 실패',
+            text: '예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+        });
+    }
 
 
 });

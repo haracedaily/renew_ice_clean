@@ -59,10 +59,10 @@ $Gobtn.addEventListener('click', async function () {
     if (data && data.length > 0) {
         row = `
       <div class="view">
-        <p><strong>이름 : </strong><input id="name" value="${data[0].name}" disabled></p>
+        <p><strong>이름 : </strong>${data[0].name}</p>
         <p><strong>연락처 : </strong>${data[0].tel}</p>
         <p><strong>email : </strong>${data[0].email}</p>
-        <p><strong>주소 : </strong>${data[0].addr}</p> <!-- 주소 검색 제거, 단순 텍스트로 표시 -->
+        <p><strong>주소 : </strong>${data[0].addr}</p>
         <p><strong>날짜 : </strong>${data[0].date.slice(0, 10)}</p>
         <p><strong>시간 : </strong>${data[0].time}</p>
         <p><strong>제빙기 모델명 : </strong>${data[0].model}</p>
@@ -72,11 +72,11 @@ $Gobtn.addEventListener('click', async function () {
         <p><strong>추가 서비스 선택 : </strong>${data[0].add || '없음'}</p>
         <p><strong>특별 요청사항 : </strong>${data[0].remark || '없음'}</p>
         <p><strong>예약금 : </strong>${data[0].deposit ? data[0].deposit + '만 원' : '미정'}</p>
-        <p><strong>예약상태 : </strong>${data[0].state == 0 ? '예약중' : '예약완료'}
+        <p><strong>예약상태 : </strong>${data[0].state == 0 ? '예약대기' : '예약완료'}
           <div class="state_explain">${data[0].state == 0 ? '< 예약금을 입금하셔야 예약이 완료됩니다 >' : '예약이 완료되었습니다.'}</div>
         </p>
       </div>
-      <div>
+      <div class="button-container">
         <button class="update-btn" onclick="Resupdate(${data[0].res_no})">수정</button>
         <button class="done-btn" onclick="location.href='../reservationInquiry.html'">확인</button>
       </div>
@@ -89,13 +89,12 @@ $Gobtn.addEventListener('click', async function () {
       </div>
     `;
     }
-    $Step02.innerHTML = '';
     $Step02.innerHTML = row;
 });
 
 // 수정 폼 생성 함수
 async function Resupdate(reservationId) {
-    if (!reservationId) {
+    if (!reservationId+"".match(/[0-9]/g)?.length>0) {
         Swal.fire({ icon: 'error', text: '예약 번호가 누락되었습니다.' });
         return;
     }
@@ -117,8 +116,6 @@ async function Resupdate(reservationId) {
         return;
     }
 
-    const reservation = document.querySelector('.view');
-
     // 현재 날짜와 3개월 후 날짜 계산
     const today = new Date();
     const maxDate = new Date();
@@ -128,73 +125,80 @@ async function Resupdate(reservationId) {
 
     // 기존 주소에서 우편번호와 상세 주소 분리
     const addrParts = data.addr.split(' ');
-    const postcode = addrParts[0].match(/^\d{5}$/) ? addrParts[0] : '';
+    const postcode = addrParts[0].match(/[0-9]{5}$/) ? addrParts[0] : '';
     const basicAddr = postcode ? addrParts.slice(1, -1).join(' ') : addrParts.slice(0, -1).join(' ');
     const detailAddr = addrParts[addrParts.length - 1];
 
     // 수정 폼 HTML
-    reservation.innerHTML = `
-    <form id="updateForm">
-      <p><strong>이름 : </strong><input id="updateName" value="${data.name}"></p>
-      <p><strong>연락처 : </strong><input id="updateTel" value="${data.tel}"></p>
-      <p><strong>email : </strong><input id="updateEmail" value="${data.email}"></p>
-      <p><strong>주소 : </strong>
-        <input id="updatePostcode" type="text" placeholder="우편번호" value="${postcode}" readonly style="width: 100px;">
-        <input id="updateAddr" type="text" value="${basicAddr}" readonly style="width: 300px;">
-        <button type="button" onclick="searchAddress()">주소 검색</button>
-      </p>
-      <p><strong>상세 주소 : </strong>
-        <input id="updateDetailAddr" type="text" value="${detailAddr}" placeholder="상세 주소를 입력하세요" style="width: 300px;">
-      </p>
-      <p><strong>날짜 : </strong><input type="date" id="updateDate" value="${data.date.slice(0, 10)}" min="${formatDate(today)}" max="${formatDate(maxDate)}"></p>
-      <p><strong>시간 : </strong>
-        <select id="updateTime">
-          <option value="오전 10시 ~ 오후 1시" ${data.time === '오전 10시 ~ 오후 1시' ? 'selected' : ''}>오전 10시 ~ 오후 1시</option>
-          <option value="오후 2시 ~ 오후 5시" ${data.time === '오후 2시 ~ 오후 5시' ? 'selected' : ''}>오후 2시 ~ 오후 5시</option>
-          <option value="오후 4시 ~ 오후 7시" ${data.time === '오후 4시 ~ 오후 7시' ? 'selected' : ''}>오후 4시 ~ 오후 7시</option>
-          <option value="오후 6시 ~ 오후 9시" ${data.time === '오후 6시 ~ 오후 9시' ? 'selected' : ''}>오후 6시 ~ 오후 9시</option>
-        </select>
-      </p>
-      <p><strong>제빙기 모델명 : </strong><input id="updateModel" value="${data.model}"></p>
-      <p><strong>제빙기 용량 : </strong>
-        <select id="updateCapacity" onchange="updateDeposit()">
-          <option value="20~50kg" ${data.capacity === '20~50kg' ? 'selected' : ''}>20~50kg</option>
-          <option value="50~100kg" ${data.capacity === '50~100kg' ? 'selected' : ''}>50~100kg</option>
-          <option value="100kg 이상" ${data.capacity === '100kg 이상' ? 'selected' : ''}>100kg 이상</option>
-        </select>
-      </p>
-      <p><strong>선택 서비스 : </strong>
-        <select id="updateService">
-          <option value="청소" ${data.service === '청소' ? 'selected' : ''}>청소</option>
-          <option value="수리" ${data.service === '수리' ? 'selected' : ''}>수리</option>
-        </select>
-      </p>
-      <p><strong>서비스 주기 : </strong>
-        <select id="updateCycle">
-          <option value="이번 한 번만" ${data.cycle === '이번 한 번만' ? 'selected' : ''}>이번 한 번만</option>
-          <option value="한 달에 한 번" ${data.cycle === '한 달에 한 번' ? 'selected' : ''}>한 달에 한 번</option>
-        </select>
-      </p>
-      <p><strong>추가 서비스 선택 : </strong>
-        <select id="updateAdd">
-          <option value="심화 청소" ${data.add === '심화 청소' ? 'selected' : ''}>심화 청소</option>
-          <option value="물탱크 청소" ${data.add === '물탱크 청소' ? 'selected' : ''}>물탱크 청소</option>
-          <option value="필터 교체" ${data.add === '필터 교체' ? 'selected' : ''}>필터 교체</option>
-          <option value="" ${!data.add ? 'selected' : ''}>없음</option>
-        </select>
-      </p>
-      <p><strong>특별 요청사항 : </strong><textarea id="updateRemark">${data.remark || ''}</textarea></p>
-      <p><strong>예약금 : </strong><span id="updateDeposit">${data.deposit ? data.deposit + '만 원' : '미정'}</span></p>
-      <p><strong>예약상태 : </strong>${data.state == 0 ? '예약중' : '예약완료'}</p>
-      <button type="button" onclick="saveUpdate(${data.res_no})">저장</button>
-      <button type="button" onclick="location.href='../reservationInquiry.html'">취소</button>
-    </form>
+    $Step02.innerHTML = `
+    <div class="view">
+      <form id="updateForm">
+        <p><strong>이름 : </strong><input id="updateName" value="${data.name}"></p>
+        <p><strong>연락처 : </strong><input id="updateTel" value="${data.tel}"></p>
+        <p><strong>email : </strong><input id="updateEmail" value="${data.email}"></p>
+        <p><strong>우편번호 : </strong>
+            <input id="updatePostcode" type="text" placeholder="우편번호" value="${postcode}" readonly style="width: 100px;">
+          <button class="view-addr-search-btn" type="button" onclick="searchAddress()">🔍검색</button>
+        </p> 
+          
+        <p><strong>주소 : </strong>
+          <input id="updateAddr" type="text" value="${basicAddr}" readonly style="width: 300px;">
+        </p>
+        <p><strong>상세 주소 : </strong>
+          <input id="updateDetailAddr" type="text" value="${detailAddr}" placeholder="상세 주소를 입력하세요" style="width: 300px;">
+        </p>
+        <p><strong>날짜 : </strong><input type="date" id="updateDate" value="${data.date.slice(0, 10)}" min="${formatDate(today)}" max="${formatDate(maxDate)}"></p>
+        <p><strong>시간 : </strong>
+          <select id="updateTime">
+            <option value="오전 10시 ~ 오후 1시" ${data.time === '오전 10시 ~ 오후 1시' ? 'selected' : ''}>오전 10시 ~ 오후 1시</option>
+            <option value="오후 2시 ~ 오후 5시" ${data.time === '오후 2시 ~ 오후 5시' ? 'selected' : ''}>오후 2시 ~ 오후 5시</option>
+            <option value="오후 4시 ~ 오후 7시" ${data.time === '오후 4시 ~ 오후 7시' ? 'selected' : ''}>오후 4시 ~ 오후 7시</option>
+            <option value="오후 6시 ~ 오후 9시" ${data.time === '오후 6시 ~ 오후 9시' ? 'selected' : ''}>오후 6시 ~ 오후 9시</option>
+          </select>
+        </p>
+        <p><strong>제빙기 모델명 : </strong><input id="updateModel" value="${data.model}"></p>
+        <p><strong>제빙기 용량 : </strong>
+          <select id="updateCapacity" onchange="updateDeposit()">
+            <option value="20~50kg" ${data.capacity === '20~50kg' ? 'selected' : ''}>20~50kg</option>
+            <option value="50~100kg" ${data.capacity === '50~100kg' ? 'selected' : ''}>50~100kg</option>
+            <option value="100kg 이상" ${data.capacity === '100kg 이상' ? 'selected' : ''}>100kg 이상</option>
+          </select>
+        </p>
+        <p><strong>선택 서비스 : </strong>
+          <select id="updateService">
+            <option value="청소" ${data.service === '청소' ? 'selected' : ''}>청소</option>
+            <option value="수리" ${data.service === '수리' ? 'selected' : ''}>수리</option>
+          </select>
+        </p>
+        <p><strong>서비스 주기 : </strong>
+          <select id="updateCycle">
+            <option value="이번 한 번만" ${data.cycle === '이번 한 번만' ? 'selected' : ''}>이번 한 번만</option>
+            <option value="한 달에 한 번" ${data.cycle === '한 달에 한 번' ? 'selected' : ''}>한 달에 한 번</option>
+          </select>
+        </p>
+        <p><strong>추가 서비스 선택 : </strong>
+          <select id="updateAdd">
+            <option value="심화 청소" ${data.add === '심화 청소' ? 'selected' : ''}>심화 청소</option>
+            <option value="물탱크 청소" ${data.add === '물탱크 청소' ? 'selected' : ''}>물탱크 청소</option>
+            <option value="필터 교체" ${data.add === '필터 교체' ? 'selected' : ''}>필터 교체</option>
+            <option value="" ${!data.add ? 'selected' : ''}>없음</option>
+          </select>
+        </p>
+        <p><strong>특별 요청사항 : </strong><textarea id="updateRemark">${data.remark || ''}</textarea></p>
+        <p><strong>예약금 : </strong><span id="updateDeposit">${data.deposit ? data.deposit + '만 원' : '미정'}</span></p>
+        <p><strong>예약상태 : </strong>${data.state == 0 ? '예약대기' : '예약완료'}</p>
+      </form>
+    </div>
+    <div class="button-container">
+      <button class="update-btn" onclick="saveUpdate(${data.res_no})">저장</button>
+      <button class="done-btn" onclick="location.href='../reservationInquiry.html'">취소</button>
+    </div>
   `;
 
     updateDeposit(); // 초기 예약금 설정
 }
 
-// 주소 검색 함수 (카카오 우편번호 서비스)
+// 주소 검색  (카카오)
 function searchAddress() {
     new daum.Postcode({
         oncomplete: function (data) {
@@ -222,7 +226,7 @@ function updateDeposit() {
 
 // 수정된 데이터 저장 함수
 async function saveUpdate(reservationId) {
-    if (!reservationId) {
+    if (!(((reservationId+"").match(/[0-9]/g))?.length>0)) {
         Swal.fire({ icon: 'error', text: '예약 번호가 누락되었습니다.' });
         return;
     }
