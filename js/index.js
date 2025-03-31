@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let $reTitle = document.querySelector("#re_title");
     let $reDate = document.querySelector("#re_date");
     let $reservNo = document.querySelector("#reserv_no");
+    let $symptoms = document.querySelector("#symptoms");
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
@@ -59,6 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     document.querySelector("#con_re").addEventListener("click", async () => {
+        let btn = document.querySelector("#con_re");
+        let btn2 = document.querySelector("#can_re");
+        btn.disabled=true;
+        btn2.disabled=true;
         /*let re_title = $reTitle.value;
         let re_content = quill.getSemanticHTML(0, 9999999);
         let reservNo = $reservNo.value;*/
@@ -81,8 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 fetchGallery(0);
 
             }
+        btn.disabled=false;
+        btn2.disabled=false;
        // }
     })
+    for(let item of $symptoms.children) {
+        item.addEventListener("click", () => {
+            location.href = './reservation.html';
+        })
+    }
 
 })
 /*
@@ -104,9 +116,11 @@ async function re_upload(arr, quill) {
     for (const file of arr) {
         //storage 폴더 경로 추가 예시
         let filenm = "review_img/"+crypto.randomUUID()+'.' + file.name.split('.').pop();
-        let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
+        let res = await supabase.storage.from('icecarebucket').upload(filenm, file);
+        // let res = await supabase.storage.from('iceCareBucket').upload(filenm, file);
         if (!res.error) {
-            let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
+            let re_img_url = await supabase.storage.from('icecarebucket').getPublicUrl(filenm).data.publicUrl;
+             // let re_img_url = await supabase.storage.from('iceCareBucket').getPublicUrl(filenm).data.publicUrl;
             // filesUrl.push({conn_no: conn_no, file_name: filenm, image_url: re_img_url});
             filesUrl.push({file_name: filenm, image_url: re_img_url});
         }
@@ -184,23 +198,59 @@ function deleteFile(num) {
 }
 
 //갤러리 불러오기(페이지별)
-async function fetchGallery(page){
-    let res = await supabase.rpc("fetch_gallery", {page});
-    if(!res.error){
+async function fetchGallery_search(page,keyword,key){
+    let page_children = document.querySelector("#gallery_pagination").children;
+    for(let i = 0; i<page_children.length; i++) {
+        if(i===page){
+            page_children[i].style.color='red';
+        }else{
+            page_children[i].style.color='black';
+        }
+    }
+    let res = await supabase.rpc("fetch_gallery_search", {page,keyword,key});
+    if (!res.error) {
         console.log(res);
         let htmlData = '';
         res.data.forEach(item => {
-            htmlData+=`  <div class="rounded-2xl flex flex-col justify-baseline w-full h-full gap-4">
+            htmlData += `  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
                 <div class="p-1 bg-gray-200 rounded-2xl">
                     <div onclick="openGallery('${item.re_no}')" class="w-full h-[25vh] rounded-2xl" data-id="1"
                          style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
                 </div>
                 <div class="text-2xl">${item.title}</div>
-                <div>${item.cpdt.slice(0,10)}</div>
+                <div>${item.cpdt.slice(0, 10)}</div>
             </div>`;
         })
         document.querySelector("#galleryPage").innerHTML = htmlData;
     }
+}
+
+//갤러리 불러오기(페이지별)
+async function fetchGallery(page,keyword=''){
+    let page_children = document.querySelector("#gallery_pagination").children;
+    for(let i = 0; i<page_children.length; i++) {
+        if(i===page){
+            page_children[i].style.color='red';
+        }else{
+            page_children[i].style.color='black';
+        }
+    }
+        let res = await supabase.rpc("fetch_gallery", {page});
+        if (!res.error) {
+            console.log(res);
+            let htmlData = '';
+            res.data.forEach(item => {
+                htmlData += `  <div class="rounded-2xl flex flex-col justify-baseline w-full h-[370px] gap-4 gallery_fetch">
+                <div class="p-1 bg-gray-200 rounded-2xl">
+                    <div onclick="openGallery('${item.re_no}')" class="w-full h-[25vh] rounded-2xl" data-id="1"
+                         style="background-image:url('${item.image}'); background-size:cover; background-repeat:no-repeat; cursor:pointer;"></div>
+                </div>
+                <div class="text-2xl">${item.title}</div>
+                <div>${item.cpdt.slice(0, 10)}</div>
+            </div>`;
+            })
+            document.querySelector("#galleryPage").innerHTML = htmlData;
+        }
 }
 
 //갤러리 페이지네이션 구성하고 거기서 갤러리 열기로 변경 => 다음 넘길때 구성 변경형태
@@ -250,8 +300,8 @@ $('#gallery_slider').slick({
     autoplay: true,
     autoplaySpeed: 2000,
     asNavFor: '#gallery_nav_slider',
-    prevArrow : `<button type='button' style='background:url("../image/pop_prev.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-prev absolute top-[40%] left-2 cursor-pointer'></button>`,
-    nextArrow : `<button type='button' style='background:url("../image/pop_next.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-next absolute top-[40%] right-2 cursor-pointer'></button>`,
+    prevArrow : `<button type='button' style='background:url("./image/pop_prev.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-prev absolute top-[40%] left-2 cursor-pointer'></button>`,
+    nextArrow : `<button type='button' style='background:url("./image/pop_next.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-next absolute top-[40%] right-2 cursor-pointer'></button>`,
     responsive: [
         {
             breakpoint: 850,
@@ -290,32 +340,83 @@ function close_gallery(){
     $('#gallery_slider').html("")
     $('#gallery_nav_slider').html("")
 }
+function gallery_search(){
+    let $keyword = document.querySelector("#search_gallery").value;
+    let $key = document.querySelector("#search_gallery_select").value;
+    if($keyword.trim().length>0){
+        galleryPagination_search(0,$keyword,$key);
+    }else{
+        galleryPagination(0);
+    }
 
+}
+//갤러리 검색 페이지 구성하기
+async function galleryPagination_search(d,keyword,key){
+    let $pagination = document.querySelector("#gallery_pagination");
+    let $prev = document.querySelector("#gallery_prev");
+    let $next = document.querySelector("#gallery_next");
+    let res;
+    if(key==1) {
+        res = await supabase.from("review_gallery").select('re_no').or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`).range(d * 9, (d * 9) + 90);
+    }else if(key==2){
+        res = await supabase.from("review_gallery").select('re_no').ilike('title',`%${keyword}%`).range(d * 9, (d * 9) + 90);
+    }else{
+        res = await supabase.from("review_gallery").select('re_no').ilike('content',`%${keyword}%`).range(d * 9, (d * 9) + 90);
+    }
+    if(res.data?.length>0) {
+
+        let htmlData = '';
+        let prevData = '';
+        let nextData = '';
+        if(d>=10){
+            prevData=`<button class="pager_prev" onclick="galleryPagination_search(${d-10},'${keyword}',${key})"></button>`;
+        }
+        if(res.data?.length===91){
+            nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination_search(${d+10},'${keyword}',${key})"></button>`;
+            res.data.length=90;
+        }
+
+        for(let i =0; i<Math.ceil(res.data.length / 9);i++){
+            htmlData+=` <div class="cursor-pointer page" onclick="fetchGallery_search(${d+i},'${keyword}',${key})">${i+1}</div> `
+        }
+        $prev.innerHTML = prevData;
+        $next.innerHTML = nextData;
+        $pagination.innerHTML = htmlData;
+        await fetchGallery_search(d,keyword,key);
+    }else{
+        $prev.innerHTML = '';
+        $next.innerHTML = '';
+        $pagination.innerHTML = '';
+        document.querySelector("#galleryPage").innerHTML = `<div>조회 결과가 없습니다.</div>`;
+        Swal.fire({icon:'error',title:'실패',text:'조회된 결과가 없습니다.'});
+    }
+}
 //갤러리 페이지 구성하기
 async function galleryPagination(d){
     let $pagination = document.querySelector("#gallery_pagination");
     let $prev = document.querySelector("#gallery_prev");
     let $next = document.querySelector("#gallery_next");
-    let res = await supabase.from("review_gallery").select('*', { count: 'exact', head: true }).range(d*9,90);
-    if(res.count>0) {
-        await fetchGallery(d);
+    let res = await supabase.from("review_gallery").select('re_no').range(d*9,(d*9)+90);
+    if(res.data?.length>0) {
+
         let htmlData = '';
         let prevData = '';
         let nextData = '';
         if(d>=10){
             prevData=`<button class="pager_prev" onclick="galleryPagination(${d-10})"></button>`;
         }
-        if(res.count===91){
+        if(res.data?.length===91){
             nextData=`<button class="pager_prev rotate-180" onclick="galleryPagination(${d+10})"></button>`;
-            res.count=90;
+            res.data.length=90;
         }
 
-        for(let i =0; i<Math.ceil(res.count / 9);i++){
-            htmlData+=` <div class="cursor-pointer" onclick="fetchGallery(${d+i})">${i+1}</div> `
+        for(let i =0; i<Math.ceil(res.data.length / 9);i++){
+            htmlData+=` <div class="cursor-pointer page" onclick="fetchGallery(${d+i})">${i+1}</div> `
         }
         $prev.innerHTML = prevData;
         $next.innerHTML = nextData;
         $pagination.innerHTML = htmlData;
+        await fetchGallery(d);
     }
 }
 
@@ -375,3 +476,90 @@ var partnerSwiper = new Swiper(".partners_row", {
 
     },
 });
+
+/*개인정보취급 팝업 닫기*/
+function close_popup(){
+    document.querySelector("#personal_popup").classList.add("hidden");
+    document.querySelector('body').classList.remove("scroll_lock");
+}
+
+/*개인정보취급 팝업 열기*/
+function open_popup(){
+    document.querySelector("#personal_popup").classList.remove("hidden");
+    document.querySelector('body').classList.add("scroll_lock");
+}
+function search_chk(ev){
+    if(ev.keyCode == 13){
+        gallery_search();
+    }
+}
+
+window.addEventListener("scroll", ()=>{
+    let $advantage = document.querySelector("#advantage")
+    let $state = document.querySelector("#state");
+    let $gallery = document.querySelector("#gallery");
+    let $symptom = document.querySelector("#symptom");
+    let $process = document.querySelector("#process");
+    let $membership = document.querySelector("#membership");
+
+    if(document.documentElement.scrollTop>=$advantage.offsetTop-500){
+        $advantage.classList.add("fade-in-animation");
+    }else{
+        $advantage.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$state.offsetTop-500){
+        $state.classList.add("fade-in-animation");
+    }else{
+        $state.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$gallery.offsetTop-500){
+        $gallery.classList.add("fade-in-animation");
+    }else{
+        $gallery.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$symptom.offsetTop-500){
+        $symptom.classList.add("fade-in-animation");
+    }else{
+        $symptom.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$process.offsetTop-500){
+        $process.classList.add("fade-in-animation");
+    }else{
+        $process.classList.remove("fade-in-animation");
+    }
+
+    if(document.documentElement.scrollTop>=$membership.offsetTop-500){
+        $membership.classList.add("fade-in-animation");
+    }else{
+        $membership.classList.remove("fade-in-animation");
+    }
+
+});
+
+function counseling(){
+    const form = document.getElementById('fwrite');
+
+    const formData = new FormData(form);
+    let counseler=true;
+    let counseling = '';
+    let counsel_info = {name:'성함',phone:'휴대전화'};
+    if(!formData.has('agree')){
+        Swal.fire({icon: 'error', title: `개인정보처리방침 미동의`, text: `개인정보처리방침을 동의하지 않으셨습니다.`});
+    }else {
+        formData.forEach((value, key) => {
+            if (value.trim().length === 0) {
+                counseling.length === 0 ? counseling += counsel_info[key] : counseling += ', ' + counsel_info[key];
+                counseler = false;
+            }
+        });
+        if (counseler) {
+            Swal.fire({icon: 'success', title: '상담신청완료', text: '상담신청이 완료 되었습니다.'});
+        } else {
+            Swal.fire({icon: 'error', title: `${counseling} 미입력`, text: `미입력하신 내용을 입력해주세요.`});
+        }
+    }
+}

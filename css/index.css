@@ -1,3 +1,78 @@
+@font-face {
+    font-family: 'pageNum';
+    src: url('../font/page.ttf') format('truetype');
+    font-weight: normal;
+}
+@font-face {
+    font-family: 'Lora-Bold';
+    src: url('../font/Lora-Bold.ttf') format('truetype');
+    font-weight: normal;
+}
+@font-face {
+    font-family: 'pageNum2';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'pageNum3';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'pageNum4';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'pageNum5';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KIMM_Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'iceFont';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+#side_btn_group{
+    background-color:rgba(217,217,217,0.7);
+    span{
+        &:hover {
+            &:first-child {
+                border: 1px solid #19499E;
+
+                p {
+                    color: #19499E;
+                }
+            }
+            &:nth-child(2) {
+                background-image:url("../image/seablueBalloon.png");
+                p{
+                    color:white;
+                }
+            }
+            &:nth-child(3) {
+                background-image:url("../image/yellowBalloon.png");
+                p{
+                    color:black;
+                }
+            }
+        }
+
+        &:nth-child(n+2){
+            p{
+                font-family:"pageNum5",sans-serif;
+                font-weight:500;
+            }
+        }
+
+    }
+}
 img {
     max-width: unset;
 }
@@ -5,8 +80,12 @@ header{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     nav{
         a{
-            margin-right: 3rem;
+            padding: 1.5rem;
+            margin-right: 1.5rem;
             font-weight: bold;
+            &:hover{
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
         }
     }
 }
@@ -17,16 +96,13 @@ header{
 
     .bg-white {
         background: linear-gradient(150deg, #ffffff, 20%, #5489DA);
-
-        .hidden {
-            display: flex;
-        }
-
-        .w-\[35px\] {
-            display: none;
-        }
     }
-
+    .symtoms-start{
+        display:none;
+    }
+    .symtoms-conserve{
+        display:flex;
+    }
 }
 
 #process_status ul {
@@ -84,7 +160,7 @@ header{
     }
 
     .end {
-        background: #252525;
+        background: #2C9900;
     }
 
     .new {
@@ -92,7 +168,7 @@ header{
     }
 
     .start {
-        background: #999999;
+        background: #F9B500;
     }
 }
 
@@ -166,7 +242,42 @@ header{
 
     }
 }
+#gallery{
+    #galleryPage{
+        position: relative;
+        &::after{
+            content: "";
+            width: 98%;
+            height:3px;
+            background: #707070;
+            position: absolute;
+            bottom: -1.5%;
+            left: 1%;
+        }
+        .gallery_fetch{
+            padding:10px;
+            border:2px solid #707070;
+        }
 
+
+    }
+    .search_icon{
+        background:url('../image/search_icon.png') no-repeat;
+        &:hover{
+            background:url('../image/search_icon_active.png') no-repeat;
+        }
+
+    }
+    #gallery_pagination{
+        .page{
+            font-family: pageNum3, sans-serif;
+            font-size: 1rem;
+        }
+    }
+}
+.gallery_fetch{
+    border-radius:15px;
+}
 #gallery_slider {
     li {
         padding: 6px;
@@ -283,7 +394,7 @@ footer {
                         height: 40px;
                         border-radius: 50%;
                         background-color: #00499a !important;
-                        background: url(/image/call_ico_sm.png);
+                        background: url(../image/call_ico_sm.png);
                         background-repeat: no-repeat;
                         background-position: center;
                         margin-right: 10px;
@@ -569,7 +680,7 @@ footer {
 
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'iceFont',sans-serif;
     color: #333;
 }
 
@@ -618,5 +729,13 @@ body {
 
 
 
-
+.non-opacity{
+    opacity: 0;
+}
+.opacity{
+    opacity: 1;
+}
+.fade-in-animation{
+    animation: fadeInUp 1500ms forwards 1;
+}
 
