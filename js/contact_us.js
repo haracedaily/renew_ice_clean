@@ -110,38 +110,74 @@ async function noticeSelect(categoryId) {
     };
     document.getElementById("changeText").innerHTML = texts[categoryId];
 
+    const params = new URLSearchParams(location.search);
+    let pageNum = parseInt(params.get('pageNum')) || 1;
+    const itemPerPage = 15;
+    const [from, to] = [(pageNum - 1) * itemPerPage, pageNum * itemPerPage - 1];
 
-    const params = new URLSearchParams(window.location.search);
-    const pageNum = parseInt(params.get("pageNum")) || 1;
-    const itemsPerPage = 15; // 페이지 글 개수 15개
-    const totalItems = 150;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    
-    const from = (pageNum - 1) * itemsPerPage;
-    const to = from + itemsPerPage - 1;
-    
-    const pagingContainer = document.getElementById("paging-container");
+    const {count} = await supabase
+        .from('board')
+        .select('*', {count: "exact", head: true})
+        .eq('category_id', categoryId);
+    const maxPage = Math.ceil(count / itemPerPage);
+
+    const pagingContainer = document.querySelector('#paging-container');
     pagingContainer.innerHTML = "";
-    let pageFrom = parseInt((pageNum - 1) / 10);
-    let result = await supabase.from('board').select('id').range(pageFrom * totalItems, pageFrom * totalItems + totalItems);
-    if (result.data?.length >= 151) {
-        // 다음페이지로 이동 넣는다면 여기서 생성!
-        result.data.length = 150;
-    }
-    for (let i = 1; i <= Math.ceil(result.data?.length / itemsPerPage); i++) {
-        const pageLink = document.createElement("a"); // a태그 생성
-        pageLink.href = `?pageNum=${i}`;
+    for (let i = 1; i <= maxPage; i++) {
+        const pageLink = document.createElement("a");
+        pageLink.href = `?category_id=${categoryId}&pageNum=${i}`;
         pageLink.textContent = i;
-    
-        pageLink.style.fontFamily = 'pageNum3';
-        // 현재 페이지라면 스타일 변경
+        pageLink.style.fontFamily = 'pageNum3'
+
         if (i === pageNum) {
             pageLink.style.fontWeight = "bold";
             pageLink.style.color = "#B8001F";
         }
-    
         pagingContainer.appendChild(pageLink);
     }
+    // debugger
+    if (params.get('category_id') !== categoryId.toString()) {
+        pageNum = 1;
+        params.set('pageNum', '1');
+        params.set('category_id', categoryId);
+        const stateobject = {
+            category_id: categoryId,
+            pageNum: pageNum,
+        }
+        history.pushState(stateobject, '', `?${params.toString()}`);
+    }
+
+    // const params = new URLSearchParams(window.location.search);
+    // const pageNum = parseInt(params.get("pageNum")) || 1;
+    // const itemsPerPage = 15; // 페이지 글 개수 15개
+    // const totalItems = 150;
+    // const totalPages = Math.ceil(totalItems / itemsPerPage);
+    //
+    // const from = (pageNum - 1) * itemsPerPage;
+    // const to = from + itemsPerPage - 1;
+    //
+    // const pagingContainer = document.getElementById("paging-container");
+    // pagingContainer.innerHTML = "";
+    // let pageFrom = parseInt((pageNum - 1) / 10);
+    // let result = await supabase.from('board').select('id').range(pageFrom * totalItems, pageFrom * totalItems + totalItems);
+    // if (result.data?.length >= 151) {
+    //     // 다음페이지로 이동 넣는다면 여기서 생성!
+    //     result.data.length = 150;
+    // }
+    // for (let i = 1; i <= Math.ceil(result.data?.length / itemsPerPage); i++) {
+    //     const pageLink = document.createElement("a"); // a태그 생성
+    //     pageLink.href = `?pageNum=${i}`;
+    //     pageLink.textContent = i;
+    //
+    //     pageLink.style.fontFamily = 'pageNum3';
+    //     // 현재 페이지라면 스타일 변경
+    //     if (i === pageNum) {
+    //         pageLink.style.fontWeight = "bold";
+    //         pageLink.style.color = "#B8001F";
+    //     }
+    //
+    //     pagingContainer.appendChild(pageLink);
+    // }
 
     // 날짜 형식 변경 0000-00-00
     const fomatDate = (dateString) => {
