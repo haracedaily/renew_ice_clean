@@ -124,7 +124,7 @@ async function Resupdate(reservationId) {
     const formatDate = (date) => date.toISOString().split('T')[0];
 
     // 기존 주소에서 우편번호와 상세 주소 분리
-    const addrParts = data.addr.split(' ');
+    const addrParts = data.addr.split(',');
     const postcode = addrParts[0].match(/[0-9]{5}$/) ? addrParts[0] : '';
     const basicAddr = postcode ? addrParts.slice(1, -1).join(' ') : addrParts.slice(0, -1).join(' ');
     const detailAddr = addrParts[addrParts.length - 1];
@@ -235,7 +235,7 @@ async function saveUpdate(reservationId) {
         name: document.getElementById('updateName').value,
         tel: document.getElementById('updateTel').value,
         email: document.getElementById('updateEmail').value,
-        addr: `${document.getElementById('updatePostcode').value} ${document.getElementById('updateAddr').value} ${document.getElementById('updateDetailAddr').value}`,
+        addr: `${document.getElementById('updatePostcode').value}, ${document.getElementById('updateAddr').value.replaceAll(',','')}, ${document.getElementById('updateDetailAddr').value.reaplaceAll(',','')}`,
         date: document.getElementById('updateDate').value,
         time: document.getElementById('updateTime').value,
         model: document.getElementById('updateModel').value,
