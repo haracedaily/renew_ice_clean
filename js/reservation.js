@@ -329,7 +329,7 @@ PrivacyNo.addEventListener('click', () => {
         confirmButtonText: "예약취소"
     }).then((result) => {
         if (result.isConfirmed) {
-            location.href = '../reservation.html'
+            location.href = './reservation.html'
         }
     });
 
