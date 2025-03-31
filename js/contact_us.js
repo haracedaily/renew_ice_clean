@@ -113,8 +113,7 @@ async function noticeSelect(categoryId) {
     const params = new URLSearchParams(location.search);
     let pageNum = parseInt(params.get('pageNum')) || 1;
     const itemPerPage = 15;
-    const [from, to] = [(pageNum - 1) * itemPerPage, pageNum * itemPerPage - 1];
-
+    let [from, to] = [(pageNum - 1) * itemPerPage, pageNum * itemPerPage - 1];
     const {count} = await supabase
         .from('board')
         .select('*', {count: "exact", head: true})
@@ -138,12 +137,14 @@ async function noticeSelect(categoryId) {
     // debugger
     if (params.get('category_id') !== categoryId.toString()) {
         pageNum = 1;
+        [from, to] = [(pageNum - 1) * itemPerPage, pageNum * itemPerPage - 1];
         params.set('pageNum', '1');
         params.set('category_id', categoryId);
         const stateobject = {
             category_id: categoryId,
             pageNum: pageNum,
         }
+
         history.pushState(stateobject, '', `?${params.toString()}`);
     }
 
@@ -190,8 +191,6 @@ async function noticeSelect(categoryId) {
         .order('updated_at', {ascending: true})
         .range(from, to)
         ;
-    ;
-
     let rows = '';
     for (let i = 0; i < res.data.length; i++) {
         rows = rows + `
@@ -402,7 +401,8 @@ document.querySelector('#submit-update').addEventListener('click', async functio
 async function postDeleteClick(ev, id) {
     // stopPropagation 다른 이벤트 실행 막는 것, userRowClick 이벤트 실행X
     ev.stopPropagation();
-
+    urlParams = new URLSearchParams(window.location.search);
+    categoryId = Number(urlParams.get('category_id'));
     const result = await Swal.fire({
         title: "삭제하시겠습니까?",
         text: "You won't be able to revert this!",
@@ -421,7 +421,7 @@ async function postDeleteClick(ev, id) {
             text: "Your file has been deleted.",
             icon: "success"
         });
-
+if(!categoryId)categoryId=1;
         noticeSelect(categoryId);
     } else {
         Swal.fire({
@@ -434,8 +434,8 @@ async function postDeleteClick(ev, id) {
 }
 
 // 카테고리 선택하면 categoryId 값 가져옴
-const urlParams = new URLSearchParams(window.location.search);
-const categoryId = Number(urlParams.get('categoryId'));
+let urlParams = new URLSearchParams(window.location.search);
+let categoryId = Number(urlParams.get('category_id'));
 document.addEventListener('DOMContentLoaded', function () {
     switch (categoryId) {
         case 1:
