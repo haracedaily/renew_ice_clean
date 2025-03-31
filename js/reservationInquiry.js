@@ -191,7 +191,7 @@ async function Resupdate(reservationId) {
     </div>
     <div class="button-container">
       <button class="update-btn" onclick="saveUpdate(${data.res_no})">저장</button>
-      <button class="done-btn" onclick="location.href='../reservationInquiry.html'">취소</button>
+      <button class="done-btn" onclick="location.href='./reservationInquiry.html'">취소</button>
     </div>
   `;
 
@@ -276,7 +276,7 @@ async function saveUpdate(reservationId) {
             icon: 'success',
             text: '예약이 성공적으로 수정되었습니다.',
         }).then(() => {
-            location.href = '../reservationInquiry.html';
+            location.href = './reservationInquiry.html';
         });
     }
 }

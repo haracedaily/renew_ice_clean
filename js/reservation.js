@@ -375,7 +375,7 @@ PrivacyOk.addEventListener('click', async function () {
             icon: 'success',
             draggable: true,
         }).then(() => {
-            location.href = '../reservation.html';
+            location.href = './reservation.html';
         });
     } else {
         Swal.fire({
