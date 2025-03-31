@@ -105,7 +105,7 @@ $Gobtn.addEventListener('click', async function () {
       </div>
       <div class="button-container">
         <button class="update-btn" onclick="Resupdate(${data[0].res_no})">수정</button>
-        <button class="done-btn" onclick="location.href='../reservationInquiry.html'">확인</button>
+        <button class="done-btn" onclick="location.href='./reservationInquiry.html'">확인</button>
       </div>
     `;
     } else {
