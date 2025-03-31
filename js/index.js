@@ -300,8 +300,8 @@ $('#gallery_slider').slick({
     autoplay: true,
     autoplaySpeed: 2000,
     asNavFor: '#gallery_nav_slider',
-    prevArrow : `<button type='button' style='background:url("../image/pop_prev.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-prev absolute top-[40%] left-2 cursor-pointer'></button>`,
-    nextArrow : `<button type='button' style='background:url("../image/pop_next.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-next absolute top-[40%] right-2 cursor-pointer'></button>`,
+    prevArrow : `<button type='button' style='background:url("./image/pop_prev.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-prev absolute top-[40%] left-2 cursor-pointer'></button>`,
+    nextArrow : `<button type='button' style='background:url("./image/pop_next.png") no-repeat center / 22px auto;' class='w-[44px] h-[80px] slick-next absolute top-[40%] right-2 cursor-pointer'></button>`,
     responsive: [
         {
             breakpoint: 850,
