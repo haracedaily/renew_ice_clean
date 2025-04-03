@@ -76,8 +76,11 @@ nav {
     left: 0;
 }
 
-
-
+.toptxt{
+    font-weight: bold;
+    font-size: 2rem;
+    margin-top: 5rem;
+}
 
 
 
@@ -173,7 +176,7 @@ input[type = "radio"]{
 }
 .info-group input{
     height: 30px;
-    padding: 1px;
+    padding: 5px 10px;
     cursor: pointer;
 }
 
@@ -514,19 +517,20 @@ input[type = "radio"]{
     cursor: pointer;
 }
 .privacy-no,.privacy-ok{
-    width: 3.5rem;
+    width: 5rem;
+    height: 3rem;
     border: gray solid 1px;
     border-radius: 0.5rem;
     margin: 1rem 1rem 5rem;
     cursor: pointer;
+    line-height: 3rem;
+    font-weight: bold;
 }
 
 .privacy-no:hover,.privacy-ok:hover{
     background-color: #006B99;
     border: none;
     color: white;
-    width: 4rem;
-    transform: scale(1.05);
 }
 .privacy-details{
     border: 1px solid lightgray;
