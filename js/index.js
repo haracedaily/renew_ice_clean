@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let $reTitle = document.querySelector("#re_title");
     let $reDate = document.querySelector("#re_date");
     let $reservNo = document.querySelector("#reserv_no");
-    let $symptoms = document.querySelector("#symptoms");
+    //let $symptoms = document.querySelector("#symptoms");
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
@@ -89,11 +89,11 @@ document.addEventListener("DOMContentLoaded", () => {
         btn2.disabled=false;
        // }
     })
-    for(let item of $symptoms.children) {
+   /* for(let item of $symptoms.children) {
         item.addEventListener("click", () => {
             location.href = './reservation.html';
         })
-    }
+    }*/
 
 })
 /*
@@ -494,48 +494,49 @@ window.addEventListener("scroll", ()=>{
     let $advantage = document.querySelector("#advantage")
     let $state = document.querySelector("#state");
     let $gallery = document.querySelector("#gallery");
-    let $symptom = document.querySelector("#symptom");
+    //let $symptom = document.querySelector("#symptom");
     let $process = document.querySelector("#process");
-    let $membership = document.querySelector("#membership");
+    //let $membership = document.querySelector("#membership");
 
     if(document.documentElement.scrollTop>=$advantage.offsetTop-500){
         $advantage.classList.add("fade-in-animation");
-    }else{
+    }/*else{
         $advantage.classList.remove("fade-in-animation");
-    }
+    }*/
 
     if(document.documentElement.scrollTop>=$state.offsetTop-500){
         $state.classList.add("fade-in-animation");
-    }else{
+    }/*else{
         $state.classList.remove("fade-in-animation");
-    }
+    }*/
 
     if(document.documentElement.scrollTop>=$gallery.offsetTop-500){
         $gallery.classList.add("fade-in-animation");
-    }else{
+    }/*else{
         $gallery.classList.remove("fade-in-animation");
-    }
+    }*/
 
-    if(document.documentElement.scrollTop>=$symptom.offsetTop-500){
+  /*  if(document.documentElement.scrollTop>=$symptom.offsetTop-500){
         $symptom.classList.add("fade-in-animation");
     }else{
         $symptom.classList.remove("fade-in-animation");
-    }
+    }*/
 
     if(document.documentElement.scrollTop>=$process.offsetTop-500){
         $process.classList.add("fade-in-animation");
-    }else{
+    }/*else{
         $process.classList.remove("fade-in-animation");
-    }
+    }*/
 
-    if(document.documentElement.scrollTop>=$membership.offsetTop-500){
+  /*  if(document.documentElement.scrollTop>=$membership.offsetTop-500){
         $membership.classList.add("fade-in-animation");
     }else{
         $membership.classList.remove("fade-in-animation");
-    }
+    }*/
 
 });
 
+/*
 function counseling(){
     const form = document.getElementById('fwrite');
 
@@ -558,4 +559,4 @@ function counseling(){
             Swal.fire({icon: 'error', title: `${counseling} 미입력`, text: `미입력하신 내용을 입력해주세요.`});
         }
     }
-}
+}*/
