@@ -103,25 +103,30 @@
         <div class="toptxt">
             <h1>아이스케어 <br/>나의 예약 내역 확인하기 </h1>
         </div>
-        <div style="margin-top: 4rem">
-            <h1 class="Q-txt">예약 정보를 입력하세요</h1>
-        </div>
+
         <div class="step01">
-            <div class="form">
-                <input type="text" name="name" id="name" placeholder="이름">
-            </div>
-            <div class="form">
-                <input type="tel" name="phone" id="phone" placeholder="연락처" maxlength="13" oninput="formatPhone(this)">
-            </div>
-            <div class="form">
-                <input type="email" name="email" id="email" placeholder="email">
+            <div style="display: flex; width: 100%;">
+                <div class="step01-left">
+                    <h1 class="Q-txt" style="text-align: left">예약 정보를 입력하세요</h1>
+                </div>
+                <div class="step01-right">
+                    <div class="form">
+                        <input type="text" name="name" id="name" placeholder="이름">
+                    </div>
+                    <div class="form">
+                        <input type="tel" name="phone" id="phone" placeholder="연락처" maxlength="13" oninput="formatPhone(this)">
+                    </div>
+                    <div class="form">
+                        <input type="email" name="email" id="email" placeholder="email">
+                    </div>
+                </div>
             </div>
             <div class="privacy-check">
                 <input type="checkbox" name="privacy" id="privacy" class="cursor-pointer">
                 <label class="agree" for="privacy">개인정보 제공에 동의합니다 </label>
                 <button class="privacy-detail-btn">[보기]</button>
             </div>
-            <div class="privacy-details hidden2" id="privacy-details">
+            <div class="privacy-details hidden2" id="privacy-details" style="margin-top: 2rem">
                 <p><strong>1. 개인정보 수집 및 이용 목적</strong><br>
                     ICECARE는 제빙기 청소 및 수리 서비스 예약, 제공, 고객 문의 응대, 품질 향상을 위해 개인정보를 수집·이용합니다.</p>
                 <p><strong>2. 수집하는 개인정보 항목</strong><br>
@@ -135,7 +140,7 @@
                 <p><strong>5. 동의 철회</strong><br>
                     언제든지 동의를 철회하거나 열람·정정을 요청할 수 있습니다 <br/>(고객센터: 1234-5678)</p>
             </div>
-            <button class="gobtn">예약 확인</button>
+            <button class="gobtn" style="margin-top: 2rem" >조회하기</button>
         </div><!--step01-->
         <div class="step02">
 
