@@ -95,19 +95,27 @@ body{
 }
 .step01{
     animation: fadein 2s;
-    padding: 2rem;
-    margin: 20px auto;
+    /*padding: 2rem;*/
+    /*margin: 20px auto;*/
     display: flex;
     flex-direction: column;
     align-items: center;
     border-radius: 10px;
-    width: 80%;
+    width: 100%;
 }
-.step01 div{
-    margin: 1rem auto;
+
+.step01-left{
+    flex: 0 0 auto;
+    width: 50%;
+    margin: 4rem 0;
 }
-.step01 div label{
-    font-weight: bold;
+.step01-right{
+    flex: 0 0 auto;
+    width: 50%;
+    margin: 4rem 0;
+}
+.step01-right div{
+    margin-bottom: 1rem;
 }
 .form input{
     /*border: lightgray 1px solid;*/
@@ -128,7 +136,7 @@ body{
     display: flex;
     align-items: center;
     gap: 5px;
-
+    /*margin-bottom: 2rem;*/
 }
 .agree{
     cursor: pointer;
