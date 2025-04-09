@@ -1,4 +1,6 @@
-const $boardDiv = document.querySelector('#board-div');
+// const $boardDiv = document.querySelector('#board-div')
+const $boardDiv = document.getElementById("board-div");
+
 
 // 게시글 작성 및 등록
 document.querySelector('#submit-post').addEventListener('click', async function () {
@@ -106,7 +108,7 @@ async function noticeSelect(categoryId) {
     const texts = {
         1: "공지사항",
         2: "FAQ",
-        3: "Q&A"
+        // 3: "Q&A"
     };
     document.getElementById("changeText").innerHTML = texts[categoryId];
 
@@ -127,6 +129,8 @@ async function noticeSelect(categoryId) {
         pageLink.href = `?category_id=${categoryId}&pageNum=${i}`;
         pageLink.textContent = i;
         pageLink.style.fontFamily = 'pageNum3'
+        pageLink.style.color = 'black';
+        pageLink.style.textDecoration = 'none';
 
         if (i === pageNum) {
             pageLink.style.fontWeight = "bold";
@@ -134,7 +138,7 @@ async function noticeSelect(categoryId) {
         }
         pagingContainer.appendChild(pageLink);
     }
-    // debugger
+
     if (params.get('category_id') !== categoryId.toString()) {
         pageNum = 1;
         [from, to] = [(pageNum - 1) * itemPerPage, pageNum * itemPerPage - 1];
@@ -148,86 +152,167 @@ async function noticeSelect(categoryId) {
         history.pushState(stateobject, '', `?${params.toString()}`);
     }
 
-    // const params = new URLSearchParams(window.location.search);
-    // const pageNum = parseInt(params.get("pageNum")) || 1;
-    // const itemsPerPage = 15; // 페이지 글 개수 15개
-    // const totalItems = 150;
-    // const totalPages = Math.ceil(totalItems / itemsPerPage);
-    //
-    // const from = (pageNum - 1) * itemsPerPage;
-    // const to = from + itemsPerPage - 1;
-    //
-    // const pagingContainer = document.getElementById("paging-container");
-    // pagingContainer.innerHTML = "";
-    // let pageFrom = parseInt((pageNum - 1) / 10);
-    // let result = await supabase.from('board').select('id').range(pageFrom * totalItems, pageFrom * totalItems + totalItems);
-    // if (result.data?.length >= 151) {
-    //     // 다음페이지로 이동 넣는다면 여기서 생성!
-    //     result.data.length = 150;
-    // }
-    // for (let i = 1; i <= Math.ceil(result.data?.length / itemsPerPage); i++) {
-    //     const pageLink = document.createElement("a"); // a태그 생성
-    //     pageLink.href = `?pageNum=${i}`;
-    //     pageLink.textContent = i;
-    //
-    //     pageLink.style.fontFamily = 'pageNum3';
-    //     // 현재 페이지라면 스타일 변경
-    //     if (i === pageNum) {
-    //         pageLink.style.fontWeight = "bold";
-    //         pageLink.style.color = "#B8001F";
-    //     }
-    //
-    //     pagingContainer.appendChild(pageLink);
-    // }
-
     // 날짜 형식 변경 0000-00-00
     const fomatDate = (dateString) => {
-        return new Date(dateString).toISOString().split('T')[0];
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).replace(/. /g, '-').replace('.', '');
     };
+
     var res = await supabase
         .from('board')
         .select()
         .eq('category_id', categoryId)
         .order('updated_at', {ascending: true})
         .range(from, to)
-        ;
+    ;
     let rows = '';
+
+    // for (let i = 0; i < res.data.length; i++) {
+    //     let content = '';
     for (let i = 0; i < res.data.length; i++) {
-        rows = rows + `
-            <tr onclick='postRowClick(this);' style='cursor:pointer;'>
-                <td>${res.data[i].id}</td>
-                <td>${res.data[i].title}</td>
-                <td>${res.data[i].content}</td>
-                <td>${res.data[i].author}</td>
-                <td>${res.data[i].password}</td>
-                <td>${fomatDate(res.data[i].created_at)}</td>
-                <td>${fomatDate(res.data[i].updated_at)}</td>
-                <td id="views-${res.data[i].id}">${res.data[i].views}</td>
-                <td>${res.data[i].category_id}</td>
-                <td><button class="delete-btn" onclick='postDeleteClick(event, "${res.data[i].id}")'>삭제</button></td>
-            </tr>`;
+        const row = document.createElement("tr");
+        if (categoryId === 1) {
+            content = `
+        <div class="notice-item post-item" data-id="${res.data[i].id}">
+            <a class="notice-link" href="contact_us.html?pageNum=${pageNum}&category_id=${categoryId}&id=${res.data[i].id}">
+                <h3 class="notice-title">${res.data[i].title}</h3>
+                <p class="notice-content">${res.data[i].content}</p>
+            </a>
+        </div>
+    `;
+        }
+        else if (categoryId === 2) {
+            content = `
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(${res.data[i].id})">
+                    <span class="faq-icon">Q</span>  ${res.data[i].title}
+                </div>
+                <div id="faq-content-${res.data[i].id}" class="faq-answer">
+                    <span class="faq-icon">A</span> ${res.data[i].content}
+                </div>
+            </div>
+        `;
+        } else {
+            content = `<td>${res.data[i].content}</td>`;
+        }
+
+        rows += `
+        <tr>
+            ${categoryId === 1 ? content : `<td>${content}</td>`}
+        </tr>
+    `;
     }
 
-    let boardTable = `
-        <div>
-            <table>
-                <tr>
-                    <th>No.</th>
-                    <th>제목</th>
-                    <th>내용</th>
-                    <th>작성자</th>
-                    <th>비밀번호</th>
-                    <th>작성시간</th>
-                    <th>수정시간</th>
-                    <th>조회수</th>
-                    <th>category_id</th>
-                    <th>선택</th>
-                </tr>
-                ${rows}
-            </table>
-        </div>`;
-    $boardDiv.innerHTML = boardTable;
+    if (!res.data) {
+        $boardDiv.innerHTML = "<p>데이터를 불러오는 중 오류가 발생했습니다.</p>";
+        return;
+    }
+
+    $boardDiv.innerHTML = rows;
     $boardDiv.classList.add('show');
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(location.search);
+    const postId = parseInt(params.get('id'));
+
+    // 게시글 ID가 없으면 목록만 보여줍니다.
+    if (!postId) {
+        document.getElementById('notice-detail-container').style.display = 'none';
+        document.querySelector('.post_list').style.display = 'block';
+        return;
+    }
+
+    // 게시글 데이터 불러오기
+    const { data, error } = await supabase
+        .from('board')
+        .select('*')
+        .eq('id', postId)
+        .single();
+
+    if (error || !data) {
+        document.getElementById('notice-title').textContent = "해당 게시물을 찾을 수 없습니다.";
+        document.getElementById('notice-date').textContent = "";
+        document.getElementById('notice-content').textContent = "";
+        return;
+    }
+
+    // 데이터 표시
+    document.getElementById('notice-title').textContent = data.title;
+    document.getElementById('notice-date').textContent = new Date(data.updated_at).toLocaleDateString('ko-KR');
+    document.getElementById('notice-content').innerHTML = data.content;
+
+    // 상세 화면 표시 / 목록 숨기기
+    document.querySelector('.post_list').style.display = 'none';
+    document.getElementById('notice-detail-container').style.display = 'block';
+});
+
+document.getElementById("board-div").addEventListener("click", async (e) => {
+    const target = e.target.closest(".post-item");
+    if (target) {
+        e.preventDefault();  // 링크 이동 막기
+        const postId = target.dataset.id;
+        history.pushState(null, "", `?pageNum=1&category_id=1&id=${postId}`); // 주소는 바뀌지만 새로고침 없음
+        showPostDetail(postId); // 내부 함수로 상세 게시글 로드
+    }
+});
+
+async function showPostDetail(postId) {
+    const { data, error } = await supabase
+        .from('board')
+        .select('*')
+        .eq('id', postId)
+        .single();
+
+    if (error || !data) {
+        document.getElementById('notice-detail-container').innerHTML = "해당 게시물을 찾을 수 없습니다.";
+        return;
+    }
+
+    document.getElementById('notice-title').textContent = data.title;
+    document.getElementById('notice-date').textContent = new Date(data.updated_at).toLocaleDateString('ko-KR');
+    document.getElementById('notice-content').innerHTML = data.content;
+
+    // 리스트 숨기고 상세보기만 보여줌
+    document.querySelector('.post_list').style.display = 'none';
+    document.getElementById('notice-detail-container').style.display = 'block';
+}
+
+
+
+function goBackToList() {
+    document.getElementById('post-detail-view').classList.add('hidden');
+    document.getElementById('board-div').style.display = 'block';
+    document.getElementById('paging-container').style.display = 'flex';
+    document.querySelector('.post-writing').style.display = 'inline-block';
+}
+
+
+function toggleFAQ(id) {
+    const currentContent = document.getElementById(`faq-content-${id}`);
+    const currentQuestion = currentContent.previousElementSibling;
+
+    const allContents = document.querySelectorAll('.faq-answer');
+    const allQuestions = document.querySelectorAll('.faq-question');
+
+    allContents.forEach(content => {
+        if (content !== currentContent) {
+            content.classList.remove('show');
+        }
+    });
+
+    allQuestions.forEach(question => {
+        if (question !== currentQuestion) {
+            question.classList.remove('active');
+        }
+    });
+
+    currentContent.classList.toggle("show");
+    currentQuestion.classList.toggle("active");
 }
 
 
@@ -248,7 +333,7 @@ async function postRowClick(trTag) {
     const author = trTag.children[3].innerText;
     const password = trTag.children[4].innerText;
     const updated_at = trTag.children[6].innerText;
-    const views = trTag.children[7].innerText;
+    const views = parseInt(trTag.children[7].innerText, 10);
     const category_id = trTag.children[8].innerText;
 
     $updateId.innerText = id;
@@ -296,8 +381,11 @@ async function postRowClick(trTag) {
     if (res.data.image_url && res.data.image_url.trim() !== '') {
         $updateImage.alt = `Uploaded Image: ${res.data.title}`;
         $updateImage.src = res.data.image_url;
+        $updateImage.style.display = 'block';
+
         console.log($updateImage.src);
     } else {
+        $updateImage.style.display = 'none';
         $updateImage.alt = '이미지가 없습니다.';
         $updateImage.src = '';
     }
@@ -305,17 +393,23 @@ async function postRowClick(trTag) {
     // 모달창 안 보여주게 하기
     const $noticeModal = document.querySelector('#notice-modal');
     $noticeModal.classList.remove('hidden');
+
+    $noticeModal.addEventListener('click', function (event) {
+        if (event.target === $noticeModal) {
+            $noticeModal.classList.add('hidden');
+        }
+    });
 }
 
 document.querySelector('#submit-update').addEventListener('click', async function () {
-    const $updateId = document.querySelector('#update-id');
+    let $updateId = document.querySelector('#update-id');
     const $updateTitle = document.querySelector('#update-title');
     const $updateContent = document.querySelector('#update-content');
     const $updateName = document.querySelector('#update-name');
-    const $updatePassword = document.querySelector('#update-password');
+    let $updatePassword = document.querySelector('#update-password');
     const $updateCategory = document.querySelector('#update-category');
 
-    const {data} = await supabase
+    let {data} = await supabase
         .from('board')
         .select('password')
         .eq('id', $updateId.innerHTML)
@@ -378,22 +472,9 @@ document.querySelector('#submit-update').addEventListener('click', async functio
             icon: "success",
             draggable: true
         });
-        console.log(`categoryId ${categoryId}`);
-        switch (categoryId) {
-            case 1:
-                noticeSelect(1);
-                break;
-            case 2:
-                noticeSelect(2);
-                break;
-            case 3:
-                noticeSelect(3);
-                break;
-            default:
-                noticeSelect(1);
-                break;
-        }
 
+        if (!categoryId) categoryId = 1;
+        noticeSelect(categoryId);
     }
 
 })
@@ -403,6 +484,45 @@ async function postDeleteClick(ev, id) {
     ev.stopPropagation();
     urlParams = new URLSearchParams(window.location.search);
     categoryId = Number(urlParams.get('category_id'));
+    const res_delete = await supabase.from('board').select('password').eq('id', id);
+
+    const {value: inputPassword} = await Swal.fire({
+        title: "비밀번호 확인",
+        input: "password",
+        inputPlaceholder: "비밀번호를 입력하세요",
+        inputAttributes: {
+            maxlength: 10,
+            autocapitalize: "off",
+            autocorrect: "off"
+        },
+        showCancelButton: true,
+        confirmButtonText: "확인",
+        cancelButtonText: "취소",
+        customClass: {
+            input: 'swal-custom-input'
+        },
+        preConfirm: (password) => {
+            if (!password) {
+                Swal.showValidationMessage("비밀번호를 입력하세요.");
+            }
+            return password;
+        }
+    });
+
+    if (!inputPassword) {
+        return;
+    }
+    console.log(inputPassword);
+    console.log(res_delete.data[0].password);
+    if (inputPassword !== res_delete.data[0].password) {
+        Swal.fire({
+            title: "비밀번호 오류",
+            text: "비밀번호가 올바르지 않습니다.",
+            icon: "error",
+        });
+        return;
+    }
+
     const result = await Swal.fire({
         title: "삭제하시겠습니까?",
         text: "You won't be able to revert this!",
@@ -413,6 +533,7 @@ async function postDeleteClick(ev, id) {
         confirmButtonText: "확인",
         cancelButtonText: "취소"
     });
+
     if (result.isConfirmed) {
         await supabase.from('board').delete().eq('id', id);
 
@@ -421,7 +542,7 @@ async function postDeleteClick(ev, id) {
             text: "Your file has been deleted.",
             icon: "success"
         });
-if(!categoryId)categoryId=1;
+        if (!categoryId) categoryId = 1;
         noticeSelect(categoryId);
     } else {
         Swal.fire({
@@ -478,6 +599,12 @@ document.getElementById('post-image-url').addEventListener('change', function (e
 function postClick() {
     const $openModal = document.querySelector('#post-modal');
     $openModal.classList.remove('hidden');
+    $openModal.addEventListener('click', function (event) {
+        if (event.target === $openModal) {
+            $openModal.classList.add('hidden');
+        }
+    });
+
 }
 
 // 글쓰기 취소
@@ -487,6 +614,7 @@ function cancelModalClose() {
     document.body.classList.add('scroll-lock');
 }
 
+// 글 수정
 function noticemodalClose() {
     const $noticeModal = document.querySelector('#notice-modal');
     $noticeModal.classList.add('hidden');
