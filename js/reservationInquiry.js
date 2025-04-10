@@ -153,10 +153,10 @@ async function Resupdate(reservationId) {
     // 기존 주소에서 우편번호와 상세 주소 분리
     const addrParts = data.addr.split(',');
     const postcode = addrParts[0].match(/[0-9]{5}$/) ? addrParts[0] : '';
-    const basicAddr = postcode ? addrParts.slice(1, -1).join(' ') : addrParts.slice(0, -1).join(' ');
-    const detailAddr = addrParts[addrParts.length - 1];
+    const basicAddr = postcode ? addrParts.slice(1, -1).join(' ').trim() : addrParts.slice(0, -1).join(' ').trim();
+    const detailAddr = addrParts[addrParts.length - 1].trim();
 
-    // 수정 폼 HTML
+    // 수정 폼
     $Step02.innerHTML = `
     <div class="view">
       <form id="updateForm">
