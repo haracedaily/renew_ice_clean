@@ -12,6 +12,7 @@
     font-style: normal;
 }
 
+
 * {
     font-family: 'iceFont', sans-serif;
 }
@@ -147,6 +148,9 @@ nav button:hover {
 .show {
     height: auto;
 }
+
+/*************************************************************************************/
+
 .faq-item {
     padding: 16px;
     border-bottom: 1px solid #ddd;
@@ -173,6 +177,7 @@ nav button:hover {
     font-size: 0.95rem;
     line-height: 1.5;
     color: #444;
+    transition: all 0.3s ease;
     display: none; /* 기본은 감춤 */
 }
 
@@ -184,8 +189,6 @@ nav button:hover {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-color: #333;
-    color: #fff;
     font-weight: bold;
     font-size: 0.8rem;
     border-radius: 50%;
@@ -193,62 +196,147 @@ nav button:hover {
     line-height: 20px;
 }
 
+table.notice-table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
+.notice-table th, .notice-table td {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
 
-/*************************************************************************************/
+.notice-table th {
+    font-weight: 600;
+    /*color: #bbbbbb;*/
+    font-size: 14px;
+    text-align: center;
+}
+
+.notice-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.notice-table .category-tag {
+    padding: 4px 10px;
+    border: 1px solid #00bfff;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #00bfff;
+    display: inline-block;
+}
+
+.notice-table .post-title:hover {
+    text-decoration: underline;
+}
+
+#paging-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#paging-container a {
+    margin: 0 6px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+#paging-container a:hover {
+    color: #ffffff;
+}
+
 #notice-detail-container {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
 }
 
 #notice-title {
     font-size: 24px;
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 #notice-date {
     font-size: 14px;
-    color: gray;
+    color: #aaa;
+    margin-bottom: 20px;
 }
 
 #notice-content {
-    margin-top: 30px;
+    font-size: 16px;
     line-height: 1.6;
+    margin-top: 20px;
+    margin-bottom: 30px;
 }
 
-button {
-    margin-top: 40px;
-    padding: 10px 20px;
+#notice-detail-container hr {
     border: none;
-    cursor: pointer;
-    border: 1px solid black;
-}
-
-
-.notice-item {
-    padding: 16px;
+    height: 1px;
     border-bottom: 1px solid #ddd;
 }
 
-.notice-link {
-    text-decoration: none;
-    color: inherit;
+#notice-detail-container button {
+    padding: 10px 20px;
+    background-color: #427D9D;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#notice-detail-container button:hover {
+    background-color: #555;
+}
+
+.notice-table.faq-mode thead {
+    display: none;
+}
+
+.list_home {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#update-image {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 10px;
+    margin: 20px 0;
     display: block;
 }
 
-.notice-title {
-    font-weight: bold;
-    font-size: 18px;
-    margin: 0 0 8px 0;
+/*************************************************************************************/
+
+.delete-btn {
+    background-color: #d33;
+    color: white;
+    border: none;
+    padding: 3px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.notice-content {
-    font-size: 14px;
-    color: #555;
-    margin: 0;
+.delete-btn:hover {
+    background-color: #b02a2a;
+    transform: scale(1.05);
 }
-/*************************************************************************************/
+
+.delete-btn:active {
+    background-color: #8a1f1f;
+    transform: scale(0.95);
+}
 
 .post-modal-c {
     position: fixed;
@@ -264,8 +352,8 @@ button {
 
 .post-modal-content {
     background: white;
-    width: 500px;
-    height: 600px;
+    width: 800px;
+    height: 700px;
     padding: 20px;
     border-radius: 10px;
     overflow-y: auto;
@@ -296,18 +384,16 @@ button {
 }
 
 .post-detail p {
-    font-size: 2rem;
+    font-size: 22px;
     font-weight: bold;
     text-align: center;
-    margin: 15px;
+    margin-bottom: 15px;
 }
 
 .post-detail label {
     display: block;
     margin-top: 10px;
     font-weight: bold;
-    font-size: 1.2rem;
-    margin-top: 30px;
 }
 
 input[type="text"],
