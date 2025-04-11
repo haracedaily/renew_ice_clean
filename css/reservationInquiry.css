@@ -133,6 +133,7 @@ body{
     font-size: 14px;
 }
 .privacy-check{
+    margin-top: 3rem;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -174,57 +175,34 @@ body{
         transform: translateY(-25px);
     }
 }
+
+
+#updateForm{
+    margin: 0 0 1rem 2rem;
+
+}
+
 .view{
     animation: fadein 2s;
     background-color: #F5F5F5;
     padding: 2rem 2rem 1rem;
-    margin: 20px auto;
+    margin: 4rem auto;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
     width: 80%;
 }
-#updateForm{
-    margin-bottom: 2rem;
-}
-
 .view p{
-    margin: 8px 25px;
-}
-.state_explain{
-    margin: 8px auto 0;
-    color: darkred;
-    font-weight: bold;
-}
-.none-txt{
-    text-align: center;
-}
-
-.button-container{
     display: flex;
-    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
 }
-
-.button-container button, .gobtn {
-    margin: 5px 20px;
-    cursor: pointer;
-    width: 120px;
-    height: 40px;
-    font-size: 18px;
-    line-height: 45px;
+.view p strong {
+    width: 150px;
+    min-width: 150px;
     font-weight: bold;
-    color: black;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-}
-
-.button-container button:hover, .gobtn:hover {
-    color: white;
-    background-color: #006B99;
-    box-shadow: 0 0 12px rgba(102, 179, 255, 0.5);
-    transform: translateY(-2px);
+    color: #444;
+    flex-shrink: 0;
 }
 
 .view-addr-search-btn{
@@ -265,6 +243,43 @@ body{
     color: #444;
     background-color: #fff;
 }
+.state_explain{
+    margin: 8px auto 0;
+    color: darkred;
+    font-weight: bold;
+}
+.none-txt{
+    text-align: center;
+}
+
+.button-container{
+    display: flex;
+    justify-content: center;
+}
+
+.button-container button, .gobtn {
+    margin: 5px 20px;
+    cursor: pointer;
+    width: 120px;
+    height: 40px;
+    font-size: 18px;
+    line-height: 45px;
+    font-weight: bold;
+    color: black;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.button-container button:hover, .gobtn:hover {
+    color: white;
+    background-color: #006B99;
+    box-shadow: 0 0 12px rgba(102, 179, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+
 
 
 .hidden2{
