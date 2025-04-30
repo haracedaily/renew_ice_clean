@@ -16,17 +16,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="./js/swiper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="./js/slick.min.js"></script>
-    <script src="./js/popup-widget.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // const supabaseUrl = "https://embqgdrxfblyczbenvie.supabase.co";
-        // const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYnFnZHJ4ZmJseWN6YmVudmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjUwMDcsImV4cCI6MjA1NTAwMTAwN30.ZsuAX5G-wfxGLCmNKOniR2t4Ia2ErMj0jjJUlTRjEFo";
         const supabaseUrl = "https://wqetnltlnsvjidubewia.supabase.co";
-        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
-        const supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     </script>
+    <script src="./js/popup-widget.js"></script>
+    <script src="./js/index.js"></script>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
 
@@ -578,7 +576,7 @@ min-height: 300px;
                     <td style="border: 1px solid #c4cdd6;">
                         - 수돗물 염소 성분으로 인한 물때와 스케일 제거<br>
                         - 곰팡이 및 세균 번식 억제<br>
-                        - 친환경 세척 약품 사용 + 스팀 살균 청소
+                        - 친환경 세척 약품 사용 + 스퀀 살균 청소
                     </td>
                     <td style="border: 1px solid #c4cdd6;">계약 후 최초 1회</td>
                 </tr>
@@ -706,7 +704,7 @@ min-height: 300px;
                         <dl>
                             <dt>휴대전화</dt>
                             <dd>
-                                <input type="tel" name="phone" placeholder="연락처를 ‘-’빼고 입력해주세요">
+                                <input type="tel" name="phone" placeholder="연락처를 '빼고 입력해주세요">
                             </dd>
                         </dl>
                     </div>
@@ -815,4 +813,3 @@ min-height: 300px;
 </main>
 </body>
 </html>
-<script src="./js/index.js"></script>
