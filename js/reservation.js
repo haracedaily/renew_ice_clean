@@ -346,6 +346,12 @@ PrivacyOk.addEventListener('click', async function () {
         return;
     }
 
+    const capacityMap = {
+        '20~50kg': '1',
+        '50~100kg': '2',
+        '100kg 이상': '3'
+    };
+
     const reservationData = {
         name: document.querySelector('.check-info-name').innerHTML,
         tel: document.querySelector('.check-info-phone').innerHTML,
@@ -356,7 +362,7 @@ PrivacyOk.addEventListener('click', async function () {
         date: document.querySelector('.check-date').innerHTML,
         time: document.querySelector('.check-time').innerHTML,
         model: document.querySelector('.check-model').innerHTML,
-        capacity: document.querySelector('.check-capacity').innerHTML,
+        capacity: capacityMap[document.querySelector('.check-capacity').innerHTML] || '',
         service: document.querySelector('.check-select-ser').innerHTML,
         cycle: document.querySelector('.check-select-cyc').innerHTML,
         add: document.querySelector('.check-select-add').innerHTML,
