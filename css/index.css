@@ -510,38 +510,39 @@ footer {
     box-sizing: content-box;
 }
 .main_visual .swiper-slide {
-    padding-top: 110px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
     position: relative;
-    width:100%;
-    color:white;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .main_visual .swiper-slide .cover_img {
-    display: block;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    z-index: 1;
 }
 
 .main_visual .swiper-slide .cover_img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display:block;
 }
 
 .main_visual h2 {
-    font-size: 3.7rem;
-    margin-top: 35px;
-    font-weight: 900;
-    line-height: 1.5;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    z-index: 2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'iceFont', sans-serif;
 }
 .slider_controll {
     position: absolute;
