@@ -370,8 +370,13 @@ PrivacyOk.addEventListener('click', async function () {
         deposit: parseInt(document.querySelector('.check-deposit').innerHTML),
     }
 
-
-    const data = await supabase
+    console.log("예약 데이터:", reservationData);
+    const rest = await fetch("http://localhost:4001/res/save", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(reservationData)
+    });
+    /*const data = await supabase
         .from('ice_res')
         .insert([reservationData]);
     // console.log(data);
@@ -389,7 +394,7 @@ PrivacyOk.addEventListener('click', async function () {
             title: '예약 실패',
             text: '예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
         });
-    }
+    }*/
 
 
 });
