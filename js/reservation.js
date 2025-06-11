@@ -376,6 +376,26 @@ PrivacyOk.addEventListener('click', async function () {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(reservationData)
     });
+    console.log(rest);
+    const res = await rest.text();
+    console.log("예약 응답:", res);
+    if(res==="success"){
+        Swal.fire({
+            title: '예약성공!',
+            icon: 'success',
+            draggable: true,
+        }).then(() => {
+            location.href = './reservation.html';
+        });
+        console.log("예약 성공");
+    }else{
+        Swal.fire({
+            icon: 'error',
+            title: '예약 실패',
+            text: '예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+        });
+        console.log("예약 실패");
+    }
     /*const data = await supabase
         .from('ice_res')
         .insert([reservationData]);
