@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ICECARE 예약하기</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="./css/reservation.css">
+  <link rel="stylesheet" href="./css/reservationmedia.css">
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+    const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
+
+    // 전역 변수로 설정
+    window.supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
+    
+    // 로그인 체크 및 리다이렉트 함수
+    function checkLoginAndRedirect(targetUrl) {
+        // 로컬 스토리지에서 로그인 정보 확인
+        const userInfo = localStorage.getItem('userInfo');
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        
+        if (!isLoggedIn || !userInfo) {
+            // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+            Swal.fire({
+                icon: 'warning',
+                title: '로그인이 필요합니다',
+                text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+                confirmButtonText: '로그인하기',
+                showCancelButton: true,
+                cancelButtonText: '취소',
+                confirmButtonColor: '#0066CC',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 로그인 페이지로 이동
+                    window.location.href = './mypage.html';
+                }
+            });
+            return false;
+        }
+        
+        // 로그인된 경우 목표 페이지로 이동
+        window.location.href = targetUrl;
+        return true;
+    }
+    
+    // SweetAlert 아이콘 커스텀 스타일
+    const style = document.createElement('style');
+    style.textContent = `
+        .swal2-icon-custom {
+            color: #0066CC !important;
+        }
+        .swal2-icon-custom .swal2-icon-content {
+            color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-warning {
+            border-color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+            border-color: #0066CC !important;
+        }
+    `;
+    document.head.appendChild(style);
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      flatpickr("#reservation-date", {
+        locale: "ko",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        disableMobile: "true",
+        inline: true,
+        onChange: function(selectedDates, dateStr) {
+          console.log('날짜 선택됨:', dateStr);
+        }
+      });
+      
+      // 예약 페이지 접근 시 로그인 체크
+      checkLoginOnPageLoad();
+    });
+    
+    // 페이지 로드 시 로그인 체크
+    function checkLoginOnPageLoad() {
+      const userInfo = localStorage.getItem('userInfo');
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      
+      if (!isLoggedIn || !userInfo) {
+        Swal.fire({
+          icon: 'warning',
+          title: '로그인이 필요합니다',
+          text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+          confirmButtonText: '로그인하기',
+          showCancelButton: true,
+          cancelButtonText: '취소',
+          confirmButtonColor: '#0066CC',
+          customClass: {
+            icon: 'swal2-icon-custom'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = './mypage.html';
+          } else {
+            window.location.href = './index.html';
+          }
+        });
+      }
+    }
+  </script>
+</head>
+<body>
+<!--<nav>-->
+<!--  <a href="./index.html" class="logo">-->
+<!--    <img src="image/logo.png" alt="로고 이미지">-->
+<!--  </a>-->
+<!--  <ul class="nav-links">-->
+<!--    <li><a class="hoho" style="line-height: 40px" href="./reservation.html">예약하기</a></li>-->
+<!--    <li><a class="hoho" style="line-height: 40px" href="./reservationInquiry.html">예약조회</a></li>-->
+<!--    <li style="cursor:pointer;" class="gomain"><a style="color: white; line-height: 43px; font-weight: 500;" onclick="window.open('./contact_us.html','_blank', 'width=1350,height= 800')">공지사항</a></li>-->
+<!--  </ul>-->
+<!--  <div class="hamburger" onclick="slideMenu()">-->
+<!--    <i class="fas fa-bars"></i> &lt;!&ndash; 햄버거 아이콘 &ndash;&gt;-->
+<!--  </div>-->
+<!--</nav>-->
+<!--<div class="m-nav-links">-->
+<!--  <div class="close-btn" onclick="slideMenu()">-->
+<!--    <i class="fas fa-times"></i> &lt;!&ndash; 닫기 아이콘 &ndash;&gt;-->
+<!--  </div>-->
+<!--  <ul>-->
+<!--    <li><a href="./reservation.html">예약하기</a></li>-->
+<!--    <li><a href="./reservationInquiry.html">예약조회</a></li>-->
+<!--    <li><a href="./contact_us.html">공지사항</a></li>-->
+<!--  </ul>-->
+<!--</div>&lt;!&ndash;m-nav-links&ndash;&gt;-->
+
+<!--<div class="overlay"></div>-->
+
+<header class="sticky top-0 z-40 w-full bg-white p-5">
+  <nav class="flex items-center justify-between max-w-[1200px] mx-auto">
+    <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
+    <ul class="flex gap-8">
+      <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
+      <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
+      <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
+      <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
+    </ul>
+  </nav>
+  <!--  <div id="side_btn_group" class="h-full absolute right-[5%] top-60 z-50 flex flex-col justify-between items-center">
+    <div id="notice_btn" class="rounded-[25px] w-[50px] h-[50px] mb-10 z-50 flex justify-center items-center" onclick="location.href='./contact_us.html'">
+        <span class="flex justify-center items-center"><h5 class="h-[38px]">&lt;</h5></span>
+        <p>공지사항</p>
+    </div>
+    <div id="kakaoBot_btn" class="rounded-[25px] w-[50px] h-[50px] z-50 flex justify-center items-center" onclick="location.href='#'">
+        <p>카카오챗봇</p>
+    </div>
+    </div>
+-->
+  <div id="side_btn_group"
+       class="w-[45px] h-[100px] rounded-[20px] z-50 absolute top-[70vh] right-10  flex flex-col justify-evenly items-center">
+        <span class="w-[35px] h-[35px] rounded-[50%] border border-white flex justify-start items-center cursor-pointer"
+              onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
+        </span>
+    <!--   <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/whiteBalloon.png')] bg-no-repeat cursor-pointer"
+             onclick="location.href='./contact_us.html'">
+           <p class="text-black text-xs font-bold tracking-[-1.2px] pb-[1.5px]">Q&A</p>
+       </span>-->
+    <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer"
+          onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
+            <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[2px]">Ch+</p>
+        </span>
+
+  </div>
+
+</header>
+
+<div id="r-container">
+  <div class="toptxt">
+    <h1>아이스케어 <br/>제빙기 청소 예약하기</h1>
+  </div>
+
+  <!-- 예약 폼 - 모든 필드를 한 번에 표시 -->
+  <form id="reservation-form" class="reservation-form">
+    <!-- 예약자 정보 -->
+    <div class="form-section">
+      <h2 class="section-title">예약자 정보</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">이름</label>
+          <input type="text" id="name" name="name" class="form-input">
+        </div>
+        <div class="form-group">
+          <label for="phone">연락처</label>
+          <input type="tel" id="phone" name="phone" class="form-input" placeholder="010-0000-0000">
+        </div>
+        <div class="form-group">
+          <label for="email">이메일</label>
+          <input type="email" id="email" name="email" class="form-input">
+        </div>
+      </div>
+    </div>
+
+    <!-- 예약 일정 -->
+    <div class="form-section">
+      <h2 class="section-title">예약 일정</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reservation-date">예약 날짜</label>
+          <input type="text" id="reservation-date" name="reservation-date" class="form-input" readonly>
+        </div>
+        <div class="form-group">
+          <label>예약 시간</label>
+          <div class="time-options">
+            <label class="time-option">
+              <input type="radio" name="reservation-time" value="10:00~12:00" class="reservationTime">
+              <span>10:00~12:00</span>
+            </label>
+            <label class="time-option">
+              <input type="radio" name="reservation-time" value="12:00~14:00" class="reservationTime">
+              <span>12:00~14:00</span>
+            </label>
+            <label class="time-option">
+              <input type="radio" name="reservation-time" value="14:00~16:00" class="reservationTime">
+              <span>14:00~16:00</span>
+            </label>
+            <label class="time-option">
+              <input type="radio" name="reservation-time" value="16:00~18:00" class="reservationTime">
+              <span>16:00~18:00</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 서비스 주소 -->
+    <div class="form-section">
+      <h2 class="section-title">서비스 주소</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="postcode">우편번호</label>
+          <div class="postcode-group">
+            <input type="text" id="postcode" name="postcode" class="form-input" readonly>
+            <button type="button" onclick="openDaumPostcode()" class="btn-postcode">주소 검색</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="address">기본주소</label>
+          <input type="text" id="address" name="address" class="form-input" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="detailAddress">상세주소</label>
+          <input type="text" id="detailAddress" name="detailAddress" class="form-input">
+        </div>
+      </div>
+    </div>
+
+    <!-- 제빙기 정보 -->
+    <div class="form-section">
+      <h2 class="section-title">제빙기 정보</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="modelname">제빙기 모델명</label>
+          <input type="text" id="modelname" name="modelname" class="form-input" placeholder="예: 삼성 제빙기">
+        </div>
+      </div>
+    </div>
+
+    <!-- 특별 요청사항 -->
+    <div class="form-section">
+      <h2 class="section-title">특별 요청사항</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="specialR">추가 요청사항</label>
+          <textarea id="specialR" name="specialR" class="form-textarea" 
+                    placeholder="제빙기 상태나 장소에 대한 설명, 특별한 요청사항이 있으시면 입력해주세요."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 예약 확인 및 동의 -->
+    <div class="form-section">
+      <h2 class="section-title">예약 확인</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="resercheck" name="resercheck">
+            <span>모든 내용을 확인했습니다.</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="privacy" name="privacy">
+            <span>개인정보 제공에 동의합니다.</span>
+          </label>
+          <button type="button" class="privacy-detail-btn">[상세보기]</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 예약 버튼 -->
+    <div class="form-section">
+      <div class="form-row">
+        <button type="submit" id="confirm-reserve" class="btn-reserve">예약하기</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- 개인정보 상세 내용 -->
+<div class="privacy-details" id="privacy-details" style="display: none;">
+  <h3>개인정보 수집 및 이용 동의</h3>
+  <p><strong>1. 개인정보 수집 및 이용 목적</strong><br>
+    ICECARE는 제빙기 청소 및 수리 서비스 예약, 제공, 고객 문의 응대, 품질 향상을 위해 개인정보를 수집·이용합니다.</p>
+  <p><strong>2. 수집하는 개인정보 항목</strong><br>
+    - 필수: 성명, 연락처, 이메일, 서비스 주소, 예약 일시, 제빙기 모델명, 서비스 요청 세부 사항 등</p>
+  <p><strong>3. 보유 및 이용 기간</strong><br>
+    서비스 제공 완료 후 1년 (법령에 따른 보존 기간 예외)</p>
+  <p><strong>4. 개인정보 제공</strong><br>
+    - 제공받는 자: ICECARE 협력업체, 제빙기 제조사<br>
+    - 목적: 예약 조율, 현장 서비스, 부품 수급<br>
+    - 항목: 성명, 연락처, 주소, 모델명</p>
+  <p><strong>5. 동의 철회</strong><br>
+    언제든지 동의를 철회하거나 열람·정정을 요청할 수 있습니다 (고객센터: 1234-5678)</p>
+</div>
+
+  <script>
+    function openDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function(data) {
+          // 팝업에서 검색 결과 항목을 클릭했을 때 실행할 코드
+          var addr = ''; // 주소 변수
+
+          // 사용자가 선택한 주소 타입에 따라 주소 값을 가져옴
+          if (data.userSelectedType === 'R') { // 도로명 주소
+            addr = data.roadAddress;
+          } else { // 지번 주소
+            addr = data.jibunAddress;
+          }
+
+          // 우편번호와 주소 필드에 값 입력
+          document.getElementById('postcode').value = data.zonecode;
+          document.getElementById('address').value = addr;
+
+          // 상세주소 입력란으로 커서 이동
+          document.getElementById('detailAddress').focus();
+        }
+      }).open();
+    }
+
+    //연락처 입력
+    function formatPhone(input) {
+      // 숫자만 남기고 나머지 제거
+      let value = input.value.replace(/\D/g, '');
+
+      // 010-1234-5678 형식으로 변환
+      if (value.length > 3 && value.length <= 7) {
+        value = `${value.slice(0, 3)}-${value.slice(3)}`;
+      } else if (value.length > 7) {
+        value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
+      }
+
+      input.value = value;
+    }
+  </script>
+  <script src="js/reservation.js"></script>
+</body>
+</html>

@@ -25,12 +25,12 @@
 
 <header class="sticky top-0 z-40 w-full bg-white p-5">
     <nav class="flex items-center justify-between max-w-[1200px] mx-auto">
-        <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="logo">
+        <img src="/image/logo.png" class="cursor-pointer" onclick="location.href='/index.html'" alt="logo">
         <ul class="flex gap-8">
-            <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
-            <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
-            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
-            <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
+            <li><a href="/contact_us.html" class="nav-link">공지사항</a></li>
+            <li><a href="/contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
+            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('/reservation.html')">예약하기</a></li>
+            <li><a href="/mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="/image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
         </ul>
     </nav>
     <div id="side_btn_group"
@@ -39,7 +39,7 @@
               onclick="window.scrollTo({top:0,behavior:'smooth'})">
             <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
         </span>
-        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer"
+        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('/image/darkBalloon.png')] bg-no-repeat cursor-pointer"
               onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
             <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[2px]">Ch+</p>
         </span>
@@ -188,7 +188,7 @@ function checkLoginAndRedirect(targetUrl) {
         }).then((result) => {
             if (result.isConfirmed) {
                 // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
-                window.location.href = './mypage.html';
+                window.location.href = '/mypage.html';
             }
         });
         return false;
@@ -220,4 +220,4 @@ document.head.appendChild(style);
 
 </body>
 </html>
-<script src="./js/contact_us.js"></script>
+<script src="/js/contact_us.js"></script>

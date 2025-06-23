@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IceCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/slick.css">
+    <link rel="stylesheet" href="./css/swiper.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/js/swiper.min.js"></script>
+    <script src="/js/slick.min.js"></script>
+    <script src="/js/popup-widget.js"></script>
+    <!-- 카카오맵 API 스크립트를 먼저 로드 -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
+    <!-- 카카오맵 API 로드 후에 index.js 로드 -->
+    <script src="/js/index.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script>
+        // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase 클라이언트 초기화
+            const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
+            window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            
+            // Swiper 초기화
+            new Swiper('.main_visual .swiper', {
+                loop: true,
+                autoplay: { delay: 4000 },
+                effect: 'fade',
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
+            });
+        });
+    </script>
+    <!-- SweetAlert 아이콘 커스텀 스타일 -->
+    <style>
+        .swal2-icon-custom {
+            color: #0066CC !important;
+        }
+        .swal2-icon-custom .swal2-icon-content {
+            color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-warning {
+            border-color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+            border-color: #0066CC !important;
+        }
+    </style>
+</head>
+<body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
+
+<header class="sticky top-0 z-40 w-full bg-white p-5">
+    <nav class="flex items-center justify-between max-w-[1200px] mx-auto">
+        <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
+        <ul class="flex gap-8">
+            <li><a href="/contact_us.html" class="nav-link">공지사항</a></li>
+            <li><a href="/contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
+            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('/reservation.html')">예약하기</a></li>
+            <li><a href="/mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
+        </ul>
+    </nav>
+    <div id="side_btn_group"
+         class="w-[45px] h-[100px] rounded-[20px] z-50 absolute top-[70vh] right-10 flex flex-col justify-evenly items-center">
+        <span class="w-[35px] h-[35px] rounded-[50%] border border-white flex justify-start items-center cursor-pointer"
+              onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
+        </span>
+        <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer"
+              onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
+            <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[2px]">Ch+</p>
+        </span>
+    </div>
+</header>
+<main class="flex flex-col items-center justify-center w-full h-full">
+
+    <!--메인헤더 시작-->
+    <div id="main_header" class="flex flex-col justify-center items-center w-full">
+        <section class="main_visual">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <figure class="cover_img">
+                            <img src="./image/main_visual.jpg" alt="" class="only_web">
+                        </figure>
+                        <h5>제빙기의 내부까지 꼼꼼히 세척해<br class="only_mo">신선하고 깨끗한 얼음을 드실 수 있습니다.</h5>
+                        <a href="#" class="call_btn color_W" onclick="checkLoginAndRedirect('./reservation.html')">
+                            <span>예약 문의</span>
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <figure class="cover_img">
+                            <img src="./image/main_visual.jpg" alt="" class="only_web">
+                        </figure>
+                        <h5>ICECARE는 제빙기의 위생을 책임지는<br>전문 청소 서비스 브랜드입니다.</h5>
+                        <a href="#" class="call_btn color_W" onclick="checkLoginAndRedirect('./reservation.html')">
+                            <span>예약 문의</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <div class="today_data_wrap">
+                <ul class="today_data color_W">
+                    <li>
+                        <p>
+                            <span id="visit">114,473</span>명
+                        </p>
+                        <p>전체방문</p>
+                    </li>
+                    <li>
+                        <p><span id="nowVisit">156</span>명</p>
+                        <p>오늘방문</p>
+                    </li>
+                    <li>
+                        <p><span id="nowService">16</span>명</p>
+                        <p>오늘접수</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    <!--메인헤더 끝-->
+    <!--서브헤더 시작-->
+    <div id="sub_header" class="flex flex-col justify-center items-center w-full">
+        <section class="sub_visual">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <figure class="cover_img">
+                            <img src="./image/sub_header.png" alt="서브헤더" class="only_web">
+                        </figure>
+                        <div class="sub_header_text fade-in-on-scroll">
+                            <div class="icecare-title">
+                                <span class="icecare-slogan">제빙기 청소의 새로운 기준</span><br>
+                                <span class="icecare-logo"><span class="color_B">ICE</span>CARE</span>
+                            </div>
+                            <br>
+                            <p class="sub_header-desc">ICECARE는 제빙기의 위생을 책임지는 전문 청소 서비스 브랜드입니다.<br>
+                            육안으로 확인하기 어려운 내부 오염까지 꼼꼼하게 분해 세척하여,<br>
+                            더 깨끗한 얼음, 더 안심할 수 있는 환경을 만들어드립니다.<br>
+                            제빙기 내부는 물때, 곰팡이, 세균이 쉽게 쌓이는 구조로 정기적인 전문 케어가 필수입니다.<br>
+                            ICECARE는 모든 부품을 철저히 분해하여 숨겨진 오염까지 완벽하게 제거합니다.</p><br>
+                            <p class="sub_header-slogan color_B"><b>청결을 넘어, 안심까지.</b></p>
+                            <p class="sub_header-strong">
+                                <b>ICE CARE는 고객님의 <span class="color_B">건강</span>과 <span class="color_B">신뢰</span>를 최우선으로 생각합니다.</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--서브헤더 끝-->
+
+    <!-- section1 시작 -->
+    <section id="section1" class="info-section fade-in-on-scroll">
+        <div class="info-block fade-in-on-scroll">
+            <div class="info-img">
+                <img src="./image/Section1.png" alt="제빙기 내부 습기 이미지">
+            </div>
+            <div class="info-text">
+                <h3><span class="color_B">제빙기 케어</span><span>는 왜, 필요할까요?</span></h3>
+                <h4>제빙기의 내부는 항상 습한 상태를 유지하기 때문에,<br>정기적인 위생 관리가 필수입니다.</h4>
+                <p>습기가 많은 제빙기 내부는 세균과 곰팡이가 자라기 쉬운 환경입니다.<br>
+                이러한 유해균은 얼음의 위생을 해칠 뿐만 아니라, 면역력이 약한 분들에게는<br>
+                호흡기 감염이나 피부 질환을 유발할 수 있어 각별한 주의가 필요합니다.</p>
+            </div>
+        </div>
+        <div class="info-block fade-in-on-scroll">
+            <div class="info-img">
+                <img src="./image/Section2.png" alt="제빙기 얼음 이미지">
+            </div>
+            <div class="info-text">
+                <h4 class="color_B">제빙기의 냉각기에는 니켈 도금이 되어 있으며,<br>정기적인 관리가 반드시 필요합니다.</h4>
+                <p>니켈은 제빙기의 냉각 효율을 높이기 위해 사용되지만, 관리가 소홀할 경우 도금이 벗겨져<br>
+                미세한 니켈 가루가 구조에 섞일 수 있습니다. 니켈은 세계보건기구(WHO)에서도<br>
+                발암 가능 물질로 분류하고 있으며, 장기간 노출 시 폐질환이나 신장 질환 등 건강에<br>
+                악영향을 줄 수 있어 주기적인 청소와 점검이 매우 중요합니다.</p>
+            </div>
+        </div>
+    </section>
+    <!-- section1 끝 -->
+
+    <!-- section2 시작 -->
+    <section id="section2" class="section2-bg">
+        <div class="section2-inner fade-in-on-scroll">
+            <h2 class="section2-title"><span class="color_B">제빙기 케어</span>가 필요한 시점은?</h2>
+            <p class="section2-desc">평상시에는 3개월에 한번, 여름철에는 최소 1~2개월에 한번 완전분해 케어가 필요합니다.</p>
+            <div class="section2-icons">
+                <div class="section2-icon-block">
+                    <img src="./image/Section2Group1.png" alt="이물질 아이콘">
+                    <p>얼음안에 이물질이 들어갔을 때</p>
+                </div>
+                <div class="section2-icon-block">
+                    <img src="./image/Section2Group2.png" alt="냄새 아이콘">
+                    <p>얼음에서 이상한 냄새가 날 때</p>
+                </div>
+                <div class="section2-icon-block">
+                    <img src="./image/Section2Group3.png" alt="분해케어 아이콘">
+                    <p>분해 케어를 받아보지 않았거나<br>케어 시점이 오래됐을 때</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section2 끝 -->
+
+    <!-- section3 시작 -->
+    <section id="section3" class="section3-image fade-in-on-scroll">
+        <img src="./image/Section3.png" alt="Section3 이미지" style="width:100%;display:block;">
+    </section>
+    <!-- section3 끝 -->
+
+    <!-- section4 시작 -->
+    <section id="section4" class="section">
+        <div class="section-title">
+            <h2>주변 가맹점 찾기</h2>
+            <p>현재 위치 기반으로 주변 가맹점을 찾아보세요</p>
+        </div>
+        <div class="map-container">
+            <div class="map-controls">
+                <div class="search-box">
+                    <input type="text" id="address-input" class="address-input" placeholder="주소를 입력하세요">
+                    <button id="search-address" class="search-btn">검색</button>
+                </div>
+                <button id="current-location" class="map-btn">현재 위치</button>
+                <button id="search-stores" class="map-btn">가맹점 찾기</button>
+            </div>
+            <div id="map" style="width:100%;height:600px;"></div>
+        </div>
+    </section>
+    <!-- section4 끝 -->
+
+    <!--처리현황-->
+
+    <!--footer 시작-->
+    <footer id="footer">
+        <div class="inner">
+            <nav class="fnb">
+                <ul>
+                    <li>
+                        <button type="button" class="agree_pop cursor-pointer" onclick="open_popup()">개인정보처리방침</button>
+                    </li>
+                </ul>
+            </nav>
+            <div class="">
+                <h1 class="foot_logo mb-[10px]">
+                    <a href="./">
+                        <img src="./image/f_logo.png" alt="홈피스 로고" class="only_web">
+                        <!--                        <img src="image/f_logo_m.png" alt="홈피스 로고" class="only_mo">-->
+                    </a>
+                </h1>
+                <div class="foot_info">
+                    <div class="footer_text">
+                        <div>
+                            <span class="bar">회사명 : 아이스케어</span>
+                            <span>사업자등록번호 : 212-86-15003 </span>
+                            <span>대표이사 : 이진규</span>
+                            <span>주소 : 서울특별시 광진구 뚝섬로 665. 2층 </span>
+                        </div>
+                        <div>
+                            <span>문의전화 : 1666-9587</span>
+                            <span>이메일 : zuhomeffice@naver.com</span>
+                        </div>
+                    </div>
+                    <p class="copy">Copyright(c) All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--footer 종료-->
+   <!-- <section class="receipt" id="receipt">
+        &lt;!&ndash;       <button type="button" class="only_mo_flex member_btn gmarket_font">
+                   멤버십 모집  <i></i>
+               </button>&ndash;&gt;
+
+        <div class="inner flex flex-row">
+
+
+            <div class="text_box">
+                <h4 class="gmarket_font">멤버쉽 모집, 수질인증 문의</h4>
+                <a class="fix_bottom_a" href="tel:1666-9587"><span class="gmarket_font">1666-9587</span></a>
+            </div>
+
+            <form name="fwrite" id="fwrite" method="post" class="flex flex-row">
+                <div class="form_item">
+                    <div class="flex__c flex flex-row items-center">
+                        <dl>
+                            <dt>지역</dt>
+                            <dd>
+                                <select name="local" id="local">
+                                    <option value="대구광역시">대구광역시</option>
+                                    <option value="인천광역시">인천광역시</option>
+                                    <option value="경기도">경기도</option>
+                                </select>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>성함</dt>
+                            <dd>
+                                <input type="text" name="name" placeholder="성함을 입력해주세요">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>휴대전화</dt>
+                            <dd>
+                                <input type="tel" name="phone" placeholder="연락처를 '빼고 입력해주세요">
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <div class="flex__c">
+                        <div class="chk_box">
+                            <input type="checkbox" name="agree" id="agree">
+                            <label for="agree">개인정보처리방침에 동의합니다</label>
+                        </div>
+                        <button type="button" class="agree_pop cursor-pointer" onclick="open_popup()">[약관동의]</button>
+                    </div>
+                </div>
+                <button type="button" class="submit_btn gmarket_font" onclick="counseling()">상담신청</button>
+            </form>
+        </div>
+    </section>-->
+    <!--개인정보처리방침 팝업-->
+    <div id="personal_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(25vw,25%)] bg-white rounded-2xl p-10">
+            <div class="flex">
+                <h2 id="pop_title" class="text-center font-bold text-[30px] p-[0_40px] w-[95%]">개인정보처리방침</h2>
+                <div onclick="close_popup()" class="w-[40px] h-[40px] cursor-pointer"
+                     style="background-image:url('./image/pop_close.png')"></div>
+            </div>
+            <hr class="mb-2">
+            <ul class="collection-content">
+                <li class="overflow-y-scroll text-[18px] h-[60vh] p-3 leading-9">
+                    <h3><strong>개인정보 수집 및 이용에 대한 동의</strong></h3>
+                    아래와 같이 개인정보를 수집합니다.<br>
+                    <br>
+                    <strong>개인정보 제공에 대한 동의</strong><br>
+                    홈피스 요청하신 대해 개인정보보호법 제15조에 따라 아래와 같은 사항을 알리고 동의를 받아 귀하의 개인정보를 수집합니다.<br>
+                    <strong>제공하는 개인정보 항목</strong><br>
+                    지역, 성함, 휴대전화, 주소 등 세부 개인정보<br>
+                    <strong>개인정보를 제공받는 자의 이용 목적</strong><br>
+                    요청하신 문의에 대한 답변 및 관련 제반 업무 지원<br>
+                    <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
+                    문의 종료 시점으로부터 1년간<br>
+                    <strong>동의 거부권에 대한 고지</strong><br>
+                    본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.<br>
+                    <br>
+                    <h3 class="text-[20px]"><strong>개인정보 제3자 제공에 대한 동의</strong></h3><br>
+                    <strong>개인정보를 제공받는 자</strong><br>
+                    홈피스 제휴 영업조직<br>
+                    <strong>개인정보를 제공받는 자의 개인정보 이용 목적</strong><br>
+                    홈피스 주식회사로 부터 위임받은 상담 및 제반 업무 지원<br>
+                    <strong>제공하는 개인정보의 항목</strong><br>
+                    지역, 성함, 휴대전화, 주소 등 문의에 관련한 세부 개인정보<br>
+                    <strong>개인정보를 제공받는 자의 개인정보 보유 및 이용 기간</strong><br>
+                    문의 종료 시점으로부터 1년간<br>
+                    <strong>동의 거부권에 대한 고지</strong><br>
+                    본 개인정보 제공에 동의하지 않으시는 경우, 동의를 거부할 수 있으며, 이 경우 문의에 대한 답변이 제한될 수 있습니다.
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <!--개인정보처리방침 팝업 끝-->
+    <!-- 글쓰기 editor 팝업 -->
+    <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(25vw,25%)] bg-white rounded-2xl p-10">
+            <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
+                <label>예약번호</label>
+                <input id="reserv_no" type="search" readonly>
+                <label>날짜</label>
+                <input id="re_date" type="date" readonly>
+                <label>제목</label>
+                <input id="re_title" class="col-span-3 border-[1px]" type="text">
+                <label>첨부파일</label>
+                <input type="file" class="col-span-3" id="re_image" onchange="addFile(this);" multiple
+                       accept="image/*">
+                <div id="re_file_list" class="file-list col-span-4"></div>
+            </div>
+            <div id="editor" class="p-5">
+                <p></p>
+            </div>
+            <div class="flex justify-end gap-4">
+                <button id="con_re" class="cursor-pointer p-3 rounded-lg bg-blue-700 text-white m-2">작성</button>
+                <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
+            </div>
+        </div>
+    </div>
+    <!--글쓰기 에디터 팝업 끝-->
+    <!--단일 갤러리 팝업-->
+    <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+        <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(25vw,25%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
+            <div class="flex flex-row justify-between items-center">
+                <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
+                <div onclick="close_gallery()" class="w-[40px] h-[40px] cursor-pointer"
+                     style="background-image:url('./image/pop_close.png')"></div>
+            </div>
+            <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
+                <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
+                <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
+            </div>
+            <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
+                날짜
+            </div>
+            <div id="gallery_content" class="max-h-[200px] overflow-y-scroll">
+                내용
+            </div>
+
+        </div>
+    </div>
+    <!--단일 갤러리 팝업 끝-->
+</main>
+
+<script>
+// 로그인 체크 및 리다이렉트 함수
+function checkLoginAndRedirect(targetUrl) {
+    // 로컬 스토리지에서 로그인 정보 확인
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (!isLoggedIn || !userInfo) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인이 필요합니다',
+            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+            confirmButtonText: '로그인하기',
+            showCancelButton: true,
+            cancelButtonText: '취소',
+            confirmButtonColor: '#0066CC',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
+                window.location.href = './mypage.html';
+            }
+        });
+        return false;
+    }
+    
+    // 로그인된 경우 목표 페이지로 이동
+    window.location.href = targetUrl;
+    return true;
+}
+
+// SweetAlert 아이콘 커스텀 스타일
+const style = document.createElement('style');
+style.textContent = `
+    .swal2-icon-custom {
+        color: #0066CC !important;
+    }
+    .swal2-icon-custom .swal2-icon-content {
+        color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning {
+        border-color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+        border-color: #0066CC !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
