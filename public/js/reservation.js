@@ -190,20 +190,10 @@ function setupFormSubmission() {
                     }
                 } else {
                     console.log('예약 성공:', data);
-                    Swal.fire({
-                        title: '예약이 완료되었습니다!',
-                        icon: 'success',
-                        text: '예약이 성공적으로 저장되었습니다.',
-                        confirmButtonText: '확인',
-                        customClass: {
-                            icon: 'swal2-icon-custom'
-                        }
-                    }).then(() => {
-                        // 폼 초기화
-                        form.reset();
-                        // 마이페이지로 이동
-                        window.location.href = '/mypage.html';
-                    });
+                    // 폼 초기화
+                    form.reset();
+                    // 바로 마이페이지로 이동
+                    window.location.href = '/mypage.html';
                 }
             } catch (err) {
                 console.error('예약 처리 중 오류:', err);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ICECARE 마이페이지</title>
+  <title>ICECARE MY</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
@@ -73,7 +73,7 @@
       <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
       <li><a href="#" class="nav-link" onclick="goToReservation()">예약하기</a></li>
-      <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> 마이페이지</a></li>
+      <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
     </ul>
     <!-- 모바일 메뉴 버튼 -->
     <button class="mobile-menu-btn md:hidden" onclick="toggleMobileMenu()">
@@ -86,7 +86,7 @@
       <li><a href="./contact_us.html" class="mobile-nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="mobile-nav-link">FAQ</a></li>
       <li><a href="#" class="mobile-nav-link" onclick="goToReservation()">예약하기</a></li>
-      <li><a href="./mypage.html" class="mobile-nav-link">마이페이지</a></li>
+      <li><a href="./mypage.html" class="mobile-nav-link">MY</a></li>
     </ul>
   </div>
 </header>
@@ -186,7 +186,7 @@
   <!-- 마이페이지 메인 섹션 -->
   <div id="mypage-section" class="mypage-section hidden">
     <div class="mypage-content-header">
-      <h1 class="mypage-title">마이페이지</h1>
+      <h1 class="mypage-title">MY</h1>
       <button id="logout-btn" class="logout-btn">로그아웃</button>
     </div>
     
@@ -216,10 +216,12 @@
         <!-- 예약 필터 버튼 -->
         <div class="reservation-filters">
           <button class="filter-btn active" data-filter="all">전체 내역</button>
-          <button class="filter-btn" data-filter="0">대기중</button>
-          <button class="filter-btn" data-filter="1">확정</button>
-          <button class="filter-btn" data-filter="2">완료</button>
-          <button class="filter-btn" data-filter="3">취소</button>
+          <button class="filter-btn" data-filter="1">신규예약</button>
+          <button class="filter-btn" data-filter="2">결제대기</button>
+          <button class="filter-btn" data-filter="3">결제완료</button>
+          <button class="filter-btn" data-filter="4">기사배정</button>
+          <button class="filter-btn" data-filter="5">청소완료</button>
+          <button class="filter-btn" data-filter="6">예약취소</button>
         </div>
         
         <!-- 예약 통계 섹션 -->
@@ -230,19 +232,27 @@
           </div>
           <div class="stat-item">
             <span class="stat-number">0</span>
-            <span class="stat-label">대기 중</span>
+            <span class="stat-label">신규예약</span>
           </div>
           <div class="stat-item">
             <span class="stat-number">0</span>
-            <span class="stat-label">확정</span>
+            <span class="stat-label">결제대기</span>
           </div>
           <div class="stat-item">
             <span class="stat-number">0</span>
-            <span class="stat-label">완료</span>
+            <span class="stat-label">결제완료</span>
           </div>
           <div class="stat-item">
             <span class="stat-number">0</span>
-            <span class="stat-label">취소</span>
+            <span class="stat-label">기사배정</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">0</span>
+            <span class="stat-label">청소완료</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">0</span>
+            <span class="stat-label">예약취소</span>
           </div>
         </div>
         

@@ -696,10 +696,12 @@ async function loadUserReservations() {
 
 function updateReservationStats(reservations) {
     const total = reservations.length;
-    const pending = reservations.filter(r => r.state === 0).length;
-    const confirmed = reservations.filter(r => r.state === 1).length;
-    const completed = reservations.filter(r => r.state === 2).length;
-    const cancelled = reservations.filter(r => r.state === 3).length;
+    const newReservation = reservations.filter(r => r.state === 1).length;
+    const paymentWaiting = reservations.filter(r => r.state === 2).length;
+    const paymentCompleted = reservations.filter(r => r.state === 3).length;
+    const assigned = reservations.filter(r => r.state === 4).length;
+    const completed = reservations.filter(r => r.state === 5).length;
+    const cancelled = reservations.filter(r => r.state === 6).length;
     
     const statsElement = document.getElementById('reservation-stats');
     if (statsElement) {
@@ -709,20 +711,28 @@ function updateReservationStats(reservations) {
                 <span class="stat-label">전체 예약</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">${pending}</span>
-                <span class="stat-label">대기 중</span>
+                <span class="stat-number">${newReservation}</span>
+                <span class="stat-label">신규예약</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">${confirmed}</span>
-                <span class="stat-label">확정</span>
+                <span class="stat-number">${paymentWaiting}</span>
+                <span class="stat-label">결제대기</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${paymentCompleted}</span>
+                <span class="stat-label">결제완료</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${assigned}</span>
+                <span class="stat-label">기사배정</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number">${completed}</span>
-                <span class="stat-label">완료</span>
+                <span class="stat-label">청소완료</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number">${cancelled}</span>
-                <span class="stat-label">취소</span>
+                <span class="stat-label">예약취소</span>
             </div>
         `;
     }
@@ -752,14 +762,14 @@ function displayReservations(reservations) {
         
         // 결제금액 표시 로직
         let paymentDisplay = '';
-        if (reservation.state >= 1) { // 확정(1) 이상인 경우
+        if (reservation.state >= 3) { // 결제완료(3) 이상인 경우
             paymentDisplay = `
                 <div class="detail-item">
                     <span class="detail-label">결제금액</span>
                     <span class="detail-value">${reservation.price ? reservation.price + '원' : '미정'}</span>
                 </div>
             `;
-        } else { // 대기중(0)인 경우
+        } else { // 결제완료 미만인 경우
             paymentDisplay = `
                 <div class="detail-item">
                     <span class="detail-label">결제금액</span>
@@ -801,10 +811,7 @@ function displayReservations(reservations) {
                 ` : ''}
                 
                 <div class="reservation-actions">
-                    <button class="action-btn detail-btn" onclick="viewReservationDetail(${reservation.res_no})">
-                        <i class="fas fa-eye"></i> 상세보기
-                    </button>
-                    ${reservation.state === 0 ? `
+                    ${reservation.state === 1 ? `
                         <button class="cancel-btn" onclick="cancelReservation(${reservation.res_no})">
                             <i class="fas fa-times"></i> 예약취소
                         </button>
@@ -817,18 +824,16 @@ function displayReservations(reservations) {
 
 // 예약 상태 정보 반환
 function getStatusInfo(state) {
-    switch (state) {
-        case 0:
-            return { text: '예약대기', class: 'status-pending' };
-        case 1:
-            return { text: '예약확정', class: 'status-confirmed' };
-        case 2:
-            return { text: '서비스완료', class: 'status-completed' };
-        case 3:
-            return { text: '취소됨', class: 'status-cancelled' };
-        default:
-            return { text: '알 수 없음', class: 'status-unknown' };
-    }
+    const stateConfig = {
+        1: { text: "신규예약", class: "status-pending" },
+        2: { text: "결제대기", class: "status-payment-waiting" },
+        3: { text: "결제완료", class: "status-payment-completed" },
+        4: { text: "기사배정", class: "status-assigned" },
+        5: { text: "청소완료", class: "status-completed" },
+        6: { text: "예약취소", class: "status-cancelled" }
+    };
+    
+    return stateConfig[state] || { text: "알 수 없음", class: "status-unknown" };
 }
 
 // 날짜 포맷팅
@@ -838,18 +843,6 @@ function formatDate(dateString) {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    });
-}
-
-// 예약 상세보기
-function viewReservationDetail(reservationId) {
-    console.log('예약 상세보기:', reservationId);
-    // 예약 상세 정보를 모달로 표시하거나 별도 페이지로 이동
-    Swal.fire({
-        title: '예약 상세 정보',
-        text: `예약 번호: ${reservationId}`,
-        icon: 'info',
-        confirmButtonText: '확인'
     });
 }
 
@@ -872,7 +865,7 @@ async function cancelReservation(reservationId) {
         try {
             const { error } = await window.supabase
                 .from('reservation')
-                .update({ state: 3 }) // 3 = 취소됨
+                .update({ state: 6 }) // 6 = 예약취소
                 .eq('res_no', reservationId);
                 
             if (error) throw error;

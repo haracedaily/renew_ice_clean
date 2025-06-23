@@ -187,10 +187,6 @@
 </header>
 
 <div id="r-container">
-  <div class="toptxt">
-    <h1>아이스케어 <br/>제빙기 청소 예약하기</h1>
-  </div>
-
   <!-- 예약 폼 - 모든 필드를 한 번에 표시 -->
   <form id="reservation-form" class="reservation-form">
     <!-- 예약자 정보 -->
@@ -224,20 +220,20 @@
           <label>예약 시간</label>
           <div class="time-options">
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="10:00~12:00" class="reservationTime">
-              <span>10:00~12:00</span>
+              <input type="radio" name="reservation-time" value="10:00" class="reservationTime">
+              <span>10:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="12:00~14:00" class="reservationTime">
-              <span>12:00~14:00</span>
+              <input type="radio" name="reservation-time" value="12:00" class="reservationTime">
+              <span>12:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="14:00~16:00" class="reservationTime">
-              <span>14:00~16:00</span>
+              <input type="radio" name="reservation-time" value="14:00" class="reservationTime">
+              <span>14:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="16:00~18:00" class="reservationTime">
-              <span>16:00~18:00</span>
+              <input type="radio" name="reservation-time" value="16:00" class="reservationTime">
+              <span>16:00</span>
             </label>
           </div>
         </div>
@@ -310,7 +306,6 @@
             <input type="checkbox" id="privacy" name="privacy">
             <span>개인정보 제공에 동의합니다.</span>
           </label>
-          <button type="button" class="privacy-detail-btn">[상세보기]</button>
         </div>
       </div>
     </div>
@@ -322,23 +317,6 @@
       </div>
     </div>
   </form>
-</div>
-
-<!-- 개인정보 상세 내용 -->
-<div class="privacy-details" id="privacy-details" style="display: none;">
-  <h3>개인정보 수집 및 이용 동의</h3>
-  <p><strong>1. 개인정보 수집 및 이용 목적</strong><br>
-    ICECARE는 제빙기 청소 및 수리 서비스 예약, 제공, 고객 문의 응대, 품질 향상을 위해 개인정보를 수집·이용합니다.</p>
-  <p><strong>2. 수집하는 개인정보 항목</strong><br>
-    - 필수: 성명, 연락처, 이메일, 서비스 주소, 예약 일시, 제빙기 모델명, 서비스 요청 세부 사항 등</p>
-  <p><strong>3. 보유 및 이용 기간</strong><br>
-    서비스 제공 완료 후 1년 (법령에 따른 보존 기간 예외)</p>
-  <p><strong>4. 개인정보 제공</strong><br>
-    - 제공받는 자: ICECARE 협력업체, 제빙기 제조사<br>
-    - 목적: 예약 조율, 현장 서비스, 부품 수급<br>
-    - 항목: 성명, 연락처, 주소, 모델명</p>
-  <p><strong>5. 동의 철회</strong><br>
-    언제든지 동의를 철회하거나 열람·정정을 요청할 수 있습니다 (고객센터: 1234-5678)</p>
 </div>
 
   <script>
