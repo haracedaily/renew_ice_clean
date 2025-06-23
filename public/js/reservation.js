@@ -150,7 +150,7 @@ function setupFormSubmission() {
                     remark: formData.specialRequest,
                     agree: 1,
                     user_email: formData.email, // email 대신 user_email 사용
-                    state: 0,
+                    state: 1, // 1 = 신규예약으로 변경
                     price: '50000'
                 };
                 
