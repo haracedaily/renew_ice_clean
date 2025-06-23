@@ -12,12 +12,43 @@
   <link rel="stylesheet" href="./css/mypage.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js" integrity="sha512-Yd62e3pxMdK6g6Wn4bIrmXv0ja2mcbdYzyHa1id14MOfW9PkZ7oF2Dg63hR7jcmbmVHxLu/HLnWadO8BTO2yew==" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script>
-    // bcryptjs 라이브러리 로드 확인
+    // bcryptjs 라이브러리 로드 확인 및 대체 함수
     function checkBcryptjs() {
       return typeof bcryptjs !== 'undefined' && typeof bcryptjs.hashSync === 'function';
+    }
+    
+    // SHA-256 해시 함수 (bcryptjs 대체용)
+    async function sha256Hash(text) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+    
+    // 비밀번호 해시 함수 (bcryptjs 우선, 실패시 SHA-256 사용)
+    async function hashPassword(password) {
+      if (checkBcryptjs()) {
+        return bcryptjs.hashSync(password, 10);
+      } else {
+        console.warn('bcryptjs를 사용할 수 없어 SHA-256을 사용합니다.');
+        return await sha256Hash(password);
+      }
+    }
+    
+    // 비밀번호 검증 함수
+    async function verifyPassword(password, hash) {
+      if (checkBcryptjs()) {
+        return bcryptjs.compareSync(password, hash);
+      } else {
+        console.warn('bcryptjs를 사용할 수 없어 SHA-256을 사용합니다.');
+        const hashedPassword = await sha256Hash(password);
+        return hashedPassword === hash;
+      }
     }
     
     // 페이지 로드 시 bcryptjs 확인

@@ -143,40 +143,11 @@ loginForm.addEventListener('submit', async function(e) {
             return;
         }
 
-        // bcryptjs 라이브러리 로드 확인 및 패스워드 검증
+        // 비밀번호 검증
         let isPasswordValid = false;
         
-        if (typeof bcryptjs === 'undefined') {
-            console.warn('bcryptjs 라이브러리가 로드되지 않았습니다. SHA-256 해시 검증을 사용합니다.');
-            
-            // 저장된 비밀번호가 salt:hash 형태인지 확인
-            if (data.password && data.password.includes(':')) {
-                // SHA-256 해시로 저장된 경우
-                const [salt, storedHash] = data.password.split(':');
-                const encoder = new TextEncoder();
-                const dataToHash = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', dataToHash);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                isPasswordValid = (hashHex === storedHash);
-            } else {
-                // 평문 또는 다른 형태로 저장된 경우 (기존 사용자 호환성)
-                isPasswordValid = (data.password === password);
-                
-                // 평문 비밀번호인 경우 자동 마이그레이션
-                if (isPasswordValid && !data.password.includes(':')) {
-                    console.log('평문 비밀번호 감지, 자동 마이그레이션 시작');
-                    const migrationSuccess = await migratePlainPassword(data.email, password);
-                    if (migrationSuccess) {
-                        console.log('비밀번호 마이그레이션 완료');
-                    } else {
-                        console.warn('비밀번호 마이그레이션 실패');
-                    }
-                }
-            }
-        } else {
-            // bcryptjs로 패스워드 검증
-            isPasswordValid = await bcryptjs.compare(password, data.password);
+        try {
+            isPasswordValid = await verifyPassword(password, data.password);
             
             // 평문 비밀번호인 경우 자동 마이그레이션
             if (!isPasswordValid && data.password === password) {
@@ -189,6 +160,10 @@ loginForm.addEventListener('submit', async function(e) {
                     console.warn('비밀번호 마이그레이션 실패');
                 }
             }
+        } catch (error) {
+            console.error('비밀번호 검증 중 오류:', error);
+            Swal.fire({ icon: 'error', title: '로그인 실패', text: '비밀번호 검증 중 오류가 발생했습니다.' });
+            return;
         }
         
         if (!isPasswordValid) {
@@ -247,40 +222,12 @@ async function registerUser(email, password, name, phone, addr) {
         // 2단계: 비밀번호 해시
         let passwordHash;
         
-        // bcryptjs 라이브러리 로드 확인 및 대체 방법
-        if (typeof bcryptjs === 'undefined') {
-            console.warn('bcryptjs 라이브러리가 로드되지 않았습니다. SHA-256 해시를 사용합니다.');
-            
-            // SHA-256 해시 함수
-            async function secureHash(password, salt) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                return hashHex;
-            }
-            
-            // 고정된 salt 사용 (보안을 위해 더 복잡한 salt 생성)
-            const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
-            passwordHash = await secureHash(password, salt);
-            passwordHash = salt + ':' + passwordHash; // salt와 해시를 함께 저장
-        } else {
-            try {
-                const salt = await bcryptjs.genSalt(10);
-                passwordHash = await bcryptjs.hash(password, salt);
-                console.log('bcryptjs를 사용하여 비밀번호를 해시했습니다.');
-            } catch (bcryptError) {
-                console.warn('bcryptjs 해시 실패, SHA-256 해시 사용:', bcryptError);
-                // bcryptjs 실패 시 SHA-256 해시 사용
-                const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
-                const encoder = new TextEncoder();
-                const data = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                passwordHash = salt + ':' + hashHex;
-            }
+        try {
+            passwordHash = await hashPassword(password);
+            console.log('비밀번호 해시 완료');
+        } catch (error) {
+            console.error('비밀번호 해시 중 오류:', error);
+            throw new Error('비밀번호 처리 중 오류가 발생했습니다.');
         }
 
         // 3단계: customer 테이블에 데이터 삽입
@@ -948,20 +895,7 @@ async function migratePlainPassword(userEmail, plainPassword) {
     try {
         console.log('비밀번호 마이그레이션 시작:', userEmail);
         
-        let passwordHash;
-        
-        if (typeof bcryptjs !== 'undefined') {
-            const salt = await bcryptjs.genSalt(10);
-            passwordHash = await bcryptjs.hash(plainPassword, salt);
-        } else {
-            const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
-            const encoder = new TextEncoder();
-            const data = encoder.encode(plainPassword + salt);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            passwordHash = salt + ':' + hashHex;
-        }
+        const passwordHash = await hashPassword(plainPassword);
         
         // 데이터베이스에서 비밀번호 업데이트
         const { error } = await supabase
