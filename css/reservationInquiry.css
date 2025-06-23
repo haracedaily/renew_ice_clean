@@ -12,6 +12,87 @@ body{
     /*padding: 60px 0 0;*/
 }
 
+header {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid #e5e7eb;
+    background-color: white;
+    nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            li {
+                a.nav-link {
+                    display: inline-block;
+                    padding: 1.5rem;
+                    font-weight: bold;
+                    position: relative;
+                    text-decoration: none;
+                    color: inherit;
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        width: 0px;
+                        height: 2px;
+                        background-color: #006B99;
+                        bottom: 20%;
+                        left: 50%;
+                        transition: width 0.3s ease, left 0.3s ease;
+                    }
+                    &:hover {
+                        color: #006B99;
+                        &::after {
+                            width: 100%;
+                            left: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    header {
+        nav {
+            padding: 0 1rem;
+            ul {
+                gap: 1rem;
+                li {
+                    a.nav-link {
+                        padding: 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        nav {
+            flex-direction: column;
+            gap: 1rem;
+            ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+                li {
+                    a.nav-link {
+                        padding: 0.5rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
 /*nav {*/
 /*    display: flex;*/
 /*    justify-content: space-around;*/
@@ -284,6 +365,72 @@ body{
 
 .hidden2{
     display: none;
+}
+
+/* 로그인 정보 표시 */
+.login-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-info-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.login-info-content i {
+    font-size: 18px;
+}
+
+/* 읽기 전용 필드 스타일 */
+input[readonly] {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #dee2e6;
+}
+
+input[readonly]:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
+}
+
+/* 예약 내역 아이템 스타일 */
+.reservation-item {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.reservation-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reservation-item h3 {
+    color: #0066cc;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.reservation-item p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.reservation-item strong {
+    color: #333;
+    font-weight: 600;
 }
 
 

@@ -11,128 +11,106 @@
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/slick.css">
     <link rel="stylesheet" href="./css/swiper.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="./js/swiper.min.js"></script>
     <script src="./js/slick.min.js"></script>
-    <script>
-        const supabaseUrl = "https://wqetnltlnsvjidubewia.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-    </script>
     <script src="./js/popup-widget.js"></script>
-    <script src="./js/index.js"></script>
+    <!-- 카카오맵 API 스크립트를 먼저 로드 -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
+    <!-- 카카오맵 API 로드 후에 index.js 로드 -->
+    <script src="./js/index.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script>
+        // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase 클라이언트 초기화
+            const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
+            window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            
+            // Swiper 초기화
+            new Swiper('.main_visual .swiper', {
+                loop: true,
+                autoplay: { delay: 4000 },
+                effect: 'fade',
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
+            });
+        });
+    </script>
+    <!-- SweetAlert 아이콘 커스텀 스타일 -->
+    <style>
+        .swal2-icon-custom {
+            color: #0066CC !important;
+        }
+        .swal2-icon-custom .swal2-icon-content {
+            color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-warning {
+            border-color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+            border-color: #0066CC !important;
+        }
+    </style>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">
 
 <header class="sticky top-0 z-40 w-full bg-white p-5">
-    <nav class="flex items-center justify-around gap-[200px] flex-wrap">
-        <img src="./image/logo.png" class="cursor-pointer ml-[150px]" onclick="location.href='./index.html'" alt="">
-        <ul>
-            <li>
-                <a href="./contact_us.html">공지사항</a>
-                <a href="./contact_us.html?pageNum=1&category_id=2">FAQ</a>
-                <a href="./reservation.html">예약하기</a>
-                <a href="./reservationInquiry.html">예약확인</a>
-
-            </li>
+    <nav class="flex items-center justify-between max-w-[1200px] mx-auto">
+        <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
+        <ul class="flex gap-8">
+            <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
+            <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
+            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
+            <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
         </ul>
-        <!--<button class="flex gap-2 align-middle p-3 rounded-[10px] text-white bg-[#194A9C] cursor-pointer"
-                onclick="window.open('./reservation.html', '_blank', 'width=1000,height=730')" >
-            <div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"></div>
-            <div class="pt-[3px]">예약하기</div>
-        </button>-->
     </nav>
-    <!--  <div id="side_btn_group" class="h-full absolute right-[5%] top-60 z-50 flex flex-col justify-between items-center">
-      <div id="notice_btn" class="rounded-[25px] w-[50px] h-[50px] mb-10 z-50 flex justify-center items-center" onclick="location.href='./contact_us.html'">
-          <span class="flex justify-center items-center"><h5 class="h-[38px]">&lt;</h5></span>
-          <p>공지사항</p>
-      </div>
-      <div id="kakaoBot_btn" class="rounded-[25px] w-[50px] h-[50px] z-50 flex justify-center items-center" onclick="location.href='#'">
-          <p>카카오챗봇</p>
-      </div>
-      </div>
-  -->
     <div id="side_btn_group"
-         class="w-[45px] h-[100px] rounded-[20px] z-50 absolute top-[70vh] right-10  flex flex-col justify-evenly items-center">
+         class="w-[45px] h-[100px] rounded-[20px] z-50 absolute top-[70vh] right-10 flex flex-col justify-evenly items-center">
         <span class="w-[35px] h-[35px] rounded-[50%] border border-white flex justify-start items-center cursor-pointer"
               onclick="window.scrollTo({top:0,behavior:'smooth'})">
             <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
         </span>
-        <!--   <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/whiteBalloon.png')] bg-no-repeat cursor-pointer"
-                 onclick="location.href='./contact_us.html'">
-               <p class="text-black text-xs font-bold tracking-[-1.2px] pb-[1.5px]">Q&A</p>
-           </span>-->
         <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer"
               onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
             <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[2px]">Ch+</p>
         </span>
-
     </div>
-
 </header>
-<main class="flex flex-col items-center justify-center w-full h-full gap-4">
+<main class="flex flex-col items-center justify-center w-full h-full">
 
     <!--메인헤더 시작-->
     <div id="main_header" class="flex flex-col justify-center items-center w-full">
-
-        <section class="main_visual wow fadeIn">
-
-
-            <div class="main_inner color_W">
-
-                <div class="swiper mySwiper main_slide">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-
-                            <figure class="cover_img">
-                                <img src="./image/main_visual.jpg" alt="" class="only_web">
-                            </figure>
-                            <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
-                            <h2>아이스케어 제빙기 <br class="only_mo"> 세척&수리</h2>
-                            <a href="#" class="call_btn color_W">
-                                <span>1666-9587</span>
-                            </a>
-                        </div>
-                        <div class="swiper-slide">
-                            <figure class="cover_img">
-                                <img src="./image/main_visual.jpg" alt="" class="only_web">
-                            </figure>
-                            <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
-                            <h2>아이스케어 제빙기 <br class="only_mo"> 세척&수리</h2>
-
-                            <a href="#" class="call_btn color_W">
-                                <span>1666-9587</span>
-                            </a>
-                        </div>
-                        <div class="swiper-slide">
-                            <figure class="cover_img">
-                                <img src="./image/main_visual.jpg" alt="" class="only_web">
-                            </figure>
-                            <!-- <span class="sub_title">쇼케이스, 업소용 냉장고, 냉동창고, 보일러, 온수기, 닥트, 주방후드, 환풍기</span> -->
-                            <h2>아이스케어 제빙기 <br class="only_mo">세척&수리</h2>
-
-                            <a href="#" class="call_btn color_W"><!-- href="tel:1666-9587"-->
-                                <span>1666-9587</span>
-                            </a>
-                        </div>
+        <section class="main_visual">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <figure class="cover_img">
+                            <img src="./image/main_visual.jpg" alt="" class="only_web">
+                        </figure>
+                        <h5>제빙기의 내부까지 꼼꼼히 세척해<br class="only_mo">신선하고 깨끗한 얼음을 드실 수 있습니다.</h5>
+                        <a href="#" class="call_btn color_W" onclick="checkLoginAndRedirect('./reservation.html')">
+                            <span>예약 문의</span>
+                        </a>
                     </div>
-                    <!-- <div class="btn_wrap only_web">
-                        <div class="swiper-button-next"></div>
-                        <div class="swiper-button-prev"></div>
-                    </div> -->
-                    <div class="slider_controll">
-                        <div class="swiper-pagination"></div>
-                        <button class="swiper-play"></button>
+                    <div class="swiper-slide">
+                        <figure class="cover_img">
+                            <img src="./image/main_visual.jpg" alt="" class="only_web">
+                        </figure>
+                        <h5>ICECARE는 제빙기의 위생을 책임지는<br>전문 청소 서비스 브랜드입니다.</h5>
+                        <a href="#" class="call_btn color_W" onclick="checkLoginAndRedirect('./reservation.html')">
+                            <span>예약 문의</span>
+                        </a>
                     </div>
-
                 </div>
+                <div class="swiper-pagination"></div>
             </div>
-
-
             <div class="today_data_wrap">
                 <ul class="today_data color_W">
                     <li>
@@ -152,11 +130,120 @@
                 </ul>
             </div>
         </section>
-
-
     </div>
     <!--메인헤더 끝-->
+    <!--서브헤더 시작-->
+    <div id="sub_header" class="flex flex-col justify-center items-center w-full">
+        <section class="sub_visual">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <figure class="cover_img">
+                            <img src="./image/sub_header.png" alt="서브헤더" class="only_web">
+                        </figure>
+                        <div class="sub_header_text fade-in-on-scroll">
+                            <div class="icecare-title">
+                                <span class="icecare-slogan">제빙기 청소의 새로운 기준</span><br>
+                                <span class="icecare-logo"><span class="color_B">ICE</span>CARE</span>
+                            </div>
+                            <br>
+                            <p class="sub_header-desc">ICECARE는 제빙기의 위생을 책임지는 전문 청소 서비스 브랜드입니다.<br>
+                            육안으로 확인하기 어려운 내부 오염까지 꼼꼼하게 분해 세척하여,<br>
+                            더 깨끗한 얼음, 더 안심할 수 있는 환경을 만들어드립니다.<br>
+                            제빙기 내부는 물때, 곰팡이, 세균이 쉽게 쌓이는 구조로 정기적인 전문 케어가 필수입니다.<br>
+                            ICECARE는 모든 부품을 철저히 분해하여 숨겨진 오염까지 완벽하게 제거합니다.</p><br>
+                            <p class="sub_header-slogan color_B"><b>청결을 넘어, 안심까지.</b></p>
+                            <p class="sub_header-strong">
+                                <b>ICE CARE는 고객님의 <span class="color_B">건강</span>과 <span class="color_B">신뢰</span>를 최우선으로 생각합니다.</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--서브헤더 끝-->
+
+    <!-- section1 시작 -->
+    <section id="section1" class="info-section fade-in-on-scroll">
+        <div class="info-block fade-in-on-scroll">
+            <div class="info-img">
+                <img src="./image/Section1.png" alt="제빙기 내부 습기 이미지">
+            </div>
+            <div class="info-text">
+                <h3><span class="color_B">제빙기 케어</span><span>는 왜, 필요할까요?</span></h3>
+                <h4>제빙기의 내부는 항상 습한 상태를 유지하기 때문에,<br>정기적인 위생 관리가 필수입니다.</h4>
+                <p>습기가 많은 제빙기 내부는 세균과 곰팡이가 자라기 쉬운 환경입니다.<br>
+                이러한 유해균은 얼음의 위생을 해칠 뿐만 아니라, 면역력이 약한 분들에게는<br>
+                호흡기 감염이나 피부 질환을 유발할 수 있어 각별한 주의가 필요합니다.</p>
+            </div>
+        </div>
+        <div class="info-block fade-in-on-scroll">
+            <div class="info-img">
+                <img src="./image/Section2.png" alt="제빙기 얼음 이미지">
+            </div>
+            <div class="info-text">
+                <h4 class="color_B">제빙기의 냉각기에는 니켈 도금이 되어 있으며,<br>정기적인 관리가 반드시 필요합니다.</h4>
+                <p>니켈은 제빙기의 냉각 효율을 높이기 위해 사용되지만, 관리가 소홀할 경우 도금이 벗겨져<br>
+                미세한 니켈 가루가 구조에 섞일 수 있습니다. 니켈은 세계보건기구(WHO)에서도<br>
+                발암 가능 물질로 분류하고 있으며, 장기간 노출 시 폐질환이나 신장 질환 등 건강에<br>
+                악영향을 줄 수 있어 주기적인 청소와 점검이 매우 중요합니다.</p>
+            </div>
+        </div>
+    </section>
+    <!-- section1 끝 -->
+
+    <!-- section2 시작 -->
+    <section id="section2" class="section2-bg">
+        <div class="section2-inner fade-in-on-scroll">
+            <h2 class="section2-title"><span class="color_B">제빙기 케어</span>가 필요한 시점은?</h2>
+            <p class="section2-desc">평상시에는 3개월에 한번, 여름철에는 최소 1~2개월에 한번 완전분해 케어가 필요합니다.</p>
+            <div class="section2-icons">
+                <div class="section2-icon-block">
+                    <img src="./image/Section2Group1.png" alt="이물질 아이콘">
+                    <p>얼음안에 이물질이 들어갔을 때</p>
+                </div>
+                <div class="section2-icon-block">
+                    <img src="./image/Section2Group2.png" alt="냄새 아이콘">
+                    <p>얼음에서 이상한 냄새가 날 때</p>
+                </div>
+                <div class="section2-icon-block">
+                    <img src="./image/Section2Group3.png" alt="분해케어 아이콘">
+                    <p>분해 케어를 받아보지 않았거나<br>케어 시점이 오래됐을 때</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section2 끝 -->
+
+    <!-- section3 시작 -->
+    <section id="section3" class="section3-image fade-in-on-scroll">
+        <img src="./image/Section3.png" alt="Section3 이미지" style="width:100%;display:block;">
+    </section>
+    <!-- section3 끝 -->
+
+    <!-- section4 시작 -->
+    <section id="section4" class="section">
+        <div class="section-title">
+            <h2>주변 가맹점 찾기</h2>
+            <p>현재 위치 기반으로 주변 가맹점을 찾아보세요</p>
+        </div>
+        <div class="map-container">
+            <div class="map-controls">
+                <div class="search-box">
+                    <input type="text" id="address-input" class="address-input" placeholder="주소를 입력하세요">
+                    <button id="search-address" class="search-btn">검색</button>
+                </div>
+                <button id="current-location" class="map-btn">현재 위치</button>
+                <button id="search-stores" class="map-btn">가맹점 찾기</button>
+            </div>
+            <div id="map" style="width:100%;height:600px;"></div>
+        </div>
+    </section>
+    <!-- section4 끝 -->
+
     <!--프로세스 시작-->
+    <!--
     <div id="process" class="non-opacity flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">Process</h4>
         <h1 class="font-bold text-3xl">고객센터 1666-9587</h1>
@@ -164,43 +251,19 @@
             <!--<div class="flex flex-row justify-center items-center gap-0">
                 <div class="text-white flex flex-col justify-center items-center rounded-[50%] w-[130px] h-[130px] bg-blue-700">
                     <p class="font-bold text-lg">소비자 접수</p>
-                    <p>start</p>
-                </div>
-                <div class="p-0 m-0 text-4xl text-blue-700">➔</div>
-            </div>-->
-            <div>
-                <img src="./image/progress_img.png" alt="">
-            </div>
-            <!--<div class="flex flex-row justify-center items-center gap-0">
-                <div class="p-0 m-0 text-4xl text-blue-700">➔</div>
-                <div class="text-white flex flex-col justify-center items-center rounded-[50%] w-[130px] h-[130px] bg-blue-700">
-                    <p class="font-bold text-lg">처리 완료</p>
-                    <p>end</p>
                 </div>
             </div>-->
-        </div>
-        <div class="flex flex-row justify-start items-center w-[80%] p-[2%] bg-gray-100 rounded-lg gap-7">
-            <div class="flex flex-col justify-center items-center">
-                <div class="rounded-[50%] border-[1px] w-[45px] h-[45px] border-gray-900 text-gray-900 text-3xl font-bold flex justify-center items-center">
-                    <p>!</p>
-                </div>
-                <p class="text-xl text-gray-900">참고사항</p>
-            </div>
-            <div class="flex flex-col justify-center items-center text-gray-700">
-                <ul>
-                    <li>멤버쉽을 이용하시면 저렴한 가격으로 최상의 서비스를 제공받으실 수 있습니다.</li>
-                    <li>멤버쉽 서비스 상담은 홈피스 홈페이지 내의 멤버쉽견적 페이지를 이용해주세요.</li>
-                </ul>
-            </div>
         </div>
     </div>
+    
     <!--프로세스 끝-->
     <!--장단점 div-->
+    <!--
     <div id="advantage" class="non-opacity flex flex-col justify-center items-center p-[10%] w-full h-[60vh] gap-7">
         <h4 class="underline text-blue-900 font-bold">Advantage</h4>
         <h1 class="font-bold text-3xl">ICECARE가 특별한 이유</h1>
         <!--이미지 시작점-->
-        <div class="flex justify-center items-baseline w-full h-full gap-14">
+        <!-- <div class="flex justify-center items-baseline w-full h-full gap-14">
             <div class="flex flex-col justify-center items-center w-[15%] gap-3">
                 <div class="w-[170px] h-[170px] flex rounded-[50%] bg-gray-200 p-6 justify-center items-center mb-[18px]">
                     <img src="./image/book.png" alt="">
@@ -230,15 +293,17 @@
                 <p class="text-gray-500">멤버쉽 서비스로 저렴한 가격에 훌륭한 서비스를 제공해드립니다</p>
             </div>
         </div>
-    </div>
+    </div> -->
+    <!-- --> 
     <!--특장점 끝-->
     <!--처리현황-->
+    <!--
     <div id="state"
          class="non-opacity flex flex-col justify-center items-center w-full h-[60vh] gap-7 p-[3%] text-white">
         <h4 class="underline font-bold">Processing status</h4>
         <h1 class="font-bold text-3xl">처리 현황</h1>
         <!--처리현황 리스트 8-->
-        <div id="process_status"
+        <!-- <div id="process_status"
              class="bg-gray-50 rounded-2xl w-[70%] h-full flex justify-center items-center text-black">
             <ul class="boxIn flex flex-col justify-center items-center w-full h-full gap-7" id="process_ul">
                 <li class="grid grid-cols-2 gap-12 wow fadeInUp">
@@ -314,20 +379,22 @@
 
 
         </div>
-    </div>
+    </div> -->
+    
     <!--처리현황 끝-->
     <!--시공 갤러리-->
+    <!--
     <div id="gallery"
          class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%] relative">
         <h4 class="underline text-blue-900 font-bold">Gallery</h4>
         <h1 class="font-bold text-3xl">시공 갤러리</h1>
         <!--갤러리 게시판 부분-->
-        <div id="galleryPage" class="w-[80%] min-h-[1040px] h-full grid grid-cols-3 gap-4">
+        <!-- <div id="galleryPage" class="w-[80%] min-h-[1040px] h-full grid grid-cols-3 gap-4">
 
         </div>
 
         <!--페이지 내비게이션-->
-        <div class="flex flex-row justify-between w-full">
+        <!-- <div class="flex flex-row justify-between w-full">
             <div class="flex flex-row justify-center items-center gap-2 ml-[180px]">
                 <select id="search_gallery_select" class="h-[40px]">
                     <option value="1">제목+내용</option>
@@ -337,13 +404,13 @@
                 <input class="h-[40px] border rounded-lg p-[3px]" type="search" id="search_gallery"
                        onkeydown="search_chk(event)">
                 <!--갤러리 검색-->
-                <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick="gallery_search()"></span>
+                <!-- <span class="h-[30px] w-[30px] cursor-pointer search_icon" style="" onclick="gallery_search()"></span>
             </div>
             <button id="review_write" class="cursor-pointer p-2 bg-[#194A9C] text-white mr-[180px]">글쓰기</button>
-        </div>
+        </div> -->
         <!--갤러리 페이지네이션-->
 
-        <div class="flex justify-around items-center w-[60%] h-full gap-3 relative">
+        <!-- <div class="flex justify-around items-center w-[60%] h-full gap-3 relative">
             <div id="gallery_prev">
 
             </div>
@@ -354,10 +421,11 @@
             </div>
 
         </div>
-    </div>
+    </div>  -->
     <!--시공 갤러리 끝-->
     <!--고장 증상-->
-<!--    <div id="symptom" class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
+    <!--
+    <div id="symptom" class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">Symptom</h4>
         <h1 class="font-bold text-3xl">고장 증상</h1>
         <div id="symptoms" class="w-[80%] h-full grid grid-cols-3 gap-3">
@@ -548,7 +616,8 @@
 
 
     <!--멤버쉽 시작-->
-    <!--<div id="membership"
+    <!--
+    <div id="membership"
          class="non-opacity flex flex-col justify-center items-center w-full h-full gap-7 p-[10%]">
         <h4 class="underline text-blue-900 font-bold">MEMBERSHIP</h4>
         <h1 class="font-bold text-3xl">아이스케어 멤버쉽 혜택</h1>
@@ -811,5 +880,59 @@ min-height: 300px;
     </div>
     <!--단일 갤러리 팝업 끝-->
 </main>
+
+<script>
+// 로그인 체크 및 리다이렉트 함수
+function checkLoginAndRedirect(targetUrl) {
+    // 로컬 스토리지에서 로그인 정보 확인
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (!isLoggedIn || !userInfo) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인이 필요합니다',
+            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+            confirmButtonText: '로그인하기',
+            showCancelButton: true,
+            cancelButtonText: '취소',
+            confirmButtonColor: '#0066CC',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
+                window.location.href = './mypage.html';
+            }
+        });
+        return false;
+    }
+    
+    // 로그인된 경우 목표 페이지로 이동
+    window.location.href = targetUrl;
+    return true;
+}
+
+// SweetAlert 아이콘 커스텀 스타일
+const style = document.createElement('style');
+style.textContent = `
+    .swal2-icon-custom {
+        color: #0066CC !important;
+    }
+    .swal2-icon-custom .swal2-icon-content {
+        color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning {
+        border-color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+        border-color: #0066CC !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
+
 </body>
 </html>

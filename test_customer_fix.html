@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer 테이블 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer 테이블 테스트 도구</h1>
+        <p>이 도구를 사용하여 customer 테이블의 문제를 진단하고 수정할 수 있습니다.</p>
+
+        <div class="test-section">
+            <h3>1. 현재 Customer 테이블 상태 확인</h3>
+            <button onclick="checkCustomerTable()">테이블 상태 확인</button>
+            <div id="table-status" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. RLS 정책 확인</h3>
+            <button onclick="checkRLSPolicies()">RLS 정책 확인</button>
+            <div id="rls-policies" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. 테스트 데이터 삽입</h3>
+            <button onclick="insertTestData()">테스트 데이터 삽입</button>
+            <div id="insert-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. 회원가입 시뮬레이션</h3>
+            <button onclick="simulateSignup()">회원가입 시뮬레이션</button>
+            <div id="signup-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. 모든 Customer 데이터 조회</h3>
+            <button onclick="getAllCustomers()">모든 데이터 조회</button>
+            <div id="all-customers" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 클라이언트 초기화
+        const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0Mjc3Mjk0OSwiZXhwIjoyMDU4MzQ4OTQ5fQ.8ibNfBcS3zEei7hx5nL5CD7EI3Iwc9fFXoisabifcUQ';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+        }
+
+        async function checkCustomerTable() {
+            try {
+                showResult('table-status', '테이블 상태 확인 중...', 'info');
+                
+                const { data, error } = await supabase
+                    .from('customer')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    showResult('table-status', `오류: ${JSON.stringify(error, null, 2)}`, 'error');
+                } else {
+                    showResult('table-status', 
+                        `✅ Customer 테이블 접근 성공!\n\n총 레코드 수: ${data.length}\n\n데이터 샘플:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                }
+            } catch (error) {
+                showResult('table-status', `예외 발생: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkRLSPolicies() {
+            try {
+                showResult('rls-policies', 'RLS 정책 확인 중...', 'info');
+                
+                // RLS 정책 정보를 가져오기 위해 시스템 테이블 조회
+                const { data, error } = await supabase
+                    .rpc('get_customer_policies');
+                
+                if (error) {
+                    showResult('rls-policies', `RLS 정책 확인 오류: ${JSON.stringify(error, null, 2)}`, 'error');
+                } else {
+                    showResult('rls-policies', 
+                        `RLS 정책 정보:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                }
+            } catch (error) {
+                showResult('rls-policies', `예외 발생: ${error.message}`, 'error');
+            }
+        }
+
+        async function insertTestData() {
+            try {
+                showResult('insert-result', '테스트 데이터 삽입 중...', 'info');
+                
+                const testData = {
+                    user_id: '00000000-0000-0000-0000-000000000000',
+                    email: 'test@example.com',
+                    name: '테스트 사용자',
+                    tel: '010-1234-5678',
+                    postcode: '12345',
+                    address: '테스트 주소',
+                    detail_address: '테스트 상세주소'
+                };
+                
+                const { data, error } = await supabase
+                    .from('customer')
+                    .insert([testData])
+                    .select();
+                
+                if (error) {
+                    showResult('insert-result', `삽입 오류: ${JSON.stringify(error, null, 2)}`, 'error');
+                } else {
+                    showResult('insert-result', 
+                        `✅ 테스트 데이터 삽입 성공!\n\n삽입된 데이터:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                }
+            } catch (error) {
+                showResult('insert-result', `예외 발생: ${error.message}`, 'error');
+            }
+        }
+
+        async function simulateSignup() {
+            try {
+                showResult('signup-result', '회원가입 시뮬레이션 중...', 'info');
+                
+                // 1. Auth 사용자 생성
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: 'simulation@example.com',
+                    password: 'testpassword123'
+                });
+                
+                if (authError) {
+                    showResult('signup-result', `Auth 오류: ${JSON.stringify(authError, null, 2)}`, 'error');
+                    return;
+                }
+                
+                // 2. Customer 데이터 삽입
+                const customerData = {
+                    user_id: authData.user.id,
+                    email: 'simulation@example.com',
+                    name: '시뮬레이션 사용자',
+                    tel: '010-9876-5432',
+                    postcode: '54321',
+                    address: '시뮬레이션 주소',
+                    detail_address: '시뮬레이션 상세주소'
+                };
+                
+                const { data: customerResult, error: customerError } = await supabase
+                    .from('customer')
+                    .insert([customerData])
+                    .select();
+                
+                if (customerError) {
+                    showResult('signup-result', 
+                        `Auth 성공, Customer 삽입 실패:\n\nAuth 결과: ${JSON.stringify(authData, null, 2)}\n\nCustomer 오류: ${JSON.stringify(customerError, null, 2)}`, 
+                        'error'
+                    );
+                } else {
+                    showResult('signup-result', 
+                        `✅ 회원가입 시뮬레이션 성공!\n\nAuth 결과: ${JSON.stringify(authData, null, 2)}\n\nCustomer 결과: ${JSON.stringify(customerResult, null, 2)}`, 
+                        'success'
+                    );
+                }
+            } catch (error) {
+                showResult('signup-result', `예외 발생: ${error.message}`, 'error');
+            }
+        }
+
+        async function getAllCustomers() {
+            try {
+                showResult('all-customers', '모든 Customer 데이터 조회 중...', 'info');
+                
+                const { data, error } = await supabase
+                    .from('customer')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    showResult('all-customers', `조회 오류: ${JSON.stringify(error, null, 2)}`, 'error');
+                } else {
+                    showResult('all-customers', 
+                        `✅ Customer 데이터 조회 성공!\n\n총 ${data.length}개의 레코드:\n\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                }
+            } catch (error) {
+                showResult('all-customers', `예외 발생: ${error.message}`, 'error');
+            }
+        }
+
+        // 페이지 로드 시 자동으로 테이블 상태 확인
+        window.onload = function() {
+            checkCustomerTable();
+        };
+    </script>
+</body>
+</html> 

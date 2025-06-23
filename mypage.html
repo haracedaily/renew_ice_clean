@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ICECARE 마이페이지</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/mypage.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script>
+    // bcryptjs 라이브러리 로드 확인 및 재시도
+    let bcryptjsLoaded = false;
+    
+    function checkBcryptjs() {
+      if (typeof bcryptjs !== 'undefined') {
+        bcryptjsLoaded = true;
+        console.log('bcryptjs 라이브러리가 정상적으로 로드되었습니다.');
+        return true;
+      }
+      return false;
+    }
+    
+    function loadBcryptjs() {
+      return new Promise((resolve, reject) => {
+        if (checkBcryptjs()) {
+          resolve();
+          return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js';
+        script.onload = function() {
+          if (checkBcryptjs()) {
+            resolve();
+          } else {
+            reject(new Error('bcryptjs 로드 실패'));
+          }
+        };
+        script.onerror = function() {
+          reject(new Error('bcryptjs 로드 실패'));
+        };
+        document.head.appendChild(script);
+      });
+    }
+    
+    // 페이지 로드 시 bcryptjs 확인
+    window.addEventListener('load', function() {
+      loadBcryptjs().catch(error => {
+        console.warn('bcryptjs 라이브러리 로드에 실패했습니다. SHA-256 해시를 사용합니다:', error);
+      });
+    });
+    
+    // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
+    document.addEventListener('DOMContentLoaded', function() {
+      const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
+      window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    });
+  </script>
+</head>
+<body>
+<header class="sticky top-0 z-40 w-full bg-white p-5">
+  <nav class="flex items-center justify-between max-w-[1200px] mx-auto">
+    <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="">
+    <ul class="flex gap-8 mobile-nav">
+      <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
+      <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
+      <li><a href="#" class="nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
+    </ul>
+    <!-- 모바일 메뉴 버튼 -->
+    <button class="mobile-menu-btn md:hidden" onclick="toggleMobileMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+  </nav>
+  <!-- 모바일 메뉴 -->
+  <div id="mobile-menu" class="mobile-menu hidden">
+    <ul class="mobile-menu-list">
+      <li><a href="./contact_us.html" class="mobile-nav-link">공지사항</a></li>
+      <li><a href="./contact_us.html?pageNum=1&category_id=2" class="mobile-nav-link">FAQ</a></li>
+      <li><a href="#" class="mobile-nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="./mypage.html" class="mobile-nav-link">마이페이지</a></li>
+    </ul>
+  </div>
+</header>
+
+<div class="mypage-container">
+  <!-- 로그인 섹션 -->
+  <div id="login-section" class="login-section">
+    <div class="login-box">
+      <div class="login-logo">
+        <img src="./image/logo.png" alt="ICECARE 로고">
+      </div>
+      <h1 class="login-title">아이스케어 로그인</h1>
+      
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="login-email">이메일</label>
+          <input type="email" id="login-email" name="email" placeholder="아이스케어 아이디" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="login-password">비밀번호</label>
+          <input type="password" id="login-password" name="password" placeholder="아이스케어 비밀번호" required>
+        </div>
+        
+        <button type="submit" class="login-btn">로그인</button>
+      </form>
+      
+      <div class="login-links">
+        <a href="#" class="forgot-password">비밀번호를 잊으셨나요?</a>
+        <a href="#" class="register-link" onclick="showRegisterForm()">회원가입</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 회원가입 섹션 -->
+  <div id="register-section" class="login-section hidden">
+    <div class="login-box">
+      <div class="login-logo">
+        <img src="./image/logo.png" alt="ICECARE 로고">
+      </div>
+      <h1 class="login-title">아이스케어 회원가입</h1>
+      
+      <form id="register-form" class="login-form">
+        <div class="form-group">
+          <label for="register-name">이름</label>
+          <input type="text" id="register-name" name="name" placeholder="이름을 입력하세요" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-email">이메일</label>
+          <input type="email" id="register-email" name="email" placeholder="이메일을 입력하세요" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-phone">연락처</label>
+          <input type="tel" id="register-phone" name="phone" placeholder="010-1234-5678" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-postcode">우편번호</label>
+          <div class="postcode-group">
+            <input type="text" id="register-postcode" name="postcode" placeholder="우편번호" readonly required>
+            <button type="button" id="search-postcode" class="postcode-btn address-search-btn">주소 검색</button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-address">주소</label>
+          <input type="text" id="register-address" name="address" placeholder="주소" readonly required>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-detail-address">상세주소</label>
+          <input type="text" id="register-detail-address" name="detail-address" placeholder="상세주소를 입력하세요" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-password">비밀번호</label>
+          <input type="password" id="register-password" name="password" placeholder="비밀번호를 입력하세요" required>
+          <span class="password-hint">(비밀번호는 영어, 숫자, 특수문자 포함 8자 이상)</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-password-confirm">비밀번호 확인</label>
+          <input type="password" id="register-password-confirm" name="password-confirm" placeholder="비밀번호를 다시 입력하세요" required>
+        </div>
+        
+        <button type="submit" class="login-btn">회원가입</button>
+      </form>
+      
+      <div class="login-links">
+        <a href="#" class="back-to-login" onclick="showLoginForm()">로그인으로 돌아가기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 마이페이지 메인 섹션 -->
+  <div id="mypage-section" class="mypage-section hidden">
+    <div class="mypage-content-header">
+      <h1 class="mypage-title">마이페이지</h1>
+      <button id="logout-btn" class="logout-btn">로그아웃</button>
+    </div>
+    
+    <div class="user-info">
+      <div class="user-avatar">
+        <img src="./image/mypage.png" alt="사용자 아바타">
+      </div>
+      <div class="user-details">
+        <h2 id="user-name" class="user-name">사용자님</h2>
+        <p id="user-email" class="user-email">user@example.com</p>
+      </div>
+    </div>
+    
+    <div class="mypage-content">
+      <div class="content-tabs">
+        <button class="tab-btn active" data-tab="reservations">예약 내역</button>
+        <button class="tab-btn" data-tab="profile">프로필</button>
+      </div>
+      
+      <!-- 예약 내역 탭 -->
+      <div id="reservations-tab" class="tab-content active">
+        <div class="reservations-header">
+          <h3>예약 내역</h3>
+          <button id="refresh-reservations" class="refresh-btn">새로고침</button>
+        </div>
+        
+        <!-- 예약 통계 섹션 -->
+        <div id="reservation-stats" class="reservation-stats">
+          <div class="stat-item">
+            <span class="stat-number">0</span>
+            <span class="stat-label">전체 예약</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">0</span>
+            <span class="stat-label">대기 중</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">0</span>
+            <span class="stat-label">완료</span>
+          </div>
+        </div>
+        
+        <div id="reservations-list" class="reservations-list">
+          <!-- 예약 내역이 여기에 동적으로 로드됩니다 -->
+        </div>
+      </div>
+      
+      <!-- 프로필 탭 -->
+      <div id="profile-tab" class="tab-content">
+        <div class="profile-form">
+          <h3>프로필 정보</h3>
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="profile-name">이름</label>
+              <input type="text" id="profile-name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-phone">연락처</label>
+              <input type="tel" id="profile-phone" name="phone" placeholder="010-1234-5678" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-email">이메일</label>
+              <input type="email" id="profile-email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-postcode">우편번호</label>
+              <div class="postcode-group">
+                <input type="text" id="profile-postcode" name="postcode" placeholder="우편번호" readonly>
+                <button type="button" id="profile-search-postcode" class="postcode-btn address-search-btn">주소 검색</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-address">주소</label>
+              <input type="text" id="profile-address" name="address" placeholder="주소" readonly>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-detail-address">상세주소</label>
+              <input type="text" id="profile-detail-address" name="detail-address" placeholder="상세주소를 입력하세요">
+            </div>
+            
+            <button type="submit" class="save-profile-btn">프로필 저장</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/mypage.js"></script>
+
+<script>
+// 로그인 체크 및 리다이렉트 함수
+function checkLoginAndRedirect(targetUrl) {
+    // 로컬 스토리지에서 로그인 정보 확인
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (!isLoggedIn || !userInfo) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인이 필요합니다',
+            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+            confirmButtonText: '로그인하기',
+            showCancelButton: true,
+            cancelButtonText: '취소',
+            confirmButtonColor: '#0066CC',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
+                window.location.href = './mypage.html';
+            }
+        });
+        return false;
+    }
+    
+    // 로그인된 경우 목표 페이지로 이동
+    window.location.href = targetUrl;
+    return true;
+}
+
+// SweetAlert 아이콘 커스텀 스타일
+const style = document.createElement('style');
+style.textContent = `
+    .swal2-icon-custom {
+        color: #0066CC !important;
+    }
+    .swal2-icon-custom .swal2-icon-content {
+        color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning {
+        border-color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+        border-color: #0066CC !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

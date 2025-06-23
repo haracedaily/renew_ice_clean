@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h1>예약 테스트</h1>
+    <button onclick="testSupabaseConnection()">Supabase 연결 테스트</button>
+    <button onclick="testInsert()">예약 데이터 삽입 테스트</button>
+    <button onclick="testSelect()">예약 데이터 조회 테스트</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        async function testSupabaseConnection() {
+            try {
+                console.log('Supabase 클라이언트:', supabase);
+                console.log('Supabase URL:', supabase.supabaseUrl);
+                console.log('Supabase Key:', supabase.supabaseKey?.substring(0, 20) + "...");
+                
+                // 간단한 쿼리로 연결 테스트
+                const { data, error } = await supabase
+                    .from('reservation')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    console.error('연결 에러:', error);
+                    document.getElementById('result').innerHTML = `<p style="color: red;">연결 실패: ${error.message}</p>`;
+                } else {
+                    console.log('연결 성공:', data);
+                    document.getElementById('result').innerHTML = `<p style="color: green;">연결 성공!</p>`;
+                }
+            } catch (err) {
+                console.error('테스트 중 오류:', err);
+                document.getElementById('result').innerHTML = `<p style="color: red;">테스트 오류: ${err.message}</p>`;
+            }
+        }
+        
+        async function testInsert() {
+            try {
+                const testData = {
+                    date: '2025-06-20',
+                    time: '10:00~12:00',
+                    addr: '서울시 강남구 테스트동 123-45',
+                    model: '테스트 제빙기',
+                    remark: '테스트 예약',
+                    agree: 'Y',
+                    user_email: 'test@test.com',
+                    gisa_email: '',
+                    state: 0,
+                    price: 50000
+                };
+                
+                console.log('테스트 데이터:', testData);
+                
+                const { data, error } = await supabase
+                    .from('reservation')
+                    .insert([testData])
+                    .select();
+                
+                if (error) {
+                    console.error('삽입 에러:', error);
+                    document.getElementById('result').innerHTML = `<p style="color: red;">삽입 실패: ${error.message}</p>`;
+                } else {
+                    console.log('삽입 성공:', data);
+                    document.getElementById('result').innerHTML = `<p style="color: green;">삽입 성공! ID: ${data[0]?.res_no}</p>`;
+                }
+            } catch (err) {
+                console.error('삽입 테스트 중 오류:', err);
+                document.getElementById('result').innerHTML = `<p style="color: red;">삽입 테스트 오류: ${err.message}</p>`;
+            }
+        }
+        
+        async function testSelect() {
+            try {
+                const { data, error } = await supabase
+                    .from('reservation')
+                    .select('*')
+                    .order('res_no', { ascending: false })
+                    .limit(5);
+                
+                if (error) {
+                    console.error('조회 에러:', error);
+                    document.getElementById('result').innerHTML = `<p style="color: red;">조회 실패: ${error.message}</p>`;
+                } else {
+                    console.log('조회 성공:', data);
+                    document.getElementById('result').innerHTML = `
+                        <p style="color: green;">조회 성공!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                console.error('조회 테스트 중 오류:', err);
+                document.getElementById('result').innerHTML = `<p style="color: red;">조회 테스트 오류: ${err.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

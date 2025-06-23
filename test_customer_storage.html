@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer 테이블 저장 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer 테이블 저장 테스트</h1>
+        
+        <form id="test-form">
+            <div class="form-group">
+                <label for="email">이메일 *</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">비밀번호 *</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="name">이름 *</label>
+                <input type="text" id="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="tel">연락처 *</label>
+                <input type="tel" id="tel" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="postcode">우편번호</label>
+                <input type="text" id="postcode">
+            </div>
+            
+            <div class="form-group">
+                <label for="address">주소</label>
+                <input type="text" id="address">
+            </div>
+            
+            <div class="form-group">
+                <label for="detail-address">상세주소</label>
+                <input type="text" id="detail-address">
+            </div>
+            
+            <button type="submit">테스트 저장</button>
+            <button type="button" onclick="checkData()">데이터 확인</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Supabase 클라이언트 초기화
+        const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0Mjc3Mjk0OSwiZXhwIjoyMDU4MzQ4OTQ5fQ.8ibNfBcS3zEei7hx5nL5CD7EI3Iwc9fFXoisabifcUQ';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        function showResult(message, type = 'success') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+        }
+
+        // 폼 제출 처리
+        document.getElementById('test-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const tel = document.getElementById('tel').value;
+            const postcode = document.getElementById('postcode').value;
+            const address = document.getElementById('address').value;
+            const detailAddress = document.getElementById('detail-address').value;
+            
+            try {
+                showResult('데이터 저장 중...', 'success');
+                
+                // customer 테이블에 저장할 데이터 준비 (기본 필드만)
+                const customerData = {
+                    email: email,
+                    password: password,
+                    name: name,
+                    tel: tel
+                };
+                
+                // 주소 필드가 있는 경우에만 추가 (컬럼이 존재할 때)
+                if (postcode) customerData.postcode = postcode;
+                if (address) customerData.address = address;
+                if (detailAddress) customerData.detail_address = detailAddress;
+                
+                // 중복 이메일 체크
+                const { data: exist, error: existError } = await supabase
+                    .from('customer')
+                    .select('email')
+                    .eq('email', email)
+                    .single();
+                    
+                if (exist) {
+                    showResult('이미 등록된 이메일입니다.', 'error');
+                    return;
+                }
+                
+                // customer 테이블에 데이터 삽입
+                const { data: result, error: insertError } = await supabase
+                    .from('customer')
+                    .insert([customerData])
+                    .select();
+                    
+                if (insertError) {
+                    console.error('Customer 테이블 삽입 오류:', insertError);
+                    
+                    // 주소 필드 오류인 경우 기본 정보만 저장 시도
+                    if (insertError.message.includes('address') || insertError.message.includes('postcode') || insertError.message.includes('detail_address')) {
+                        console.log('주소 필드 오류로 기본 정보만 저장 시도');
+                        const basicCustomerData = {
+                            email: email,
+                            password: password,
+                            name: name,
+                            tel: tel
+                        };
+                        
+                        const { data: basicResult, error: basicError } = await supabase
+                            .from('customer')
+                            .insert([basicCustomerData])
+                            .select();
+                            
+                        if (basicError) {
+                            console.error('기본 고객 정보 저장 오류:', basicError);
+                            showResult(`저장 실패: ${basicError.message}`, 'error');
+                            return;
+                        } else {
+                            console.log('기본 고객 정보 저장 성공:', basicResult);
+                            showResult(`✅ 기본 정보 저장 성공!\n\n저장된 데이터:\n${JSON.stringify(basicResult[0], null, 2)}`, 'success');
+                            
+                            // 폼 초기화
+                            document.getElementById('test-form').reset();
+                            return;
+                        }
+                    } else {
+                        showResult(`저장 실패: ${insertError.message}`, 'error');
+                        return;
+                    }
+                }
+                
+                showResult(`✅ 저장 성공!\n\n저장된 데이터:\n${JSON.stringify(result[0], null, 2)}`, 'success');
+                
+                // 폼 초기화
+                document.getElementById('test-form').reset();
+                
+            } catch (error) {
+                console.error('오류:', error);
+                showResult(`오류 발생: ${error.message}`, 'error');
+            }
+        });
+
+        // 데이터 확인 함수
+        async function checkData() {
+            try {
+                showResult('데이터 조회 중...', 'success');
+                
+                const { data, error } = await supabase
+                    .from('customer')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+                
+                if (error) {
+                    showResult(`조회 실패: ${error.message}`, 'error');
+                    return;
+                }
+                
+                showResult(`✅ Customer 테이블 데이터 (최근 10개):\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                console.error('오류:', error);
+                showResult(`오류 발생: ${error.message}`, 'error');
+            }
+        }
+
+        // 페이지 로드 시 데이터 확인
+        window.onload = function() {
+            checkData();
+        };
+    </script>
+</body>
+</html> 

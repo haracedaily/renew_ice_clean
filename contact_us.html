@@ -9,63 +9,41 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/contact_us.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const supabaseUrl = "https://rnzhzcfovaqfsjfxorfq.supabase.co";
-        const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuemh6Y2ZvdmFxZnNqZnhvcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MjQ4MzAsImV4cCI6MjA1NTAwMDgzMH0.lC3jUF1yLH5RA0rMZ-ApWOuoTmWHQT7b1ihZXR50xhM";
-
-        var supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
+        // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
+            window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        });
     </script>
 </head>
 <body class="scroll-lock">
 
 <header class="sticky top-0 z-40 w-full bg-white p-5">
-    <nav class="flex items-center justify-around gap-[200px] flex-wrap">
-        <img src="./image/logo.png" class="cursor-pointer ml-[150px]" onclick="location.href='./index.html'" alt="logo">
-        <ul>
-            <li>
-                <a href="./contact_us.html">공지사항</a>
-                <a href="./contact_us.html?pageNum=1&category_id=2">FAQ</a>
-                <a href="./reservation.html">예약하기</a>
-                <a href="./reservationInquiry.html">예약확인</a>
-
-            </li>
+    <nav class="flex items-center justify-between max-w-[1200px] mx-auto">
+        <img src="./image/logo.png" class="cursor-pointer" onclick="location.href='./index.html'" alt="logo">
+        <ul class="flex gap-8">
+            <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
+            <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
+            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
+            <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
         </ul>
-        <!--<button class="flex gap-2 align-middle p-3 rounded-[10px] text-white bg-[#194A9C] cursor-pointer"
-                onclick="window.open('./reservation.html', '_blank', 'width=1000,height=730')" >
-            <div class="w-[27px] h-[26px]" style="background:url('image/reserve.png') no-repeat"></div>
-            <div class="pt-[3px]">예약하기</div>
-        </button>-->
     </nav>
-    <!--  <div id="side_btn_group" class="h-full absolute right-[5%] top-60 z-50 flex flex-col justify-between items-center">
-      <div id="notice_btn" class="rounded-[25px] w-[50px] h-[50px] mb-10 z-50 flex justify-center items-center" onclick="location.href='./contact_us.html'">
-          <span class="flex justify-center items-center"><h5 class="h-[38px]">&lt;</h5></span>
-          <p>공지사항</p>
-      </div>
-      <div id="kakaoBot_btn" class="rounded-[25px] w-[50px] h-[50px] z-50 flex justify-center items-center" onclick="location.href='#'">
-          <p>카카오챗봇</p>
-      </div>
-      </div>
-  -->
     <div id="side_btn_group"
-         class="w-[45px] h-[100px] rounded-[20px] z-50 absolute top-[70vh] right-10  flex flex-col justify-evenly items-center">
+         class="w-[45px] h-[100px] rounded-[20px] z-50 absolute top-[70vh] right-10 flex flex-col justify-evenly items-center">
         <span class="w-[35px] h-[35px] rounded-[50%] border border-white flex justify-start items-center cursor-pointer"
               onclick="window.scrollTo({top:0,behavior:'smooth'})">
             <p class="text-white text-xl rotate-90 pb-[17px]">&lt;</p>
         </span>
-        <!--   <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/whiteBalloon.png')] bg-no-repeat cursor-pointer"
-                 onclick="location.href='./contact_us.html'">
-               <p class="text-black text-xs font-bold tracking-[-1.2px] pb-[1.5px]">Q&A</p>
-           </span>-->
         <span class="w-[35px] h-[35px] rounded-[50%] flex justify-center items-center bg-[url('./image/darkBalloon.png')] bg-no-repeat cursor-pointer"
               onclick="window.open('http://pf.kakao.com/_Kxgsxfn','_blank','width=500,height=630')">
             <p class="text-white text-xs font-bold tracking-[-0.5px] pl-[3px] pb-[2px]">Ch+</p>
         </span>
-
     </div>
-
 </header>
 <div id="container">
 
@@ -186,6 +164,60 @@
     <div id="paging-container" class="post-paging"></div>
 
 </div>
+
+<script>
+// 로그인 체크 및 리다이렉트 함수
+function checkLoginAndRedirect(targetUrl) {
+    // 로컬 스토리지에서 로그인 정보 확인
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (!isLoggedIn || !userInfo) {
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인이 필요합니다',
+            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+            confirmButtonText: '로그인하기',
+            showCancelButton: true,
+            cancelButtonText: '취소',
+            confirmButtonColor: '#0066CC',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
+                window.location.href = './mypage.html';
+            }
+        });
+        return false;
+    }
+    
+    // 로그인된 경우 목표 페이지로 이동
+    window.location.href = targetUrl;
+    return true;
+}
+
+// SweetAlert 아이콘 커스텀 스타일
+const style = document.createElement('style');
+style.textContent = `
+    .swal2-icon-custom {
+        color: #0066CC !important;
+    }
+    .swal2-icon-custom .swal2-icon-content {
+        color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning {
+        border-color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+        border-color: #0066CC !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
+
 </body>
 </html>
 <script src="./js/contact_us.js"></script>

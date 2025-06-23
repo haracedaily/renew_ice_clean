@@ -8,7 +8,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // 게시글 작성 및 등록
-document.querySelector('#submit-post').addEventListener('click', async function () {
+const submitPostBtn = document.querySelector('#submit-post');
+if (submitPostBtn) {
+    submitPostBtn.addEventListener('click', async function () {
     const title = document.querySelector('#post-title').value;
     let category_id = document.querySelector('#post-category').value;
     const author = document.querySelector('#post-name').value;
@@ -94,7 +96,8 @@ document.querySelector('#submit-post').addEventListener('click', async function 
     } else {
         Swal.fire({title: '저장실패', icon: 'error', confirmButtonText: '확인'});
     }
-})
+    });
+}
 
 // 파일 업로드 url 생성
 async function uploadFile(image_url) {
@@ -110,7 +113,7 @@ async function noticeSelect(categoryId) {
         1: "공지사항",
         2: "FAQ",
     };
-    document.getElementById("changeText").innerHTML = texts[categoryId];
+    safeSetInnerHTML('changeText', texts[categoryId]);
 
     const params = new URLSearchParams(location.search);
     let pageNum = parseInt(params.get('pageNum')) || 1;
@@ -163,7 +166,12 @@ async function noticeSelect(categoryId) {
     // boardBody.innerHTML = ''; // 초기화
 
     const boardDiv = document.getElementById("board-div");
+    if (boardDiv) {
     boardDiv.innerHTML = '';
+    } else {
+        console.error('board-div 요소를 찾을 수 없습니다.');
+        return;
+    }
 
     if (categoryId === 1) {
         // 공지사항인 경우 테이블 생성 및 데이터 표시
@@ -308,15 +316,19 @@ async function postRowClick(trTag) {
     }
 }
 
-document.getElementById("board-div").addEventListener("click", async (e) => {
+// 안전하게 요소가 있을 때만 addEventListener 등록
+const boardDivEl = document.getElementById("board-div");
+if (boardDivEl) {
+    boardDivEl.addEventListener("click", async (e) => {
     const target = e.target.closest(".post-item");
     if (target) {
-        e.preventDefault();  // 링크 이동 막기
+            e.preventDefault();
         const postId = target.dataset.id;
-        history.pushState(null, "", `?pageNum=1&category_id=1&id=${postId}`); // 주소는 바뀌지만 새로고침 없음
-        showPostDetail(postId); // 내부 함수로 상세 게시글 로드
+            history.pushState(null, "", `?pageNum=1&category_id=1&id=${postId}`);
+            showPostDetail(postId);
     }
 });
+}
 
 async function showPostDetail(postId) {
     const {data, error} = await supabase
@@ -546,3 +558,23 @@ function toggleFAQ(id) {
         currentAnswer.style.display = 'none';
     }
 }
+
+// 팝업 열기/닫기 함수 추가 (푸터 개인정보처리방침 버튼용)
+function open_popup(){
+    const popup = document.querySelector("#personal_popup");
+    if (popup) popup.classList.remove("hidden");
+    document.body.classList.add("scroll_lock");
+}
+function close_popup(){
+    const popup = document.querySelector("#personal_popup");
+    if (popup) popup.classList.add("hidden");
+    document.body.classList.remove("scroll_lock");
+}
+
+// noticeSelect 등에서 innerHTML 할당 시 id 존재 여부 확인
+function safeSetInnerHTML(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+// 예시 사용: safeSetInnerHTML('changeText', texts[categoryId]);
+// 기존 document.getElementById('changeText').innerHTML = ...; 부분을 safeSetInnerHTML로 교체

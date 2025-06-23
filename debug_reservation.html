@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 디버깅</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h1>예약 디버깅 페이지</h1>
+    
+    <div>
+        <h2>1. Supabase 연결 테스트</h2>
+        <button onclick="testConnection()">연결 테스트</button>
+        <div id="connection-result"></div>
+    </div>
+    
+    <div>
+        <h2>2. 예약 데이터 테스트</h2>
+        <button onclick="testReservationData()">예약 데이터 구성 테스트</button>
+        <div id="data-result"></div>
+    </div>
+    
+    <div>
+        <h2>3. 실제 예약 삽입 테스트</h2>
+        <button onclick="testInsert()">실제 삽입 테스트</button>
+        <div id="insert-result"></div>
+    </div>
+    
+    <div>
+        <h2>4. 예약 데이터 조회</h2>
+        <button onclick="testSelect()">데이터 조회</button>
+        <div id="select-result"></div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
+        
+        window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        async function testConnection() {
+            try {
+                console.log('Supabase 클라이언트:', window.supabase);
+                console.log('Supabase URL:', window.supabase.supabaseUrl);
+                console.log('Supabase Key:', window.supabase.supabaseKey?.substring(0, 20) + "...");
+                
+                const { data, error } = await window.supabase
+                    .from('reservation')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    document.getElementById('connection-result').innerHTML = `<p style="color: red;">연결 실패: ${error.message}</p>`;
+                } else {
+                    document.getElementById('connection-result').innerHTML = `<p style="color: green;">연결 성공!</p>`;
+                }
+            } catch (err) {
+                document.getElementById('connection-result').innerHTML = `<p style="color: red;">연결 오류: ${err.message}</p>`;
+            }
+        }
+        
+        function testReservationData() {
+            // 실제 예약 페이지와 동일한 데이터 구성
+            const reservationData = {
+                date: '2025-06-20',
+                time: '10:00~12:00',
+                addr: '서울시 강남구 테스트동 123-45',
+                model: '테스트 제빙기',
+                remark: '테스트 예약',
+                agree: 1,
+                user_email: 'test@test.com',
+                state: 0,
+                price: '50000'
+            };
+            
+            console.log('예약 데이터:', reservationData);
+            document.getElementById('data-result').innerHTML = `
+                <p style="color: green;">데이터 구성 완료!</p>
+                <pre>${JSON.stringify(reservationData, null, 2)}</pre>
+            `;
+        }
+        
+        async function testInsert() {
+            try {
+                const reservationData = {
+                    date: '2025-06-20',
+                    time: '10:00~12:00',
+                    addr: '서울시 강남구 테스트동 123-45',
+                    model: '테스트 제빙기',
+                    remark: '테스트 예약',
+                    agree: 1,
+                    user_email: 'test@test.com',
+                    state: 0,
+                    price: '50000'
+                };
+                
+                console.log('삽입할 데이터:', reservationData);
+                
+                const { data, error } = await window.supabase
+                    .from('reservation')
+                    .insert([reservationData])
+                    .select();
+                
+                if (error) {
+                    console.error('삽입 에러:', error);
+                    document.getElementById('insert-result').innerHTML = `
+                        <p style="color: red;">삽입 실패: ${error.message}</p>
+                        <p>에러 코드: ${error.code}</p>
+                        <p>에러 상세: ${error.details}</p>
+                    `;
+                } else {
+                    console.log('삽입 성공:', data);
+                    document.getElementById('insert-result').innerHTML = `
+                        <p style="color: green;">삽입 성공!</p>
+                        <p>저장된 ID: ${data[0]?.res_no}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                console.error('삽입 테스트 오류:', err);
+                document.getElementById('insert-result').innerHTML = `<p style="color: red;">삽입 테스트 오류: ${err.message}</p>`;
+            }
+        }
+        
+        async function testSelect() {
+            try {
+                const { data, error } = await window.supabase
+                    .from('reservation')
+                    .select('*')
+                    .order('res_no', { ascending: false })
+                    .limit(5);
+                
+                if (error) {
+                    document.getElementById('select-result').innerHTML = `<p style="color: red;">조회 실패: ${error.message}</p>`;
+                } else {
+                    document.getElementById('select-result').innerHTML = `
+                        <p style="color: green;">조회 성공! (${data.length}개)</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('select-result').innerHTML = `<p style="color: red;">조회 오류: ${err.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

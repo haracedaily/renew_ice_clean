@@ -1,13 +1,11 @@
 (async function() {
-    // 전역 supabase 클라이언트 사용
-    if (!window.supabase) {
-        console.error('Supabase client is not initialized');
-        return;
-    }
+    const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     async function getActivePopups() {
         const now = new Date().toISOString();
-        const { data, error } = await window.supabase
+        const { data, error } = await supabase
             .from('popups')
             .select('*')
             .eq('display_status', 'show')
@@ -29,18 +27,6 @@
         const div = document.createElement('div');
         div.id = 'custom-popup';
         div.style.position = 'fixed';
-        div.style.display = 'flex';
-        div.style.flexDirection = 'column';
-        div.style.alignItems = 'center';
-        div.style.justifyContent = 'center';
-        div.style.backgroundColor = 'white';
-        div.style.padding = '10px';
-        div.style.borderRadius = '12px';
-        div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-        div.style.zIndex = '9999';
-        div.style.cursor = 'pointer';
-        div.style.transition = 'all 0.3s ease';
-        
         // 관리자에서 설정한 위치값 사용 (없으면 기본값)
         if (popup.position_x && popup.position_y) {
             div.style.left = popup.position_x;
@@ -50,43 +36,26 @@
             div.style.top = '40px';
             div.style.right = '40px';
         }
-        
         div.style.width = popup.width || '400px';
         div.style.height = popup.height || 'auto';
-        div.style.maxWidth = '90vw';
-        div.style.maxHeight = '90vh';
-        
+        div.style.background = 'white';
+        div.style.zIndex = 9999;
+        div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+        div.style.borderRadius = '12px';
+        div.style.overflow = 'hidden';
+        div.style.cursor = 'pointer';
         div.innerHTML = `
-            <div id="popup-close-btn" style="position:absolute;top:5px;right:5px;width:24px;height:24px;background:rgba(0,0,0,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#333;z-index:10000;transition:all 0.2s ease;">×</div>
-            <img src="${popup.image_url}" style="width:100%;height:auto;display:block;border-radius:8px;">
+            <div id="popup-close-btn" style="position:absolute;top:5px;right:5px;width:18px;height:18px;background:rgba(255,255,255,0.8);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#333;z-index:10000;">×</div>
+            <img src="${popup.image_url}" style="width:100%;display:block;">
         `;
-
-        // 닫기 버튼 호버 효과
-        const closeBtn = div.querySelector('#popup-close-btn');
-        closeBtn.onmouseover = function() {
-            this.style.background = 'rgba(0,0,0,0.2)';
-        };
-        closeBtn.onmouseout = function() {
-            this.style.background = 'rgba(0,0,0,0.1)';
-        };
-
-        div.onclick = function(e) {
-            if (e.target === closeBtn) return;
+        div.onclick = function() {
             window.location.href = popup.link_url || 'reservation.html';
         };
-
         // 닫기 버튼만 클릭 시 팝업 닫기(링크 이동 X)
-        closeBtn.onclick = function(e) {
+        div.querySelector('#popup-close-btn').onclick = function(e) {
             e.stopPropagation();
-            div.style.opacity = '0';
-            setTimeout(() => div.remove(), 300);
+            div.remove();
         };
-
         document.body.appendChild(div);
-        
-        // 팝업 애니메이션
-        setTimeout(() => {
-            div.style.opacity = '1';
-        }, 100);
     }
 })();
