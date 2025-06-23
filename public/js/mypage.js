@@ -750,6 +750,24 @@ function displayReservations(reservations) {
     reservationsList.innerHTML = reservations.map(reservation => {
         const statusInfo = getStatusInfo(reservation.state);
         
+        // 결제금액 표시 로직
+        let paymentDisplay = '';
+        if (reservation.state >= 1) { // 확정(1) 이상인 경우
+            paymentDisplay = `
+                <div class="detail-item">
+                    <span class="detail-label">결제금액</span>
+                    <span class="detail-value">${reservation.price ? reservation.price + '원' : '미정'}</span>
+                </div>
+            `;
+        } else { // 대기중(0)인 경우
+            paymentDisplay = `
+                <div class="detail-item">
+                    <span class="detail-label">결제금액</span>
+                    <span class="detail-value">기사배정중</span>
+                </div>
+            `;
+        }
+        
         return `
             <div class="reservation-card">
                 <div class="reservation-card-header">
@@ -772,10 +790,7 @@ function displayReservations(reservations) {
                         <span class="detail-label">제빙기 모델</span>
                         <span class="detail-value">${reservation.model || '미입력'}</span>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">서비스 금액</span>
-                        <span class="detail-value">${reservation.price ? reservation.price + '원' : '미정'}</span>
-                    </div>
+                    ${paymentDisplay}
                 </div>
                 
                 ${reservation.remark ? `
