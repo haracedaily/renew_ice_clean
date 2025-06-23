@@ -194,11 +194,15 @@ function setupFormSubmission() {
                         title: '예약이 완료되었습니다!',
                         icon: 'success',
                         text: '예약이 성공적으로 저장되었습니다.',
-                        confirmButtonText: '확인'
+                        confirmButtonText: '확인',
+                        customClass: {
+                            icon: 'swal2-icon-custom'
+                        }
                     }).then(() => {
                         // 폼 초기화
                         form.reset();
-                        location.reload();
+                        // 마이페이지로 이동
+                        window.location.href = '/mypage.html';
                     });
                 }
             } catch (err) {

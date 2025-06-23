@@ -10,8 +10,11 @@ const tabContents = document.querySelectorAll('.tab-content');
 const refreshBtn = document.getElementById('refresh-reservations');
 const reservationsList = document.getElementById('reservations-list');
 const profileForm = document.getElementById('profile-form');
+const filterBtns = document.querySelectorAll('.filter-btn');
 
 let currentUser = null;
+let allReservations = []; // 모든 예약 데이터 저장
+let currentFilter = 'all'; // 현재 필터 상태
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -21,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileOptimization();
     setupPhoneFormatting();
     setupAddressSearch();
+    setupFilterButtons();
 });
 
 // === 전화번호 자동 하이픈 설정 ===
@@ -211,7 +215,14 @@ loginForm.addEventListener('submit', async function(e) {
         loadUserReservations();
         loadUserProfile();
 
-        Swal.fire({ icon: 'success', title: '로그인 성공!', text: '마이페이지로 이동합니다.' });
+        Swal.fire({ 
+            icon: 'success', 
+            title: '로그인 성공!', 
+            text: '마이페이지로 이동합니다.',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        });
     } catch (error) {
         console.error('로그인 오류:', error);
         Swal.fire({ icon: 'error', title: '로그인 실패', text: '로그인 중 오류가 발생했습니다.' });
@@ -669,8 +680,9 @@ async function loadUserReservations() {
         }
         
         console.log('조회된 예약 내역:', data);
-        displayReservations(data || []);
-        updateReservationStats(data || []);
+        allReservations = data || []; // 모든 예약 데이터 저장
+        updateReservationStats(allReservations);
+        applyFilter(); // 현재 필터 적용
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
@@ -708,6 +720,10 @@ function updateReservationStats(reservations) {
                 <span class="stat-number">${completed}</span>
                 <span class="stat-label">완료</span>
             </div>
+            <div class="stat-item">
+                <span class="stat-number">${cancelled}</span>
+                <span class="stat-label">취소</span>
+            </div>
         `;
     }
 }
@@ -736,51 +752,45 @@ function displayReservations(reservations) {
         
         return `
             <div class="reservation-card">
-                <div class="reservation-header">
+                <div class="reservation-card-header">
                     <div class="reservation-id">
                         <span class="reservation-number">예약 #${reservation.res_no}</span>
-                        <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
                     </div>
-                    <div class="reservation-date-time">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>${formatDate(reservation.date)} ${reservation.time}</span>
+                    <span class="reservation-status status-${reservation.state}">${statusInfo.text}</span>
+                </div>
+                
+                <div class="reservation-details">
+                    <div class="detail-item">
+                        <span class="detail-label">예약 날짜</span>
+                        <span class="detail-value">${formatDate(reservation.date)} ${reservation.time}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">서비스 주소</span>
+                        <span class="detail-value">${reservation.addr || '미입력'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">제빙기 모델</span>
+                        <span class="detail-value">${reservation.model || '미입력'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">서비스 금액</span>
+                        <span class="detail-value">${reservation.price ? reservation.price + '원' : '미정'}</span>
                     </div>
                 </div>
                 
-                <div class="reservation-content">
-                    <div class="reservation-info-grid">
-                        <div class="info-item">
-                            <label><i class="fas fa-map-marker-alt"></i> 서비스 주소</label>
-                            <span>${reservation.addr || '미입력'}</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-cube"></i> 제빙기 모델</label>
-                            <span>${reservation.model || '미입력'}</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-comment"></i> 특별 요청사항</label>
-                            <span>${reservation.remark || '없음'}</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-won-sign"></i> 서비스 금액</label>
-                            <span class="price">${reservation.price ? reservation.price + '원' : '미정'}</span>
-                        </div>
+                ${reservation.remark ? `
+                    <div class="detail-item">
+                        <span class="detail-label">특별 요청사항</span>
+                        <span class="detail-value">${reservation.remark}</span>
                     </div>
-                    
-                    ${reservation.remark ? `
-                        <div class="reservation-remark">
-                            <label><i class="fas fa-sticky-note"></i> 특별 요청사항</label>
-                            <p>${reservation.remark}</p>
-                        </div>
-                    ` : ''}
-                </div>
+                ` : ''}
                 
                 <div class="reservation-actions">
                     <button class="action-btn detail-btn" onclick="viewReservationDetail(${reservation.res_no})">
                         <i class="fas fa-eye"></i> 상세보기
                     </button>
                     ${reservation.state === 0 ? `
-                        <button class="action-btn cancel-btn" onclick="cancelReservation(${reservation.res_no})">
+                        <button class="cancel-btn" onclick="cancelReservation(${reservation.res_no})">
                             <i class="fas fa-times"></i> 예약취소
                         </button>
                     ` : ''}
@@ -837,7 +847,10 @@ async function cancelReservation(reservationId) {
         showCancelButton: true,
         confirmButtonText: '취소하기',
         cancelButtonText: '돌아가기',
-        confirmButtonColor: '#dc3545'
+        confirmButtonColor: '#dc3545',
+        customClass: {
+            icon: 'swal2-icon-custom'
+        }
     });
     
     if (result.isConfirmed) {
@@ -852,7 +865,10 @@ async function cancelReservation(reservationId) {
             Swal.fire({
                 icon: 'success',
                 title: '예약 취소 완료',
-                text: '예약이 성공적으로 취소되었습니다.'
+                text: '예약이 성공적으로 취소되었습니다.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
             });
             
             // 예약 내역 새로고침
@@ -863,7 +879,10 @@ async function cancelReservation(reservationId) {
             Swal.fire({
                 icon: 'error',
                 title: '취소 실패',
-                text: '예약 취소 중 오류가 발생했습니다.'
+                text: '예약 취소 중 오류가 발생했습니다.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
             });
         }
     }
@@ -953,4 +972,35 @@ async function migratePlainPassword(userEmail, plainPassword) {
         console.error('비밀번호 마이그레이션 오류:', error);
         return false;
     }
+}
+
+// === 필터 버튼 설정 ===
+function setupFilterButtons() {
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // 모든 필터 버튼에서 active 클래스 제거
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // 클릭된 버튼에 active 클래스 추가
+            this.classList.add('active');
+            
+            // 필터 적용
+            currentFilter = this.getAttribute('data-filter');
+            applyFilter();
+        });
+    });
+}
+
+// === 필터 적용 ===
+function applyFilter() {
+    let filteredReservations = [];
+    
+    if (currentFilter === 'all') {
+        filteredReservations = allReservations;
+    } else {
+        filteredReservations = allReservations.filter(reservation => 
+            reservation.state.toString() === currentFilter
+        );
+    }
+    
+    displayReservations(filteredReservations);
 }
