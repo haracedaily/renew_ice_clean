@@ -758,7 +758,7 @@ function displayReservations(reservations) {
                 ` : ''}
                 
                 <div class="reservation-actions">
-                    ${reservation.state === 1 ? `
+                    ${statusInfo.canCancel ? `
                         <button class="cancel-btn" onclick="cancelReservation(${reservation.res_no})">
                             <i class="fas fa-times"></i> 예약취소
                         </button>
@@ -772,15 +772,15 @@ function displayReservations(reservations) {
 // 예약 상태 정보 반환
 function getStatusInfo(state) {
     const stateConfig = {
-        1: { text: "신규예약", class: "status-pending" },
-        2: { text: "결제대기", class: "status-payment-waiting" },
-        3: { text: "결제완료", class: "status-payment-completed" },
-        4: { text: "기사배정", class: "status-assigned" },
-        5: { text: "청소완료", class: "status-completed" },
-        6: { text: "예약취소", class: "status-cancelled" }
+        1: { text: "신규예약 (취소 가능)", class: "status-pending", canCancel: true },
+        2: { text: "결제대기", class: "status-payment-waiting", canCancel: false },
+        3: { text: "결제완료", class: "status-payment-completed", canCancel: false },
+        4: { text: "기사배정", class: "status-assigned", canCancel: false },
+        5: { text: "청소완료", class: "status-completed", canCancel: false },
+        6: { text: "예약취소", class: "status-cancelled", canCancel: false }
     };
     
-    return stateConfig[state] || { text: "알 수 없음", class: "status-unknown" };
+    return stateConfig[state] || { text: "알 수 없음", class: "status-unknown", canCancel: false };
 }
 
 // 날짜 포맷팅
