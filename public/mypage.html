@@ -12,49 +12,21 @@
   <link rel="stylesheet" href="./css/mypage.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js" integrity="sha512-Yd62e3pxMdK6g6Wn4bIrmXv0ja2mcbdYzyHa1id14MOfW9PkZ7oF2Dg63hR7jcmbmVHxLu/HLnWadO8BTO2yew==" crossorigin="anonymous"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script>
-    // bcryptjs 라이브러리 로드 확인 및 재시도
-    let bcryptjsLoaded = false;
-    
+    // bcryptjs 라이브러리 로드 확인
     function checkBcryptjs() {
-      if (typeof bcryptjs !== 'undefined') {
-        bcryptjsLoaded = true;
-        console.log('bcryptjs 라이브러리가 정상적으로 로드되었습니다.');
-        return true;
-      }
-      return false;
-    }
-    
-    function loadBcryptjs() {
-      return new Promise((resolve, reject) => {
-        if (checkBcryptjs()) {
-          resolve();
-          return;
-        }
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js';
-        script.onload = function() {
-          if (checkBcryptjs()) {
-            resolve();
-          } else {
-            reject(new Error('bcryptjs 로드 실패'));
-          }
-        };
-        script.onerror = function() {
-          reject(new Error('bcryptjs 로드 실패'));
-        };
-        document.head.appendChild(script);
-      });
+      return typeof bcryptjs !== 'undefined' && typeof bcryptjs.hashSync === 'function';
     }
     
     // 페이지 로드 시 bcryptjs 확인
     window.addEventListener('load', function() {
-      loadBcryptjs().catch(error => {
-        console.warn('bcryptjs 라이브러리 로드에 실패했습니다. SHA-256 해시를 사용합니다:', error);
-      });
+      if (!checkBcryptjs()) {
+        console.warn('bcryptjs 라이브러리 로드에 실패했습니다. SHA-256 해시를 사용합니다.');
+      } else {
+        console.log('bcryptjs 라이브러리가 정상적으로 로드되었습니다.');
+      }
     });
     
     // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
