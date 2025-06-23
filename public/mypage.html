@@ -12,15 +12,9 @@
   <link rel="stylesheet" href="./css/mypage.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script>
-    // bcryptjs 라이브러리 로드 확인 및 대체 함수
-    function checkBcryptjs() {
-      return typeof bcryptjs !== 'undefined' && typeof bcryptjs.hashSync === 'function';
-    }
-    
-    // SHA-256 해시 함수 (bcryptjs 대체용)
+    // SHA-256 해시 함수
     async function sha256Hash(text) {
       const encoder = new TextEncoder();
       const data = encoder.encode(text);
@@ -30,35 +24,30 @@
       return hashHex;
     }
     
-    // 비밀번호 해시 함수 (bcryptjs 우선, 실패시 SHA-256 사용)
+    // 비밀번호 해시 함수 (SHA-256 사용)
     async function hashPassword(password) {
-      if (checkBcryptjs()) {
-        return bcryptjs.hashSync(password, 10);
-      } else {
-        console.warn('bcryptjs를 사용할 수 없어 SHA-256을 사용합니다.');
-        return await sha256Hash(password);
-      }
+      const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
+      const hashedPassword = await sha256Hash(password + salt);
+      return salt + ':' + hashedPassword;
     }
     
-    // 비밀번호 검증 함수
+    // 비밀번호 검증 함수 (SHA-256 사용)
     async function verifyPassword(password, hash) {
-      if (checkBcryptjs()) {
-        return bcryptjs.compareSync(password, hash);
-      } else {
-        console.warn('bcryptjs를 사용할 수 없어 SHA-256을 사용합니다.');
-        const hashedPassword = await sha256Hash(password);
-        return hashedPassword === hash;
+      try {
+        // 저장된 해시가 salt:hash 형태인지 확인
+        if (hash && hash.includes(':')) {
+          const [salt, storedHash] = hash.split(':');
+          const hashedPassword = await sha256Hash(password + salt);
+          return hashedPassword === storedHash;
+        } else {
+          // 평문 비밀번호인 경우 (기존 사용자 호환성)
+          return password === hash;
+        }
+      } catch (error) {
+        console.error('비밀번호 검증 중 오류:', error);
+        return false;
       }
     }
-    
-    // 페이지 로드 시 bcryptjs 확인
-    window.addEventListener('load', function() {
-      if (!checkBcryptjs()) {
-        console.warn('bcryptjs 라이브러리 로드에 실패했습니다. SHA-256 해시를 사용합니다.');
-      } else {
-        console.log('bcryptjs 라이브러리가 정상적으로 로드되었습니다.');
-      }
-    });
     
     // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
     document.addEventListener('DOMContentLoaded', function() {
