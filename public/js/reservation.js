@@ -217,6 +217,64 @@ function setupPhoneFormatting() {
     }
 }
 
+// 시간 선택 제한 기능
+function setupTimeRestrictions() {
+    const dateInput = document.getElementById('reservation-date');
+    const timeOptions = document.querySelectorAll('input[name="reservation-time"]');
+    
+    // 날짜 변경 시 시간 옵션 업데이트
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            updateTimeOptions(this.value);
+        });
+        
+        // 페이지 로드 시에도 시간 옵션 업데이트
+        if (this.value) {
+            updateTimeOptions(this.value);
+        }
+    }
+}
+
+// 시간 옵션 업데이트
+function updateTimeOptions(selectedDate) {
+    const timeOptions = document.querySelectorAll('input[name="reservation-time"]');
+    const now = new Date();
+    const selectedDateTime = new Date(selectedDate);
+    
+    // 오늘 날짜인지 확인
+    const isToday = selectedDate === now.toISOString().split('T')[0];
+    
+    timeOptions.forEach(option => {
+        const timeValue = option.value;
+        const timeLabel = option.nextElementSibling;
+        const timeContainer = option.closest('.time-option');
+        
+        if (isToday) {
+            // 오늘 날짜인 경우 현재 시간과 비교
+            const currentHour = now.getHours();
+            const optionHour = parseInt(timeValue.split(':')[0]);
+            
+            if (optionHour <= currentHour) {
+                // 현재 시간 이전의 시간은 비활성화
+                option.disabled = true;
+                option.checked = false;
+                timeContainer.classList.add('disabled');
+                timeLabel.style.color = '#999';
+            } else {
+                // 현재 시간 이후의 시간은 활성화
+                option.disabled = false;
+                timeContainer.classList.remove('disabled');
+                timeLabel.style.color = '#333';
+            }
+        } else {
+            // 오늘이 아닌 날짜는 모든 시간 활성화
+            option.disabled = false;
+            timeContainer.classList.remove('disabled');
+            timeLabel.style.color = '#333';
+        }
+    });
+}
+
 // 페이지 로드 시 초기화
 window.addEventListener('DOMContentLoaded', () => {
     console.log('DOM 로드 완료, 초기화 시작');
@@ -232,6 +290,9 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // 전화번호 포맷팅
     setupPhoneFormatting();
+    
+    // 시간 선택 제한 기능
+    setupTimeRestrictions();
     
     console.log('초기화 완료');
 });

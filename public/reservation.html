@@ -85,6 +85,10 @@
         inline: true,
         onChange: function(selectedDates, dateStr) {
           console.log('날짜 선택됨:', dateStr);
+          // 시간 옵션 업데이트
+          if (typeof updateTimeOptions === 'function') {
+            updateTimeOptions(dateStr);
+          }
         }
       });
       
