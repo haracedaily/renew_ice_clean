@@ -1168,4 +1168,89 @@
     min-width: 80px;
     text-align: center;
   }
+}
+
+/* 즐겨찾기 버튼 스타일 */
+.favorite-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+}
+
+.favorite-btn:hover {
+    color: #0066cc;
+    transform: scale(1.1);
+}
+
+.favorite-btn.active {
+    color: #0066cc;
+}
+
+.favorite-btn.active:hover {
+    color: #ccc;
+}
+
+/* 삭제 버튼 스타일 */
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+}
+
+.delete-btn i {
+    margin-right: 5px;
+}
+
+/* 즐겨찾기된 카드 스타일 */
+.reservation-card.favorite {
+    border: 2px solid #0066cc;
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+.reservation-card.favorite .reservation-header {
+    background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+}
+
+/* 헤더 액션 영역 스타일 */
+.reservation-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .favorite-btn {
+        font-size: 16px;
+        margin-right: 5px;
+    }
+    
+    .delete-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+    
+    .reservation-header-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
 } 

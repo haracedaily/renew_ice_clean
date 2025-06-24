@@ -15,6 +15,7 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 let currentUser = null;
 let allReservations = []; // 모든 예약 데이터 저장
 let currentFilter = 'all'; // 현재 필터 상태
+let favoriteReservations = new Set(); // 즐겨찾기된 예약 ID들을 저장
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -639,6 +640,9 @@ async function loadUserReservations() {
     try {
         console.log('예약 내역 로드 시작:', currentUser.email);
         
+        // 즐겨찾기 로드
+        await loadFavorites();
+        
         // 예약 데이터와 고객 정보를 함께 조회
         const { data, error } = await window.supabase
             .from('reservation')
@@ -664,7 +668,19 @@ async function loadUserReservations() {
             name: reservation.customer?.name || currentUser.name || ''
         }));
         
-        allReservations = reservationsWithName || []; // 모든 예약 데이터 저장
+        // 즐겨찾기 순으로 정렬 (즐겨찾기가 위로)
+        const sortedReservations = reservationsWithName.sort((a, b) => {
+            const aIsFavorite = favoriteReservations.has(Number(a.res_no));
+            const bIsFavorite = favoriteReservations.has(Number(b.res_no));
+            
+            if (aIsFavorite && !bIsFavorite) return -1;
+            if (!aIsFavorite && bIsFavorite) return 1;
+            
+            // 즐겨찾기 상태가 같으면 날짜순 정렬
+            return new Date(b.date) - new Date(a.date);
+        });
+        
+        allReservations = sortedReservations || []; // 모든 예약 데이터 저장
         applyFilter(); // 필터 적용
         updateReservationStats(allReservations); // 전체 통계 업데이트
         
@@ -745,17 +761,24 @@ function displayReservations(reservations) {
         const statusInfo = getStatusInfo(reservation.state);
         const canCancel = reservation.state === 1; // 신규예약 상태일 때만 취소 가능
         const hasEngineer = reservation.engineer_id; // 엔지니어 할당 여부
+        const isCancelled = reservation.state === 6; // 취소된 예약인지 확인
+        const isFavorite = favoriteReservations.has(Number(reservation.res_no)); // 즐겨찾기 여부
         
         return `
-            <div class="reservation-card">
+            <div class="reservation-card ${isFavorite ? 'favorite' : ''}">
                 <div class="reservation-header">
                     <div class="reservation-id">
                         <span class="reservation-number">${reservation.name ? reservation.name + '님 ' : ''}예약 #${reservation.res_no}</span>
                         <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
                     </div>
-                    <div class="reservation-date-time">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>${formatDate(reservation.date)} ${reservation.time}</span>
+                    <div class="reservation-header-actions">
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${Number(reservation.res_no)})" title="${isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <div class="reservation-date-time">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>${formatDate(reservation.date)} ${reservation.time}</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -765,7 +788,7 @@ function displayReservations(reservations) {
                             <label><i class="fas fa-map-marker-alt"></i> 서비스 주소</label>
                             <span>${reservation.addr || '미입력'}</span>
                             ${reservation.addr ? `
-                                <button class="map-btn" onclick="showReservationMap('${reservation.addr}', '${reservation.res_no}', '${reservation.name || ''}')" style="margin-left: 10px; background: #0066cc; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                <button class="map-btn" onclick="showReservationMap('${reservation.addr}', ${Number(reservation.res_no)}, '${reservation.name || ''}')" style="margin-left: 10px; background: #0066cc; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
                                     <i class="fas fa-map"></i> 지도보기
                                 </button>
                             ` : ''}
@@ -788,8 +811,13 @@ function displayReservations(reservations) {
                         </button>
                     ` : ''}
                     ${canCancel ? `
-                        <button class="cancel-btn" onclick="cancelReservation('${reservation.res_no}')">
+                        <button class="cancel-btn" onclick="cancelReservation(${Number(reservation.res_no)})">
                             <i class="fas fa-times"></i> 예약 취소
+                        </button>
+                    ` : ''}
+                    ${isCancelled ? `
+                        <button class="delete-btn" onclick="deleteCancelledReservation(${Number(reservation.res_no)})">
+                            <i class="fas fa-trash"></i> 예약 삭제
                         </button>
                     ` : ''}
                 </div>
@@ -1188,5 +1216,125 @@ async function showReservationMap(address, reservationId, customerName = '') {
             text: '지도를 불러오는 중 오류가 발생했습니다.',
             confirmButtonColor: '#0066cc'
         });
+    }
+}
+
+// === 즐겨찾기 기능 ===
+
+// 즐겨찾기 로드
+async function loadFavorites() {
+    if (!currentUser) return;
+    try {
+        const { data, error } = await window.supabase
+            .from('favorite_reservations')
+            .select('reservation_id')
+            .eq('user_email', currentUser.email);
+        if (error) throw error;
+        favoriteReservations.clear();
+        if (data) {
+            data.forEach(fav => favoriteReservations.add(Number(fav.reservation_id)));
+        }
+    } catch (error) {
+        console.error('즐겨찾기 로드 오류:', error);
+    }
+}
+
+// 즐겨찾기 토글
+async function toggleFavorite(reservationId) {
+    if (!currentUser) return;
+    const numericReservationId = Number(reservationId);
+    try {
+        if (favoriteReservations.has(numericReservationId)) {
+            // 즐겨찾기 제거
+            const { error } = await window.supabase
+                .from('favorite_reservations')
+                .delete()
+                .eq('user_email', currentUser.email)
+                .eq('reservation_id', numericReservationId);
+            if (error) throw error;
+            favoriteReservations.delete(numericReservationId);
+        } else {
+            // 즐겨찾기 추가
+            const { error } = await window.supabase
+                .from('favorite_reservations')
+                .insert({
+                    user_email: currentUser.email,
+                    reservation_id: numericReservationId
+                });
+            if (error) {
+                if (error.code === '23505' || error.message?.includes('unique')) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: '이미 즐겨찾기됨',
+                        text: '이미 즐겨찾기된 예약입니다.',
+                        confirmButtonColor: '#0066cc'
+                    });
+                    return;
+                }
+                throw error;
+            }
+            favoriteReservations.add(numericReservationId);
+        }
+        loadUserReservations();
+    } catch (error) {
+        console.error('즐겨찾기 토글 오류:', error);
+        Swal.fire({
+            icon: 'error',
+            title: '즐겨찾기 오류',
+            text: '즐겨찾기 처리 중 오류가 발생했습니다.'
+        });
+    }
+}
+
+// 취소된 예약 삭제
+async function deleteCancelledReservation(reservationId) {
+    const result = await Swal.fire({
+        title: '예약 삭제',
+        text: '정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제하기',
+        cancelButtonText: '취소',
+        confirmButtonColor: '#dc3545',
+        customClass: {
+            icon: 'swal2-icon-custom'
+        }
+    });
+    
+    if (result.isConfirmed) {
+        try {
+            // 먼저 즐겨찾기에서 제거
+            await window.supabase
+                .from('favorite_reservations')
+                .delete()
+                .eq('user_email', currentUser.email)
+                .eq('reservation_id', reservationId);
+            
+            // 예약 삭제
+            const { error } = await window.supabase
+                .from('reservation')
+                .delete()
+                .eq('res_no', reservationId);
+                
+            if (error) throw error;
+            
+            Swal.fire({
+                icon: 'success',
+                title: '예약 삭제 완료',
+                text: '취소된 예약이 성공적으로 삭제되었습니다.',
+                confirmButtonColor: '#0066CC'
+            });
+            
+            // 예약 내역 새로고침
+            loadUserReservations();
+            
+        } catch (error) {
+            console.error('예약 삭제 오류:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '예약 삭제 실패',
+                text: '예약 삭제 중 오류가 발생했습니다.'
+            });
+        }
     }
 }

@@ -11,6 +11,12 @@
     font-weight: normal;
     font-style: normal;
 }
+@font-face {
+    font-family: 'pageNum5';
+    src: url('../font/page.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 body{
     margin: 0;
     /*padding: 60px 0 0;*/
@@ -230,8 +236,8 @@ header {
     align-items: center;
 }
 input[type = "radio"]{
-    width: 30px;
-    height: 30px;
+    
+    
     margin-right: 10px;
     cursor: pointer;
 }
@@ -736,8 +742,8 @@ input[type = "radio"]{
 .time-option input[type="radio"] {
   margin-right: 8px;
   margin-left: 0;
-  margin-top: 2px;
-  align-self: flex-end;
+  margin-top: 6px;
+  align-self: center;
 }
 
 .time-option input[type="radio"]:checked + span {
@@ -748,8 +754,10 @@ input[type = "radio"]{
 .time-option span {
   text-align: center;
   flex: 1;
-  margin-top: -8px;
-  align-self: flex-start;
+  margin-top: 0;
+  align-self: center;
+  font-size: 20px;
+  font-weight: 500;
 }
 
 /* 비활성화된 시간 옵션 스타일 */
@@ -1025,4 +1033,40 @@ button#confirm-reserve.btn-reserve:focus {
     padding: 30px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 사이드 버튼 그룹 스타일 */
+#side_btn_group{
+    background-color:rgba(217,217,217,0.7);
+    span{
+        &:hover {
+            &:first-child {
+                border: 1px solid #19499E;
+
+                p {
+                    color: #19499E;
+                }
+            }
+            &:nth-child(2) {
+                background-image:url("../image/seablueBalloon.png");
+                p{
+                    color:white;
+                }
+            }
+            &:nth-child(3) {
+                background-image:url("../image/yellowBalloon.png");
+                p{
+                    color:black;
+                }
+            }
+        }
+
+        &:nth-child(n+2){
+            p{
+                font-family:"pageNum5",sans-serif;
+                font-weight:500;
+            }
+        }
+
+    }
 }
