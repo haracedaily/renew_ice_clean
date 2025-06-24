@@ -1,4 +1,32 @@
 @font-face {
+    font-family: 'iceFont';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'iceFont', sans-serif;
+}
+
+body {
+    font-family: 'iceFont', sans-serif;
+}
+
+button,
+.reservation-card,
+.form-section,
+#side_btn_group span,
+.stat-item,
+.tab-btn,
+input,
+textarea,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li {
+    font-family: 'iceFont', sans-serif !important;
+}
+
+@font-face {
     font-family: 'pageNum';
     src: url('../font/page.ttf') format('truetype');
     font-weight: normal;
@@ -34,12 +62,6 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'iceFont';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
 #side_btn_group{
     background-color:rgba(217,217,217,0.7);
     span{
@@ -683,15 +705,6 @@ footer {
     40%, 100% {
         transform: rotateZ(0);
     }
-}
-
-
-
-
-
-body {
-    font-family: 'iceFont',sans-serif;
-    color: #333;
 }
 
 #membership {
@@ -1368,16 +1381,5 @@ div.swal2-icon.swal2-warning {
 }
 div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
     border-color: #0066cc !important;
-}
-
-button,
-.reservation-card,
-.form-section,
-#side_btn_group span,
-.stat-item,
-.tab-btn,
-input,
-textarea {
-  font-family: 'Lora-Bold', sans-serif !important;
 }
 

@@ -217,10 +217,18 @@ header{
 }
 
 @font-face {
-  font-family: 'Lora-Bold';
-  src: url('../font/Lora-Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
+    font-family: 'iceFont';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'iceFont', sans-serif;
+}
+
+body {
+    font-family: 'iceFont', sans-serif;
 }
 
 button,
@@ -230,6 +238,8 @@ button,
 .stat-item,
 .tab-btn,
 input,
-textarea {
-  font-family: 'Lora-Bold', sans-serif !important;
+textarea,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li {
+    font-family: 'iceFont', sans-serif !important;
 }

@@ -2,7 +2,7 @@
     /*margin: 0;*/
     /*padding: 0;*/
     /*box-sizing: border-box;*/
-    font-family: iceFont, sans-serif;
+    font-family: 'iceFont', sans-serif;
 
 }
 @font-face {
@@ -26,6 +26,7 @@
 body{
     margin: 0;
     /*padding: 60px 0 0;*/
+    font-family: 'iceFont', sans-serif;
 }
 
 header {
@@ -1043,86 +1044,37 @@ button#confirm-reserve.btn-reserve:focus {
 
 /* 사이드 버튼 그룹 스타일 */
 #side_btn_group{
-    position: fixed;
-    top: 70vh;
-    right: 40px;
-    width: 45px;
-    height: 100px;
-    background-color: rgba(217, 217, 217, 0.5);
-    border-radius: 20px;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    
+    background-color:rgba(217,217,217,0.7);
     span{
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        
         &:hover {
-            transform: scale(1.1);
-            
             &:first-child {
-                border: 2px solid #0066CC;
-                background-color: rgba(0, 102, 204, 0.1);
+                border: 1px solid #19499E;
 
                 p {
-                    color: #0066CC;
+                    color: #19499E;
                 }
             }
             &:nth-child(2) {
-                background-image: url("../image/seablueBalloon.png");
-                background-size: cover;
-                background-position: center;
+                background-image:url("../image/seablueBalloon.png");
                 p{
-                    color: white;
+                    color:white;
                 }
             }
             &:nth-child(3) {
-                background-image: url("../image/yellowBalloon.png");
-                background-size: cover;
-                background-position: center;
+                background-image:url("../image/yellowBalloon.png");
                 p{
-                    color: black;
+                    color:black;
                 }
             }
         }
 
         &:nth-child(n+2){
             p{
-                font-family: "pageNum5", sans-serif;
-                font-weight: 500;
-                font-size: 12px;
+                font-family:"iceFont",sans-serif;
+                font-weight:500;
             }
         }
-    }
-}
 
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    #side_btn_group {
-        top: 80vh;
-        right: 20px;
-        width: 40px;
-        height: 90px;
-        
-        span {
-            width: 30px;
-            height: 30px;
-            
-            &:nth-child(n+2) p {
-                font-size: 10px;
-            }
-        }
     }
 }
 
@@ -1133,6 +1085,8 @@ button,
 .stat-item,
 .tab-btn,
 input,
-textarea {
-  font-family: 'Lora-Bold', sans-serif !important;
+textarea,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li {
+  font-family: 'iceFont', sans-serif !important;
 }
