@@ -14,6 +14,7 @@ const profileForm = document.getElementById('profile-form');
 let currentUser = null;
 let allReservations = []; // 모든 예약 데이터 저장
 let currentFilter = 'all'; // 현재 필터 상태
+let favoriteReservations = new Set(); // 즐겨찾기된 예약 ID들을 저장
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -615,7 +616,9 @@ tabBtns.forEach(btn => {
         this.classList.add('active');
         tabContents.forEach(content => content.classList.remove('active'));
         document.getElementById(`${targetTab}-tab`).classList.add('active');
-        if (targetTab === 'reservations') loadUserReservations();
+        if (targetTab === 'reservations') {
+            loadUserReservations();
+        }
     });
 });
 
@@ -645,6 +648,9 @@ async function loadUserReservations() {
     try {
         console.log('예약 내역 로드 시작:', currentUser.email);
         
+        // 즐겨찾기 로드
+        await loadFavorites();
+        
         // 예약 데이터와 고객 정보를 함께 조회
         const { data, error } = await window.supabase
             .from('reservation')
@@ -670,7 +676,19 @@ async function loadUserReservations() {
             name: reservation.customer?.name || currentUser.name || ''
         }));
         
-        allReservations = reservationsWithName || []; // 모든 예약 데이터 저장
+        // 즐겨찾기 순으로 정렬 (즐겨찾기가 위로)
+        const sortedReservations = reservationsWithName.sort((a, b) => {
+            const aIsFavorite = favoriteReservations.has(Number(a.res_no));
+            const bIsFavorite = favoriteReservations.has(Number(b.res_no));
+            
+            if (aIsFavorite && !bIsFavorite) return -1;
+            if (!aIsFavorite && bIsFavorite) return 1;
+            
+            // 즐겨찾기 상태가 같으면 날짜순 정렬
+            return new Date(b.date) - new Date(a.date);
+        });
+        
+        allReservations = sortedReservations || []; // 모든 예약 데이터 저장
         applyFilter(); // 필터 적용
         updateReservationStats(allReservations); // 전체 통계 업데이트
         
@@ -761,10 +779,33 @@ function displayReservations(reservations) {
         return;
     }
     
+    // 디버깅: 기사배정 예약 확인
+    console.log('=== 예약 데이터 디버깅 ===');
+    reservations.forEach((reservation, index) => {
+        console.log(`예약 ${index + 1}:`, {
+            res_no: reservation.res_no,
+            state: reservation.state,
+            engineer_id: reservation.engineer_id,
+            isAssigned: reservation.state === 4,
+            hasEngineer: !!reservation.engineer_id,
+            showEngineerButton: reservation.state === 4 && !!reservation.engineer_id
+        });
+    });
+    
     reservationsList.innerHTML = reservations.map(reservation => {
         const statusInfo = getStatusInfo(reservation.state);
         const canCancel = reservation.state === 1; // 신규예약 상태일 때만 취소 가능
         const hasEngineer = reservation.engineer_id; // 엔지니어 할당 여부
+        const isAssigned = reservation.state === 4; // 기사배정 상태
+        
+        // 디버깅: 각 예약의 조건 확인
+        console.log(`예약 #${reservation.res_no} 조건:`, {
+            state: reservation.state,
+            engineer_id: reservation.engineer_id,
+            isAssigned,
+            hasEngineer,
+            showEngineerButton: isAssigned && hasEngineer
+        });
         
         return `
             <div class="reservation-card">
@@ -802,9 +843,12 @@ function displayReservations(reservations) {
                 </div>
                 
                 <div class="reservation-actions">
-                    ${hasEngineer ? `
+                    <button class="favorite-btn ${favoriteReservations.has(Number(reservation.res_no)) ? 'active' : ''}" onclick="toggleFavorite('${reservation.res_no}')">
+                        <i class="fas fa-star"></i> ${favoriteReservations.has(Number(reservation.res_no)) ? '즐겨찾기 해제' : '즐겨찾기'}
+                    </button>
+                    ${isAssigned && hasEngineer ? `
                         <button class="engineer-info-btn" onclick="showEngineerInfo('${reservation.engineer_id}')">
-                            <i class="fas fa-user-tie"></i> 엔지니어 정보
+                            <i class="fas fa-user-tie"></i> 기사 정보
                         </button>
                     ` : ''}
                     ${canCancel ? `
@@ -1179,4 +1223,178 @@ async function showReservationMap(address, reservationId, customerName = '') {
             confirmButtonColor: '#0066cc'
         });
     }
+}
+
+// === 즐겨찾기 관련 함수들 ===
+
+// 즐겨찾기 목록 불러오기
+async function loadFavorites() {
+    if (!currentUser) return;
+    
+    try {
+        const { data, error } = await window.supabase
+            .from('favorites')
+            .select('reservation_id')
+            .eq('user_email', currentUser.email);
+            
+        if (error) {
+            console.error('즐겨찾기 조회 오류:', error);
+            return;
+        }
+        
+        favoriteReservations.clear();
+        data.forEach(fav => favoriteReservations.add(Number(fav.reservation_id)));
+        
+        // 즐겨찾기 목록 표시
+        displayFavorites();
+        
+    } catch (error) {
+        console.error('즐겨찾기 로드 오류:', error);
+    }
+}
+
+// 즐겨찾기 토글
+async function toggleFavorite(reservationId) {
+    if (!currentUser) return;
+    
+    const numericReservationId = Number(reservationId);
+    
+    try {
+        if (favoriteReservations.has(numericReservationId)) {
+            // 즐겨찾기 제거
+            const { error } = await window.supabase
+                .from('favorites')
+                .delete()
+                .eq('user_email', currentUser.email)
+                .eq('reservation_id', reservationId);
+                
+            if (error) throw error;
+            
+            favoriteReservations.delete(numericReservationId);
+            Swal.fire({ 
+                icon: 'success', 
+                title: '즐겨찾기 해제', 
+                text: '즐겨찾기에서 제거되었습니다.',
+                toast: true, 
+                position: 'top-end', 
+                showConfirmButton: false, 
+                timer: 1500 
+            });
+        } else {
+            // 즐겨찾기 추가
+            const { error } = await window.supabase
+                .from('favorites')
+                .insert({
+                    user_email: currentUser.email,
+                    reservation_id: reservationId
+                });
+                
+            if (error) throw error;
+            
+            favoriteReservations.add(numericReservationId);
+            Swal.fire({ 
+                icon: 'success', 
+                title: '즐겨찾기 추가', 
+                text: '즐겨찾기에 추가되었습니다.',
+                toast: true, 
+                position: 'top-end', 
+                showConfirmButton: false, 
+                timer: 1500 
+            });
+        }
+        
+        // 예약 목록 새로고침 (즐겨찾기 순으로 정렬)
+        loadUserReservations();
+        
+    } catch (error) {
+        console.error('즐겨찾기 토글 오류:', error);
+        Swal.fire({ 
+            icon: 'error', 
+            title: '오류', 
+            text: '즐겨찾기 처리 중 오류가 발생했습니다.' 
+        });
+    }
+}
+
+// 즐겨찾기 목록 표시
+function displayFavorites() {
+    const favoritesList = document.getElementById('favorites-list');
+    if (!favoritesList) return;
+    
+    const favoriteReservationsList = allReservations.filter(reservation => 
+        favoriteReservations.has(Number(reservation.res_no))
+    );
+    
+    if (favoriteReservationsList.length === 0) {
+        favoritesList.innerHTML = `
+            <div class="no-favorites">
+                <div class="no-favorites-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>즐겨찾기한 예약이 없습니다</h3>
+                <p>예약 내역에서 별표를 클릭하여<br>즐겨찾기에 추가해보세요!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    favoritesList.innerHTML = favoriteReservationsList.map(reservation => {
+        const statusInfo = getStatusInfo(reservation.state);
+        const canCancel = reservation.state === 1;
+        const hasEngineer = reservation.engineer_id;
+        const isAssigned = reservation.state === 4;
+        
+        return `
+            <div class="reservation-card">
+                <div class="reservation-header">
+                    <div class="reservation-id">
+                        <span class="reservation-number">${reservation.name ? reservation.name + '님 ' : ''}예약 #${reservation.res_no}</span>
+                        <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
+                    </div>
+                    <div class="reservation-date-time">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>${formatDate(reservation.date)} ${reservation.time}</span>
+                    </div>
+                </div>
+                
+                <div class="reservation-content">
+                    <div class="reservation-info-grid">
+                        <div class="info-item">
+                            <label><i class="fas fa-map-marker-alt"></i> 서비스 주소</label>
+                            <span>${reservation.addr || '미입력'}</span>
+                            ${reservation.addr ? `
+                                <button class="map-btn" onclick="showReservationMap('${reservation.addr}', '${reservation.res_no}', '${reservation.name || ''}')" style="margin-left: 10px; background: #0066cc; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    <i class="fas fa-map"></i> 지도보기
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="info-item">
+                            <label><i class="fas fa-cube"></i> 모델명</label>
+                            <span>${reservation.model || '미입력'}</span>
+                        </div>
+                        <div class="info-item">
+                            <label><i class="fas fa-won-sign"></i> 결제금액</label>
+                            <span class="price">${reservation.price ? formatPrice(reservation.price) + '원' : '미정'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reservation-actions">
+                    <button class="favorite-btn ${favoriteReservations.has(Number(reservation.res_no)) ? 'active' : ''}" onclick="toggleFavorite('${reservation.res_no}')">
+                        <i class="fas fa-star"></i> ${favoriteReservations.has(Number(reservation.res_no)) ? '즐겨찾기 해제' : '즐겨찾기'}
+                    </button>
+                    ${isAssigned && hasEngineer ? `
+                        <button class="engineer-info-btn" onclick="showEngineerInfo('${reservation.engineer_id}')">
+                            <i class="fas fa-user-tie"></i> 기사 정보
+                        </button>
+                    ` : ''}
+                    ${canCancel ? `
+                        <button class="cancel-btn" onclick="cancelReservation('${reservation.res_no}')">
+                            <i class="fas fa-times"></i> 예약 취소
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
 }

@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPhoneFormatting();
     setupAddressSearch();
     setupFilterButtons();
+    const refreshFavoritesBtn = document.getElementById('refresh-favorites');
+    if (refreshFavoritesBtn) {
+        refreshFavoritesBtn.addEventListener('click', function() {
+            loadFavorites();
+            Swal.fire({ icon: 'success', title: '즐겨찾기 새로고침 완료', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+        });
+    }
 });
 
 // === 전화번호 자동 하이픈 설정 ===
@@ -625,7 +632,9 @@ tabBtns.forEach(btn => {
         this.classList.add('active');
         tabContents.forEach(content => content.classList.remove('active'));
         document.getElementById(`${targetTab}-tab`).classList.add('active');
-        if (targetTab === 'reservations') loadUserReservations();
+        if (targetTab === 'reservations') {
+            loadUserReservations();
+        }
     });
 });
 refreshBtn.addEventListener('click', function() {
@@ -683,6 +692,19 @@ async function loadUserReservations() {
         allReservations = sortedReservations || []; // 모든 예약 데이터 저장
         applyFilter(); // 필터 적용
         updateReservationStats(allReservations); // 전체 통계 업데이트
+        
+        // 디버깅: 기사배정 예약 확인
+        console.log('=== 예약 데이터 디버깅 ===');
+        allReservations.forEach((reservation, index) => {
+            console.log(`예약 ${index + 1}:`, {
+                res_no: reservation.res_no,
+                state: reservation.state,
+                engineer_id: reservation.engineer_id,
+                isAssigned: reservation.state === 4,
+                hasEngineer: !!reservation.engineer_id,
+                showEngineerButton: reservation.state === 4 && !!reservation.engineer_id
+            });
+        });
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
@@ -761,24 +783,27 @@ function displayReservations(reservations) {
         const statusInfo = getStatusInfo(reservation.state);
         const canCancel = reservation.state === 1; // 신규예약 상태일 때만 취소 가능
         const hasEngineer = reservation.engineer_id; // 엔지니어 할당 여부
-        const isCancelled = reservation.state === 6; // 취소된 예약인지 확인
-        const isFavorite = favoriteReservations.has(Number(reservation.res_no)); // 즐겨찾기 여부
+        const isAssigned = reservation.state === 4; // 기사배정 상태
+        
+        // 디버깅: 각 예약의 조건 확인
+        console.log(`예약 #${reservation.res_no} 조건:`, {
+            state: reservation.state,
+            engineer_id: reservation.engineer_id,
+            isAssigned,
+            hasEngineer,
+            showEngineerButton: isAssigned && hasEngineer
+        });
         
         return `
-            <div class="reservation-card ${isFavorite ? 'favorite' : ''}">
+            <div class="reservation-card">
                 <div class="reservation-header">
                     <div class="reservation-id">
                         <span class="reservation-number">${reservation.name ? reservation.name + '님 ' : ''}예약 #${reservation.res_no}</span>
                         <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
                     </div>
-                    <div class="reservation-header-actions">
-                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${Number(reservation.res_no)})" title="${isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}">
-                            <i class="fas fa-star"></i>
-                        </button>
-                        <div class="reservation-date-time">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>${formatDate(reservation.date)} ${reservation.time}</span>
-                        </div>
+                    <div class="reservation-date-time">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>${formatDate(reservation.date)} ${reservation.time}</span>
                     </div>
                 </div>
                 
@@ -788,7 +813,7 @@ function displayReservations(reservations) {
                             <label><i class="fas fa-map-marker-alt"></i> 서비스 주소</label>
                             <span>${reservation.addr || '미입력'}</span>
                             ${reservation.addr ? `
-                                <button class="map-btn" onclick="showReservationMap('${reservation.addr}', ${Number(reservation.res_no)}, '${reservation.name || ''}')" style="margin-left: 10px; background: #0066cc; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                <button class="map-btn" onclick="showReservationMap('${reservation.addr}', '${reservation.res_no}', '${reservation.name || ''}')" style="margin-left: 10px; background: #0066cc; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
                                     <i class="fas fa-map"></i> 지도보기
                                 </button>
                             ` : ''}
@@ -805,19 +830,14 @@ function displayReservations(reservations) {
                 </div>
                 
                 <div class="reservation-actions">
-                    ${hasEngineer ? `
+                    ${isAssigned && hasEngineer ? `
                         <button class="engineer-info-btn" onclick="showEngineerInfo('${reservation.engineer_id}')">
-                            <i class="fas fa-user-tie"></i> 엔지니어 정보
+                            <i class="fas fa-user-tie"></i> 기사 정보
                         </button>
                     ` : ''}
                     ${canCancel ? `
-                        <button class="cancel-btn" onclick="cancelReservation(${Number(reservation.res_no)})">
+                        <button class="cancel-btn" onclick="cancelReservation('${reservation.res_no}')">
                             <i class="fas fa-times"></i> 예약 취소
-                        </button>
-                    ` : ''}
-                    ${isCancelled ? `
-                        <button class="delete-btn" onclick="deleteCancelledReservation(${Number(reservation.res_no)})">
-                            <i class="fas fa-trash"></i> 예약 삭제
                         </button>
                     ` : ''}
                 </div>
