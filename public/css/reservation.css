@@ -719,11 +719,13 @@ input[type = "radio"]{
 .time-option {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 10px;
   border: 2px solid #ddd;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .time-option:hover {
@@ -733,11 +735,21 @@ input[type = "radio"]{
 
 .time-option input[type="radio"] {
   margin-right: 8px;
+  margin-left: 0;
+  margin-top: 2px;
+  align-self: flex-end;
 }
 
 .time-option input[type="radio"]:checked + span {
-  /* background-color: #0066CC; */
-  color: white;
+  color: #0066CC;
+  font-weight: 600;
+}
+
+.time-option span {
+  text-align: center;
+  flex: 1;
+  margin-top: -8px;
+  align-self: flex-start;
 }
 
 /* 비활성화된 시간 옵션 스타일 */
@@ -860,17 +872,37 @@ input[type = "radio"]{
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: none;
 }
 
 .btn-reserve:hover {
   background: #0052a3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
 }
 
 .btn-reserve:active {
-  transform: translateY(0);
+  transform: none;
+}
+
+/* 구체적인 예약 버튼 움직임 제거 */
+button#confirm-reserve.btn-reserve {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+button#confirm-reserve.btn-reserve:hover {
+  transform: none !important;
+  animation: none !important;
+}
+
+button#confirm-reserve.btn-reserve:active {
+  transform: none !important;
+  animation: none !important;
+}
+
+button#confirm-reserve.btn-reserve:focus {
+  transform: none !important;
+  animation: none !important;
 }
 
 /* 개인정보 상세 */

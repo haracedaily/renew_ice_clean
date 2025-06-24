@@ -27,10 +27,13 @@ class NotificationSystem {
         
         const icon = this.getIconForType(type);
         
+        // success 타입일 때 아이콘 색상을 HTML에 직접 포함
+        const iconStyle = type === 'success' ? 'style="color:#0066cc"' : '';
+        
         notification.innerHTML = `
             <div class="notification-header">
                 <h4 class="notification-title">
-                    <i class="fas ${icon} notification-icon"></i>
+                    <i class="fas ${icon} notification-icon" ${iconStyle}></i>
                     ${title}
                 </h4>
                 <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
@@ -39,6 +42,11 @@ class NotificationSystem {
             </div>
             <p class="notification-message">${message}</p>
         `;
+
+        if (type === 'success') {
+            notification.style.background = '#e6f0fa';
+            notification.style.color = '#0066cc';
+        }
 
         this.container.appendChild(notification);
 

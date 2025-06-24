@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
   <script>
     // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
     document.addEventListener('DOMContentLoaded', function() {
@@ -143,7 +144,9 @@
   <div id="mypage-section" class="mypage-section hidden">
     <div class="mypage-content-header">
       <h1 class="mypage-title">마이페이지</h1>
-      <button id="logout-btn" class="logout-btn">로그아웃</button>
+      <button id="logout-btn" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
     </div>
     
     <div class="user-info">
@@ -302,6 +305,18 @@ swalStyle.textContent = `
         border-color: #0066CC !important;
     }
     div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
+        border-color: #0066CC !important;
+    }
+    .swal2-icon-question-custom {
+        color: #0066CC !important;
+    }
+    .swal2-icon-question-custom .swal2-icon-content {
+        color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-question {
+        border-color: #0066CC !important;
+    }
+    div:where(.swal2-icon).swal2-question [class^='swal2-question-mark'] {
         border-color: #0066CC !important;
     }
 `;

@@ -16,6 +16,7 @@
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
   <script>
     const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
     const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
@@ -71,11 +72,39 @@
         div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
             border-color: #0066CC !important;
         }
+        .swal2-icon-success-custom {
+            color: #0066CC !important;
+        }
+        .swal2-icon-success-custom .swal2-icon-content {
+            color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-success {
+            border-color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-success [class^='swal2-success-circular-line'] {
+            border-color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-success [class^='swal2-success-fix'] {
+            background-color: #0066CC !important;
+        }
+        div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
+            background-color: #0066CC !important;
+        }
     `;
     document.head.appendChild(style);
   </script>
   <script>
+    // 지도 관련 전역 변수
+    let map;
+    let marker;
+    let infowindow;
+
+    // 페이지 로드 시 지도 초기화
     document.addEventListener('DOMContentLoaded', function() {
+      // 지도 초기화
+      initMap();
+      
+      // 기존 flatpickr 설정
       flatpickr("#reservation-date", {
         locale: "ko",
         dateFormat: "Y-m-d",
@@ -87,10 +116,126 @@
         }
       });
       
+      // 상세주소 입력 시 툴팁 업데이트
+      const detailAddressInput = document.getElementById('detailAddress');
+      if (detailAddressInput) {
+        detailAddressInput.addEventListener('input', function() {
+          const address = document.getElementById('address').value;
+          if (address && marker) {
+            const fullAddress = this.value ? `${address} ${this.value}` : address;
+            
+            const content = `
+              <div style="padding:10px;min-width:200px;">
+                <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
+                <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${fullAddress}</p>
+              </div>
+            `;
+            
+            infowindow.setContent(content);
+          }
+        });
+      }
+      
       // 예약 페이지 접근 시 로그인 체크
       checkLoginOnPageLoad();
     });
-    
+
+    // 지도 초기화 함수
+    function initMap() {
+      const container = document.getElementById('map');
+      const options = {
+        center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
+        level: 3
+      };
+      
+      map = new kakao.maps.Map(container, options);
+      
+      // 인포윈도우 생성
+      infowindow = new kakao.maps.InfoWindow({
+        zIndex: 1
+      });
+    }
+
+    // 주소로 좌표 검색 함수
+    function searchAddress(address) {
+      const geocoder = new kakao.maps.services.Geocoder();
+      
+      geocoder.addressSearch(address, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+          
+          // 기존 마커 제거
+          if (marker) {
+            marker.setMap(null);
+          }
+          
+          // 새 마커 생성
+          marker = new kakao.maps.Marker({
+            map: map,
+            position: coords
+          });
+          
+          // 지도 중심 이동
+          map.setCenter(coords);
+          
+          // 툴팁 내용 설정
+          const detailAddress = document.getElementById('detailAddress').value;
+          const fullAddress = detailAddress ? `${address} ${detailAddress}` : address;
+          
+          const content = `
+            <div style="padding:10px;min-width:200px;">
+              <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
+              <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${fullAddress}</p>
+            </div>
+          `;
+          
+          // 인포윈도우 내용 설정
+          infowindow.setContent(content);
+          
+          // 마커 클릭 시 툴팁 표시
+          kakao.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);
+          });
+          
+          // 마커에 마우스 오버 시 툴팁 표시
+          kakao.maps.event.addListener(marker, 'mouseover', function() {
+            infowindow.open(map, marker);
+          });
+          
+          // 마커에서 마우스 아웃 시 툴팁 닫기
+          kakao.maps.event.addListener(marker, 'mouseout', function() {
+            infowindow.close();
+          });
+        }
+      });
+    }
+
+    function openDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function(data) {
+          // 팝업에서 검색 결과 항목을 클릭했을 때 실행할 코드
+          var addr = ''; // 주소 변수
+
+          // 사용자가 선택한 주소 타입에 따라 주소 값을 가져옴
+          if (data.userSelectedType === 'R') { // 도로명 주소
+            addr = data.roadAddress;
+          } else { // 지번 주소
+            addr = data.jibunAddress;
+          }
+
+          // 우편번호와 주소 필드에 값 입력
+          document.getElementById('postcode').value = data.zonecode;
+          document.getElementById('address').value = addr;
+
+          // 지도에 마커 표시
+          searchAddress(addr);
+
+          // 상세주소 입력란으로 커서 이동
+          document.getElementById('detailAddress').focus();
+        }
+      }).open();
+    }
+
     // 페이지 로드 시 로그인 체크
     function checkLoginOnPageLoad() {
       const userInfo = localStorage.getItem('userInfo');
@@ -118,6 +263,8 @@
       }
     }
   </script>
+  <script src="js/reservation.js"></script>
+  <script src="js/notification-system.js"></script>
 </head>
 <body>
 <!--<nav>-->
@@ -261,6 +408,12 @@
         <div class="form-group">
           <label for="detailAddress">상세주소</label>
           <input type="text" id="detailAddress" name="detailAddress" class="form-input">
+        </div>
+      </div>
+      <!-- 지도 컨테이너 추가 -->
+      <div class="form-row">
+        <div class="form-group">
+          <div id="map" style="width:100%;height:300px;margin-top:10px;border-radius:8px;"></div>
         </div>
       </div>
     </div>

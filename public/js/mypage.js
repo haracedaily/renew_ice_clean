@@ -376,7 +376,7 @@ function displayUserProfile(user) {
     
     try {
         // 사용자 정보 표시
-        document.getElementById('user-name').textContent = user.name || '사용자님';
+        document.getElementById('user-name').textContent = (user.name || '사용자') + '님 반갑습니다.';
         document.getElementById('user-email').textContent = user.email || 'user@example.com';
         
         // 프로필 폼에 정보 채우기
@@ -600,7 +600,10 @@ logoutBtn.addEventListener('click', function() {
         showCancelButton: true,
         confirmButtonText: '로그아웃',
         cancelButtonText: '취소',
-        confirmButtonColor: '#dc3545'
+        confirmButtonColor: '#dc3545',
+        customClass: {
+            icon: 'swal2-icon-question-custom'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             localStorage.removeItem('mypageUser');
@@ -636,10 +639,16 @@ async function loadUserReservations() {
     try {
         console.log('예약 내역 로드 시작:', currentUser.email);
         
+        // 예약 데이터와 고객 정보를 함께 조회
         const { data, error } = await window.supabase
-            .from('reservation') // ice_res 대신 reservation 테이블 사용
-            .select('*')
-            .eq('user_email', currentUser.email) // email 대신 user_email 사용
+            .from('reservation')
+            .select(`
+                *,
+                customer:user_email(
+                    name
+                )
+            `)
+            .eq('user_email', currentUser.email)
             .order('date', { ascending: false });
             
         if (error) {
@@ -648,9 +657,16 @@ async function loadUserReservations() {
         }
         
         console.log('조회된 예약 내역:', data);
-        allReservations = data || []; // 모든 예약 데이터 저장
-        updateReservationStats(allReservations);
-        applyFilter(); // 현재 필터 적용
+        
+        // 고객 이름 정보를 예약 데이터에 추가
+        const reservationsWithName = data.map(reservation => ({
+            ...reservation,
+            name: reservation.customer?.name || currentUser.name || ''
+        }));
+        
+        allReservations = reservationsWithName || []; // 모든 예약 데이터 저장
+        applyFilter(); // 필터 적용
+        updateReservationStats(allReservations); // 전체 통계 업데이트
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
@@ -734,7 +750,7 @@ function displayReservations(reservations) {
             <div class="reservation-card">
                 <div class="reservation-header">
                     <div class="reservation-id">
-                        <span class="reservation-number">예약 #${reservation.res_no}</span>
+                        <span class="reservation-number">${reservation.name ? reservation.name + '님 ' : ''}예약 #${reservation.res_no}</span>
                         <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
                     </div>
                     <div class="reservation-date-time">
@@ -748,14 +764,15 @@ function displayReservations(reservations) {
                         <div class="info-item">
                             <label><i class="fas fa-map-marker-alt"></i> 서비스 주소</label>
                             <span>${reservation.addr || '미입력'}</span>
+                            ${reservation.addr ? `
+                                <button class="map-btn" onclick="showReservationMap('${reservation.addr}', '${reservation.res_no}', '${reservation.name || ''}')" style="margin-left: 10px; background: #0066cc; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    <i class="fas fa-map"></i> 지도보기
+                                </button>
+                            ` : ''}
                         </div>
                         <div class="info-item">
                             <label><i class="fas fa-cube"></i> 모델명</label>
                             <span>${reservation.model || '미입력'}</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-comment"></i> 요청사항</label>
-                            <span>${reservation.remark || '없음'}</span>
                         </div>
                         <div class="info-item">
                             <label><i class="fas fa-won-sign"></i> 결제금액</label>
@@ -868,7 +885,7 @@ function setupMobileOptimization() {
 
 function showLogin() {
     showLoginForm();
-    document.getElementById('user-name').textContent = '사용자님';
+    document.getElementById('user-name').textContent = '사용자님 반갑습니다.';
     document.getElementById('user-email').textContent = 'user@example.com';
 }
 function showLoginForm() {
@@ -886,7 +903,7 @@ function showMypage() {
     registerSection.classList.add('hidden');
     mypageSection.classList.remove('hidden');
     if (currentUser) {
-        document.getElementById('user-name').textContent = currentUser.name + '님';
+        document.getElementById('user-name').textContent = currentUser.name + '님 반갑습니다.';
         document.getElementById('user-email').textContent = currentUser.email;
         document.getElementById('profile-name').value = currentUser.name;
         document.getElementById('profile-phone').value = currentUser.phone;
@@ -1039,6 +1056,137 @@ async function showEngineerInfo(engineerId) {
             icon: 'error',
             title: '오류',
             text: '엔지니어 정보를 불러오는 중 오류가 발생했습니다.'
+        });
+    }
+}
+
+// === 예약 주소 지도 표시 ===
+async function showReservationMap(address, reservationId, customerName = '') {
+    try {
+        console.log('지도 표시 시작:', { address, reservationId, customerName });
+        
+        // 주소가 비어있는지 확인
+        if (!address || address.trim() === '') {
+            console.error('주소가 비어있습니다:', address);
+            Swal.fire({
+                icon: 'error',
+                title: '주소 없음',
+                text: '표시할 주소가 없습니다.',
+                confirmButtonColor: '#0066cc'
+            });
+            return;
+        }
+        
+        // 주소 파싱: 우편번호, 기본주소, 상세주소 분리
+        const addressParts = address.split(' ');
+        let searchAddress = '';
+        let displayAddress = '';
+        
+        // 우편번호는 제외하고 나머지 주소 부분만 사용
+        if (addressParts.length >= 2) {
+            // 우편번호(첫 번째)를 제외한 나머지 주소 부분
+            searchAddress = addressParts.slice(1).join(' ');
+            displayAddress = addressParts.slice(1).join(' ');
+        } else {
+            searchAddress = address;
+            displayAddress = address;
+        }
+        
+        console.log('파싱된 주소:', { searchAddress, displayAddress });
+        
+        const mapId = `swal-map-${reservationId}`;
+        const titleText = customerName ? `${customerName}님 서비스 주소` : `예약 #${reservationId} 서비스 주소`;
+        
+        Swal.fire({
+            title: titleText,
+            html: `<div id="${mapId}" style="width:400px;height:300px;border-radius:8px;"></div>`,
+            width: '450px',
+            showConfirmButton: true,
+            confirmButtonText: '닫기',
+            confirmButtonColor: '#0066cc',
+            didOpen: () => {
+                console.log('SweetAlert 열림, 지도 초기화 시작');
+                const geocoder = new kakao.maps.services.Geocoder();
+                
+                // 단계별 주소 검색 함수
+                const searchAddressStep = (searchText, step = 1) => {
+                    console.log(`주소 검색 시도 ${step}:`, searchText);
+                    
+                    geocoder.addressSearch(searchText, function(result, status) {
+                        console.log(`주소 검색 결과 ${step}:`, { result, status });
+                        
+                        if (status === kakao.maps.services.Status.OK) {
+                            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                            const map = new kakao.maps.Map(document.getElementById(mapId), {
+                                center: coords,
+                                level: 3
+                            });
+                            const marker = new kakao.maps.Marker({ position: coords });
+                            marker.setMap(map);
+                            const infowindow = new kakao.maps.InfoWindow({
+                                content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">${displayAddress}</p></div>`
+                            });
+                            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                                infowindow.open(map, marker);
+                            });
+                            kakao.maps.event.addListener(marker, 'mouseout', function() {
+                                infowindow.close();
+                            });
+                            console.log('지도 표시 완료');
+                        } else {
+                            // 다음 단계로 진행
+                            if (step === 1) {
+                                // 1단계 실패: 원본 주소로 재시도
+                                searchAddressStep(address, 2);
+                            } else if (step === 2) {
+                                // 2단계 실패: 주소의 첫 번째 부분만 사용
+                                const firstPart = searchAddress.split(' ')[0];
+                                if (firstPart && firstPart !== searchAddress) {
+                                    searchAddressStep(firstPart, 3);
+                                } else {
+                                    // 3단계 실패: 서울 시청으로 기본 표시
+                                    showDefaultMap();
+                                }
+                            } else {
+                                // 모든 단계 실패: 서울 시청으로 기본 표시
+                                showDefaultMap();
+                            }
+                        }
+                    });
+                };
+                
+                // 기본 지도 표시 함수 (서울 시청)
+                const showDefaultMap = () => {
+                    console.log('기본 지도 표시 (서울 시청)');
+                    const coords = new kakao.maps.LatLng(37.5665, 126.9780);
+                    const map = new kakao.maps.Map(document.getElementById(mapId), {
+                        center: coords,
+                        level: 3
+                    });
+                    const marker = new kakao.maps.Marker({ position: coords });
+                    marker.setMap(map);
+                    const infowindow = new kakao.maps.InfoWindow({
+                        content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>원본 주소: ${address}</p></div>`
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseover', function() {
+                        infowindow.open(map, marker);
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseout', function() {
+                        infowindow.close();
+                    });
+                };
+                
+                // 1단계: 파싱된 주소로 검색 시작
+                searchAddressStep(searchAddress, 1);
+            }
+        });
+    } catch (error) {
+        console.error('지도 표시 오류:', error);
+        Swal.fire({
+            icon: 'error',
+            title: '지도 표시 실패',
+            text: '지도를 불러오는 중 오류가 발생했습니다.',
+            confirmButtonColor: '#0066cc'
         });
     }
 }

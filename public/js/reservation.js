@@ -125,7 +125,7 @@ function setupFormSubmission() {
                 address: document.getElementById('address').value || '',
                 detailAddress: document.getElementById('detailAddress').value || '',
                 modelname: document.getElementById('modelname').value || '',
-                specialRequest: document.getElementById('specialR').value || ''
+                specialRequest: document.getElementById('specialRequest').value || ''
             };
             
             console.log('수집된 데이터:', formData);
@@ -200,7 +200,11 @@ function setupFormSubmission() {
                         title: '예약이 완료되었습니다!',
                         icon: 'success',
                         text: '예약이 성공적으로 저장되었습니다.',
-                        confirmButtonText: '확인'
+                        confirmButtonText: '확인',
+                        confirmButtonColor: '#0066cc',
+                        customClass: {
+                            icon: 'swal2-icon-success-custom'
+                        }
                     }).then(() => {
                         // 폼 초기화
                         form.reset();
