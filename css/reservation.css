@@ -736,7 +736,7 @@ input[type = "radio"]{
 }
 
 .time-option input[type="radio"]:checked + span {
-  color: #0066CC;
+  /* color: #0066CC; */
   font-weight: 600;
 }
 

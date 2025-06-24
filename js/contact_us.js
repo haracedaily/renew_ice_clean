@@ -159,7 +159,7 @@ async function noticeSelect(categoryId) {
         .from('board')
         .select()
         .eq('category_id', categoryId)
-        .order('updated_at', {ascending: true})
+        .order('updated_at', {ascending: false})
         .range(from, to);
 
     // const boardBody = document.getElementById("board");

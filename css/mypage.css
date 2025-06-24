@@ -891,39 +891,51 @@
 
 .reservation-actions {
     display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-.action-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.detail-btn {
-    background: #0066cc;
-    color: white;
-}
-
-.detail-btn:hover {
-    background: #0056b3;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
 }
 
 .cancel-btn {
-    background: #dc3545;
+    background-color: #dc3545;
     color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .cancel-btn:hover {
-    background: #c82333;
+    background-color: #c82333;
+}
+
+.cancel-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.engineer-info-btn {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.engineer-info-btn:hover {
+    background-color: #0052a3;
 }
 
 /* 예약 없음 상태 */
@@ -999,4 +1011,149 @@
     font-size: 0.9rem;
     color: #666;
     font-weight: 500;
+}
+
+/* 예약 상태 스타일 */
+.status-new {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.status-payment-waiting {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.status-payment-completed {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-assigned {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.status-completed {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-unknown {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* 기존 상태 스타일 유지 (호환성) */
+.status-pending {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.status-confirmed {
+    background-color: #28a745;
+    color: white;
+}
+
+/* 예약 액션 버튼 스타일 */
+.reservation-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.detail-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.detail-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}
+
+.cancel-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* 예약 필터 버튼 */
+.reservation-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  font-family: 'iceFont', sans-serif;
+}
+
+.filter-btn:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.filter-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* 모바일에서 필터 버튼 */
+@media (max-width: 768px) {
+  .reservation-filters {
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .filter-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+  }
 } 

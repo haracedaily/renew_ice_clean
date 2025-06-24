@@ -58,4 +58,4 @@
         };
         document.body.appendChild(div);
     }
-})();
+})(); 

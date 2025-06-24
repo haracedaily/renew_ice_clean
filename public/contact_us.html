@@ -201,8 +201,8 @@ function checkLoginAndRedirect(targetUrl) {
 }
 
 // SweetAlert 아이콘 커스텀 스타일
-const style = document.createElement('style');
-style.textContent = `
+const swalStyle = document.createElement('style');
+swalStyle.textContent = `
     .swal2-icon-custom {
         color: #0066CC !important;
     }
@@ -216,7 +216,7 @@ style.textContent = `
         border-color: #0066CC !important;
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(swalStyle);
 </script>
 
 </body>

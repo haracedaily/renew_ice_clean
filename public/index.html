@@ -20,7 +20,6 @@
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="/js/swiper.min.js"></script>
     <script src="/js/slick.min.js"></script>
-    <script src="/js/popup-widget.js"></script>
     <!-- 카카오맵 API 스크립트를 먼저 로드 -->
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
     <!-- 카카오맵 API 로드 후에 index.js 로드 -->
@@ -68,7 +67,7 @@
         <ul class="flex gap-8">
             <li><a href="/contact_us.html" class="nav-link">공지사항</a></li>
             <li><a href="/contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
-            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('/reservation.html')">예약하기</a></li>
+            <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
             <li><a href="/mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
         </ul>
     </nav>
@@ -459,8 +458,8 @@ function checkLoginAndRedirect(targetUrl) {
 }
 
 // SweetAlert 아이콘 커스텀 스타일
-const style = document.createElement('style');
-style.textContent = `
+const swalStyle = document.createElement('style');
+swalStyle.textContent = `
     .swal2-icon-custom {
         color: #0066CC !important;
     }
@@ -474,33 +473,43 @@ style.textContent = `
         border-color: #0066CC !important;
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(swalStyle);
 
 // 강제 모달 팝업 기능
 async function checkForcedPopup() {
-  const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
   try {
-    const now = new Date().toISOString();
-    const { data, error } = await supabase
-      .from('forced_popups')
+    if (!window.supabase) {
+      console.log('Supabase 클라이언트가 초기화되지 않았습니다.');
+      return;
+    }
+
+    // display_status가 'Y'인 팝업만 조회
+    const { data, error } = await window.supabase
+      .from('popups')
       .select('*')
-      .eq('is_active', true)
-      .lte('start_date', now)
-      .gte('end_date', now)
-      .order('created_at', { ascending: false })
-      .limit(1);
+      .eq('display_status', 'Y')
+      .limit(10); // 여러 개 받아서 JS에서 날짜 필터
 
     if (error) {
-      console.error('강제 팝업 조회 에러:', error);
+      console.error('팝업 조회 에러:', error);
       return;
     }
 
     if (data && data.length > 0) {
-      const popup = data[0];
-      showForcedPopup(popup);
+      const now = new Date();
+      const activePopups = data.filter(popup => {
+        const startDate = new Date(popup.start_date);
+        const endDate = new Date(popup.end_date);
+        return now >= startDate && now <= endDate;
+      });
+
+      if (activePopups.length > 0) {
+        // 가장 최근 팝업 표시
+        const popup = activePopups.sort((a, b) => 
+          new Date(b.created_at) - new Date(a.created_at)
+        )[0];
+        showForcedPopup(popup);
+      }
     }
   } catch (error) {
     console.error('강제 팝업 확인 중 오류:', error);
@@ -511,9 +520,8 @@ function showForcedPopup(popup) {
   // 24시간 동안 열지 않기 체크 여부 확인
   const popupKey = `popup_${popup.id}_hidden`;
   const hiddenUntil = localStorage.getItem(popupKey);
-  
   if (hiddenUntil && new Date().getTime() < parseInt(hiddenUntil)) {
-    return; // 24시간이 지나지 않았으면 팝업을 표시하지 않음
+    return;
   }
 
   // 배경 오버레이 생성
@@ -581,9 +589,10 @@ function showForcedPopup(popup) {
     text-align: center;
   `;
 
-  if (popup.image_url) {
+  // 이미지 (imgage_url)
+  if (popup.imgage_url) {
     const img = document.createElement('img');
-    img.src = popup.image_url;
+    img.src = popup.imgage_url;
     img.style.cssText = `
       max-width: 100%;
       height: auto;
@@ -736,8 +745,8 @@ function showForcedPopup(popup) {
 }
 
 // CSS 애니메이션 추가
-const style = document.createElement('style');
-style.textContent = `
+const popupStyle = document.createElement('style');
+popupStyle.textContent = `
   @keyframes modalFadeIn {
     from {
       opacity: 0;
@@ -749,7 +758,7 @@ style.textContent = `
     }
   }
 `;
-document.head.appendChild(style);
+document.head.appendChild(popupStyle);
 
 // 페이지 로드 시 강제 팝업 확인
 document.addEventListener('DOMContentLoaded', function() {
@@ -757,5 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script src="js/popup-widget.js"></script>
+<script src="js/notification-system.js"></script>
 </body>
 </html>

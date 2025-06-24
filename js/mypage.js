@@ -12,6 +12,8 @@ const reservationsList = document.getElementById('reservations-list');
 const profileForm = document.getElementById('profile-form');
 
 let currentUser = null;
+let allReservations = []; // 모든 예약 데이터 저장
+let currentFilter = 'all'; // 현재 필터 상태
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -139,13 +141,10 @@ loginForm.addEventListener('submit', async function(e) {
             return;
         }
 
-        // bcryptjs 라이브러리 로드 확인 및 패스워드 검증
+        // 비밀번호 검증 (SHA-256 해시 사용)
         let isPasswordValid = false;
         
-        if (typeof bcryptjs === 'undefined') {
-            console.warn('bcryptjs 라이브러리가 로드되지 않았습니다. SHA-256 해시 검증을 사용합니다.');
-            
-            // 저장된 비밀번호가 salt:hash 형태인지 확인
+        try {
             if (data.password && data.password.includes(':')) {
                 // SHA-256 해시로 저장된 경우
                 const [salt, storedHash] = data.password.split(':');
@@ -170,21 +169,10 @@ loginForm.addEventListener('submit', async function(e) {
                     }
                 }
             }
-        } else {
-            // bcryptjs로 패스워드 검증
-            isPasswordValid = await bcryptjs.compare(password, data.password);
-            
-            // 평문 비밀번호인 경우 자동 마이그레이션
-            if (!isPasswordValid && data.password === password) {
-                console.log('평문 비밀번호 감지, 자동 마이그레이션 시작');
-                const migrationSuccess = await migratePlainPassword(data.email, password);
-                if (migrationSuccess) {
-                    console.log('비밀번호 마이그레이션 완료');
-                    isPasswordValid = true; // 마이그레이션 후 로그인 허용
-                } else {
-                    console.warn('비밀번호 마이그레이션 실패');
-                }
-            }
+        } catch (hashError) {
+            console.warn('비밀번호 검증 중 오류:', hashError);
+            // 오류 발생 시 평문 비교로 폴백
+            isPasswordValid = (data.password === password);
         }
         
         if (!isPasswordValid) {
@@ -202,6 +190,9 @@ loginForm.addEventListener('submit', async function(e) {
             img_url: data.img_url || '',
             state: data.state || ''
         };
+
+        // 전역 변수로 설정 (알림 시스템에서 접근)
+        window.currentUser = currentUser;
 
         localStorage.setItem('mypageUser', JSON.stringify(currentUser));
         localStorage.setItem('userInfo', JSON.stringify(currentUser));
@@ -233,44 +224,23 @@ async function registerUser(email, password, name, phone, addr) {
             throw new Error('이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.');
         }
 
-        // 2단계: 비밀번호 해시
+        // 2단계: 비밀번호 해시 (SHA-256 사용)
         let passwordHash;
         
-        // bcryptjs 라이브러리 로드 확인 및 대체 방법
-        if (typeof bcryptjs === 'undefined') {
-            console.warn('bcryptjs 라이브러리가 로드되지 않았습니다. SHA-256 해시를 사용합니다.');
-            
-            // SHA-256 해시 함수
-            async function secureHash(password, salt) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                return hashHex;
-            }
-            
-            // 고정된 salt 사용 (보안을 위해 더 복잡한 salt 생성)
-            const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
-            passwordHash = await secureHash(password, salt);
-            passwordHash = salt + ':' + passwordHash; // salt와 해시를 함께 저장
-        } else {
-            try {
-                const salt = await bcryptjs.genSalt(10);
-                passwordHash = await bcryptjs.hash(password, salt);
-                console.log('bcryptjs를 사용하여 비밀번호를 해시했습니다.');
-            } catch (bcryptError) {
-                console.warn('bcryptjs 해시 실패, SHA-256 해시 사용:', bcryptError);
-                // bcryptjs 실패 시 SHA-256 해시 사용
-                const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
-                const encoder = new TextEncoder();
-                const data = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                passwordHash = salt + ':' + hashHex;
-            }
+        // SHA-256 해시 함수
+        async function secureHash(password, salt) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password + salt);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
         }
+        
+        // 고정된 salt 사용 (보안을 위해 더 복잡한 salt 생성)
+        const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
+        passwordHash = await secureHash(password, salt);
+        passwordHash = salt + ':' + passwordHash; // salt와 해시를 함께 저장
 
         // 3단계: customer 테이블에 데이터 삽입
         const customerData = {
@@ -645,6 +615,21 @@ tabBtns.forEach(btn => {
         if (targetTab === 'reservations') loadUserReservations();
     });
 });
+
+// 필터 버튼 이벤트 리스너
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = filter;
+            applyFilter();
+        });
+    });
+});
+
 refreshBtn.addEventListener('click', function() {
     loadUserReservations();
     Swal.fire({ icon: 'success', title: '새로고침 완료', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
@@ -669,8 +654,9 @@ async function loadUserReservations() {
         }
         
         console.log('조회된 예약 내역:', data);
-        displayReservations(data || []);
-        updateReservationStats(data || []);
+        allReservations = data || []; // 모든 예약 데이터 저장
+        applyFilter(); // 필터 적용
+        updateReservationStats(allReservations); // 전체 통계 업데이트
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
@@ -682,12 +668,28 @@ async function loadUserReservations() {
     }
 }
 
+// 필터 적용 함수
+function applyFilter() {
+    let filteredReservations = [];
+    
+    if (currentFilter === 'all') {
+        filteredReservations = allReservations;
+    } else {
+        const filterState = parseInt(currentFilter);
+        filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
+    }
+    
+    displayReservations(filteredReservations);
+}
+
 function updateReservationStats(reservations) {
     const total = reservations.length;
-    const pending = reservations.filter(r => r.state === 0).length;
-    const confirmed = reservations.filter(r => r.state === 1).length;
-    const completed = reservations.filter(r => r.state === 2).length;
-    const cancelled = reservations.filter(r => r.state === 3).length;
+    const newReservations = reservations.filter(r => r.state === 1).length;
+    const paymentWaiting = reservations.filter(r => r.state === 2).length;
+    const paymentCompleted = reservations.filter(r => r.state === 3).length;
+    const assigned = reservations.filter(r => r.state === 4).length;
+    const completed = reservations.filter(r => r.state === 5).length;
+    const cancelled = reservations.filter(r => r.state === 6).length;
     
     const statsElement = document.getElementById('reservation-stats');
     if (statsElement) {
@@ -697,16 +699,28 @@ function updateReservationStats(reservations) {
                 <span class="stat-label">전체 예약</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">${pending}</span>
-                <span class="stat-label">대기 중</span>
+                <span class="stat-number">${newReservations}</span>
+                <span class="stat-label">신규예약</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">${confirmed}</span>
-                <span class="stat-label">확정</span>
+                <span class="stat-number">${paymentWaiting}</span>
+                <span class="stat-label">결제대기</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${paymentCompleted}</span>
+                <span class="stat-label">결제완료</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${assigned}</span>
+                <span class="stat-label">기사배정</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number">${completed}</span>
-                <span class="stat-label">완료</span>
+                <span class="stat-label">청소완료</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${cancelled}</span>
+                <span class="stat-label">예약취소</span>
             </div>
         `;
     }
@@ -733,6 +747,8 @@ function displayReservations(reservations) {
     
     reservationsList.innerHTML = reservations.map(reservation => {
         const statusInfo = getStatusInfo(reservation.state);
+        const canCancel = reservation.state === 1; // 신규예약 상태일 때만 취소 가능
+        const hasEngineer = reservation.engineer_id; // 엔지니어 할당 여부
         
         return `
             <div class="reservation-card">
@@ -754,34 +770,29 @@ function displayReservations(reservations) {
                             <span>${reservation.addr || '미입력'}</span>
                         </div>
                         <div class="info-item">
-                            <label><i class="fas fa-cube"></i> 제빙기 모델</label>
+                            <label><i class="fas fa-cube"></i> 모델명</label>
                             <span>${reservation.model || '미입력'}</span>
                         </div>
                         <div class="info-item">
-                            <label><i class="fas fa-comment"></i> 특별 요청사항</label>
+                            <label><i class="fas fa-comment"></i> 요청사항</label>
                             <span>${reservation.remark || '없음'}</span>
                         </div>
                         <div class="info-item">
-                            <label><i class="fas fa-won-sign"></i> 서비스 금액</label>
-                            <span class="price">${reservation.price ? reservation.price + '원' : '미정'}</span>
+                            <label><i class="fas fa-won-sign"></i> 결제금액</label>
+                            <span class="price">${reservation.price ? formatPrice(reservation.price) + '원' : '미정'}</span>
                         </div>
                     </div>
-                    
-                    ${reservation.remark ? `
-                        <div class="reservation-remark">
-                            <label><i class="fas fa-sticky-note"></i> 특별 요청사항</label>
-                            <p>${reservation.remark}</p>
-                        </div>
-                    ` : ''}
                 </div>
                 
                 <div class="reservation-actions">
-                    <button class="action-btn detail-btn" onclick="viewReservationDetail(${reservation.res_no})">
-                        <i class="fas fa-eye"></i> 상세보기
-                    </button>
-                    ${reservation.state === 0 ? `
-                        <button class="action-btn cancel-btn" onclick="cancelReservation(${reservation.res_no})">
-                            <i class="fas fa-times"></i> 예약취소
+                    ${hasEngineer ? `
+                        <button class="engineer-info-btn" onclick="showEngineerInfo('${reservation.engineer_id}')">
+                            <i class="fas fa-user-tie"></i> 엔지니어 정보
+                        </button>
+                    ` : ''}
+                    ${canCancel ? `
+                        <button class="cancel-btn" onclick="cancelReservation('${reservation.res_no}')">
+                            <i class="fas fa-times"></i> 예약 취소
                         </button>
                     ` : ''}
                 </div>
@@ -793,14 +804,18 @@ function displayReservations(reservations) {
 // 예약 상태 정보 반환
 function getStatusInfo(state) {
     switch (state) {
-        case 0:
-            return { text: '예약대기', class: 'status-pending' };
         case 1:
-            return { text: '예약확정', class: 'status-confirmed' };
+            return { text: '신규예약', class: 'status-new' };
         case 2:
-            return { text: '서비스완료', class: 'status-completed' };
+            return { text: '결제대기', class: 'status-payment-waiting' };
         case 3:
-            return { text: '취소됨', class: 'status-cancelled' };
+            return { text: '결제완료', class: 'status-payment-completed' };
+        case 4:
+            return { text: '기사배정', class: 'status-assigned' };
+        case 5:
+            return { text: '청소완료', class: 'status-completed' };
+        case 6:
+            return { text: '예약취소', class: 'status-cancelled' };
         default:
             return { text: '알 수 없음', class: 'status-unknown' };
     }
@@ -813,18 +828,6 @@ function formatDate(dateString) {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    });
-}
-
-// 예약 상세보기
-function viewReservationDetail(reservationId) {
-    console.log('예약 상세보기:', reservationId);
-    // 예약 상세 정보를 모달로 표시하거나 별도 페이지로 이동
-    Swal.fire({
-        title: '예약 상세 정보',
-        text: `예약 번호: ${reservationId}`,
-        icon: 'info',
-        confirmButtonText: '확인'
     });
 }
 
@@ -844,7 +847,7 @@ async function cancelReservation(reservationId) {
         try {
             const { error } = await window.supabase
                 .from('reservation')
-                .update({ state: 3 }) // 3 = 취소됨
+                .update({ state: 6 }) // 6 = 예약취소
                 .eq('res_no', reservationId);
                 
             if (error) throw error;
@@ -862,7 +865,7 @@ async function cancelReservation(reservationId) {
             console.error('예약 취소 오류:', error);
             Swal.fire({
                 icon: 'error',
-                title: '취소 실패',
+                title: '예약 취소 실패',
                 text: '예약 취소 중 오류가 발생했습니다.'
             });
         }
@@ -921,20 +924,14 @@ async function migratePlainPassword(userEmail, plainPassword) {
     try {
         console.log('비밀번호 마이그레이션 시작:', userEmail);
         
-        let passwordHash;
-        
-        if (typeof bcryptjs !== 'undefined') {
-            const salt = await bcryptjs.genSalt(10);
-            passwordHash = await bcryptjs.hash(plainPassword, salt);
-        } else {
-            const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
-            const encoder = new TextEncoder();
-            const data = encoder.encode(plainPassword + salt);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            passwordHash = salt + ':' + hashHex;
-        }
+        // SHA-256 해시 사용
+        const salt = 'icecare_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now().toString(36);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(plainPassword + salt);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const passwordHash = salt + ':' + hashHex;
         
         // 데이터베이스에서 비밀번호 업데이트
         const { error } = await supabase
@@ -952,5 +949,86 @@ async function migratePlainPassword(userEmail, plainPassword) {
     } catch (error) {
         console.error('비밀번호 마이그레이션 오류:', error);
         return false;
+    }
+}
+
+function formatPrice(price) {
+    if (!price || isNaN(price)) return '미정';
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// === 엔지니어 정보 조회 함수 ===
+async function getEngineerInfo(engineerId) {
+    try {
+        const { data, error } = await supabase
+            .from('member')
+            .select('nm, tel, file_url')
+            .eq('idx', engineerId)
+            .eq('auth', 2) // 기사/엔지니어 권한
+            .single();
+
+        if (error) {
+            console.error('엔지니어 정보 조회 오류:', error);
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('엔지니어 정보 조회 중 오류:', error);
+        return null;
+    }
+}
+
+// === 엔지니어 정보 팝업 표시 ===
+async function showEngineerInfo(engineerId) {
+    try {
+        const engineer = await getEngineerInfo(engineerId);
+        
+        if (!engineer) {
+            Swal.fire({
+                icon: 'error',
+                title: '엔지니어 정보 없음',
+                text: '할당된 엔지니어 정보를 찾을 수 없습니다.'
+            });
+            return;
+        }
+
+        // 엔지니어 정보 팝업 HTML 생성
+        const engineerInfoHtml = `
+            <div class="engineer-info-popup">
+                <div class="engineer-photo">
+                    ${engineer.file_url ? 
+                        `<img src="${engineer.file_url}" alt="엔지니어 사진" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">` :
+                        `<div style="width: 120px; height: 120px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: #666;">
+                            <i class="fas fa-user" style="font-size: 3rem;"></i>
+                        </div>`
+                    }
+                </div>
+                <div class="engineer-details">
+                    <h4 style="margin: 0 0 10px 0; color: #333; font-size: 1.2rem;">${engineer.nm || '이름 없음'}</h4>
+                    <p style="margin: 5px 0; color: #666;">
+                        <i class="fas fa-phone" style="color: #0066cc; margin-right: 8px;"></i>
+                        ${engineer.tel || '연락처 없음'}
+                    </p>
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: '담당 엔지니어 정보',
+            html: engineerInfoHtml,
+            icon: 'info',
+            confirmButtonText: '확인',
+            confirmButtonColor: '#0066cc',
+            width: '400px'
+        });
+
+    } catch (error) {
+        console.error('엔지니어 정보 표시 중 오류:', error);
+        Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: '엔지니어 정보를 불러오는 중 오류가 발생했습니다.'
+        });
     }
 }

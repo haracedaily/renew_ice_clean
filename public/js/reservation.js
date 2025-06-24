@@ -150,8 +150,8 @@ function setupFormSubmission() {
                     remark: formData.specialRequest,
                     agree: 1,
                     user_email: formData.email, // email 대신 user_email 사용
-                    state: 1, // 1 = 신규예약으로 변경
-                    price: '50000'
+                    state: 1, // 신규예약(1)
+                    price: 0 // 서비스금액 0으로 저장
                 };
                 
                 console.log('Supabase 저장 데이터:', reservationData);
@@ -190,10 +190,22 @@ function setupFormSubmission() {
                     }
                 } else {
                     console.log('예약 성공:', data);
-                    // 폼 초기화
-                    form.reset();
-                    // 바로 마이페이지로 이동
-                    window.location.href = '/mypage.html';
+                    
+                    // 알림 시스템을 통한 알림 표시
+                    if (window.showNotification) {
+                        window.showNotification('신규예약 완료', '신규예약이 완료되었습니다.', 'success');
+                    }
+                    
+                    Swal.fire({
+                        title: '예약이 완료되었습니다!',
+                        icon: 'success',
+                        text: '예약이 성공적으로 저장되었습니다.',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        // 폼 초기화
+                        form.reset();
+                        location.reload();
+                    });
                 }
             } catch (err) {
                 console.error('예약 처리 중 오류:', err);

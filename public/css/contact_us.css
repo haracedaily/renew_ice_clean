@@ -525,3 +525,18 @@ textarea {
     width: 84% !important;
     border-radius: 10px !important;
 }
+
+/* SweetAlert2 경고 아이콘 내부까지 파란색으로 */
+div.swal2-icon.swal2-warning .swal2-icon-content {
+    color: #0066cc !important;
+}
+div.swal2-icon.swal2-warning svg path {
+    fill: #0066cc !important;
+    stroke: #0066cc !important;
+}
+div.swal2-icon.swal2-warning {
+    border-color: #0066cc !important;
+}
+div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
+    border-color: #0066cc !important;
+}
