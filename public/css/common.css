@@ -215,3 +215,21 @@ header{
         max-width: none;
     }
 }
+
+@font-face {
+  font-family: 'Lora-Bold';
+  src: url('../font/Lora-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+button,
+.reservation-card,
+.form-section,
+#side_btn_group span,
+.stat-item,
+.tab-btn,
+input,
+textarea {
+  font-family: 'Lora-Bold', sans-serif !important;
+}

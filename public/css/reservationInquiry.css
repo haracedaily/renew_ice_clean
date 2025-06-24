@@ -7,6 +7,12 @@
     font-weight: normal;
     font-style: normal;
 }
+@font-face {
+  font-family: 'Lora-Bold';
+  src: url('../font/Lora-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
 body{
     margin: 0;
     /*padding: 60px 0 0;*/
@@ -431,6 +437,17 @@ input[readonly]:focus {
 .reservation-item strong {
     color: #333;
     font-weight: 600;
+}
+
+button,
+.reservation-card,
+.form-section,
+#side_btn_group span,
+.stat-item,
+.tab-btn,
+input,
+textarea {
+  font-family: 'Lora-Bold', sans-serif !important;
 }
 
 

@@ -6,7 +6,8 @@
 @font-face {
     font-family: 'Lora-Bold';
     src: url('../font/Lora-Bold.ttf') format('truetype');
-    font-weight: normal;
+    font-weight: bold;
+    font-style: normal;
 }
 @font-face {
     font-family: 'pageNum2';
@@ -1367,5 +1368,16 @@ div.swal2-icon.swal2-warning {
 }
 div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
     border-color: #0066cc !important;
+}
+
+button,
+.reservation-card,
+.form-section,
+#side_btn_group span,
+.stat-item,
+.tab-btn,
+input,
+textarea {
+  font-family: 'Lora-Bold', sans-serif !important;
 }
 
