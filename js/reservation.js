@@ -1,5 +1,8 @@
 console.log('예약 JavaScript 파일 로드됨');
 
+// 전역 변수로 폼 제출 상태 관리
+let isSubmitting = false;
+
 // Supabase 클라이언트 생성 (중복 선언 방지)
 if (typeof window.SUPABASE_URL === 'undefined') {
     window.SUPABASE_URL = 'https://wqetnltlnsvjidubewia.supabase.co';
@@ -125,15 +128,28 @@ function setupFormSubmission() {
     const form = document.getElementById('reservation-form');
     
     if (form) {
-        form.addEventListener('submit', async function(e) {
+        // 기존 이벤트 리스너 제거 (중복 바인딩 방지)
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        newForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // 중복 제출 방지
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn && submitBtn.disabled) {
-                console.log('이미 제출 중입니다.');
+            // 전역 중복 제출 방지
+            if (isSubmitting) {
+                console.log('이미 제출 중입니다. 중복 제출 방지됨.');
                 return;
             }
+            
+            // 중복 제출 방지
+            const submitBtn = newForm.querySelector('button[type="submit"]');
+            if (submitBtn && submitBtn.disabled) {
+                console.log('제출 버튼이 이미 비활성화되어 있습니다.');
+                return;
+            }
+            
+            // 전역 상태 설정
+            isSubmitting = true;
             
             // 제출 버튼 비활성화 및 로딩 상태 표시
             if (submitBtn) {
@@ -142,9 +158,10 @@ function setupFormSubmission() {
                 submitBtn.textContent = '예약 중...';
                 submitBtn.style.opacity = '0.7';
                 submitBtn.style.cursor = 'not-allowed';
+                submitBtn.style.pointerEvents = 'none'; // 클릭 이벤트 완전 차단
             }
             
-            console.log('폼 제출 시작');
+            console.log('폼 제출 시작 - 중복 제출 방지 활성화됨');
             
             // 데이터 수집
             const formData = {
@@ -262,12 +279,16 @@ function setupFormSubmission() {
                     text: `예약 처리 중 오류가 발생했습니다: ${err.message}`,
                 });
             } finally {
+                // 전역 상태 복원
+                isSubmitting = false;
+                
                 // 제출 버튼 상태 복원
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
+                    submitBtn.textContent = '예약하기';
                     submitBtn.style.opacity = '1';
                     submitBtn.style.cursor = 'pointer';
+                    submitBtn.style.pointerEvents = 'auto'; // 클릭 이벤트 복원
                 }
             }
         });
