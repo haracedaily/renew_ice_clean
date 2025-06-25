@@ -162,17 +162,28 @@ function setupFormSubmission() {
             // 전역 상태 설정
             isSubmitting = true;
             
-            // 제출 버튼 비활성화 및 로딩 상태 표시
+            // 제출 버튼 완전 비활성화
             if (submitBtn) {
-                const originalText = submitBtn.textContent;
                 submitBtn.disabled = true;
                 submitBtn.textContent = '예약 중...';
-                submitBtn.style.opacity = '0.7';
+                submitBtn.style.opacity = '0.5';
                 submitBtn.style.cursor = 'not-allowed';
-                submitBtn.style.pointerEvents = 'none'; // 클릭 이벤트 완전 차단
+                submitBtn.style.pointerEvents = 'none';
+                submitBtn.style.backgroundColor = '#ccc';
+                submitBtn.style.color = '#666';
             }
             
-            console.log(`[${submissionId}] 폼 제출 시작 - 중복 제출 방지 활성화됨`);
+            // 폼 전체 비활성화
+            const formInputs = form.querySelectorAll('input, textarea, select, button');
+            formInputs.forEach(input => {
+                if (input !== submitBtn) {
+                    input.disabled = true;
+                    input.style.opacity = '0.5';
+                    input.style.cursor = 'not-allowed';
+                }
+            });
+            
+            console.log(`[${submissionId}] 폼 제출 시작 - 완전 비활성화됨`);
             
             // 데이터 수집
             const formData = {
@@ -399,8 +410,19 @@ function setupFormSubmission() {
                     submitBtn.textContent = '예약하기';
                     submitBtn.style.opacity = '1';
                     submitBtn.style.cursor = 'pointer';
-                    submitBtn.style.pointerEvents = 'auto'; // 클릭 이벤트 복원
+                    submitBtn.style.pointerEvents = 'auto';
+                    submitBtn.style.backgroundColor = '#0066cc';
+                    submitBtn.style.color = 'white';
                 }
+                
+                // 폼 전체 복원
+                formInputs.forEach(input => {
+                    if (input !== submitBtn) {
+                        input.disabled = false;
+                        input.style.opacity = '1';
+                        input.style.cursor = 'auto';
+                    }
+                });
                 
                 console.log(`[${submissionId}] 예약 제출 완료 - 상태 복원됨`);
             }
