@@ -5,6 +5,7 @@ let isSubmitting = false;
 let lastInsertTime = 0; // 마지막 삽입 시간 추적
 let formSubmissionCount = 0; // 폼 제출 횟수 추적
 let eventListenerAttached = false; // 이벤트 리스너 중복 바인딩 방지
+let insertCount = 0; // 삽입 실행 횟수 추적
 
 // Supabase 클라이언트 생성 (중복 선언 방지)
 if (typeof window.SUPABASE_URL === 'undefined') {
@@ -449,6 +450,7 @@ function setupPhoneFormatting() {
 // 페이지 로드 시 초기화
 window.addEventListener('DOMContentLoaded', () => {
     console.log('DOM 로드 완료, 초기화 시작');
+    console.log('현재 이벤트 리스너 상태:', eventListenerAttached);
     
     // 자동 입력
     autofillReservationUser();
@@ -463,6 +465,21 @@ window.addEventListener('DOMContentLoaded', () => {
     setupPhoneFormatting();
     
     console.log('초기화 완료');
+});
+
+// 페이지 로드 완료 후 추가 확인
+window.addEventListener('load', () => {
+    console.log('페이지 로드 완료, 이벤트 리스너 상태 확인');
+    console.log('이벤트 리스너 바인딩 상태:', eventListenerAttached);
+    
+    // 폼이 존재하는지 확인
+    const form = document.getElementById('reservation-form');
+    if (form) {
+        console.log('reservation-form 존재 확인됨');
+        console.log('폼의 이벤트 리스너 개수:', form.onclick ? 'onclick 있음' : 'onclick 없음');
+    } else {
+        console.error('reservation-form을 찾을 수 없음');
+    }
 });
 
 console.log('예약 JavaScript 파일 로드 완료');
