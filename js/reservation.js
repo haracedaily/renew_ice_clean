@@ -2,6 +2,7 @@ console.log('예약 JavaScript 파일 로드됨');
 
 // 전역 변수로 폼 제출 상태 관리
 let isSubmitting = false;
+let lastInsertTime = 0; // 마지막 삽입 시간 추적
 
 // Supabase 클라이언트 생성 (중복 선언 방지)
 if (typeof window.SUPABASE_URL === 'undefined') {
@@ -226,9 +227,9 @@ function setupFormSubmission() {
                         const timeDiff = new Date().getTime() - new Date(existingData[0].created_at).getTime();
                         console.log('마지막 예약과의 시간 차이 (밀리초):', timeDiff);
                         
-                        // 5초 이내에 동일한 예약이 있으면 중복으로 간주
-                        if (timeDiff < 5000) {
-                            console.warn('중복 예약 감지됨! 5초 이내에 동일한 예약이 존재합니다.');
+                        // 10초 이내에 동일한 예약이 있으면 중복으로 간주
+                        if (timeDiff < 10000) {
+                            console.warn('중복 예약 감지됨! 10초 이내에 동일한 예약이 존재합니다.');
                             Swal.fire({
                                 icon: 'warning',
                                 title: '중복 예약 감지',
@@ -250,6 +251,19 @@ function setupFormSubmission() {
                     return;
                 }
                 
+                // 마지막 삽입 시간 확인 (추가 보호)
+                const currentTime = new Date().getTime();
+                if (currentTime - lastInsertTime < 5000) {
+                    console.warn('5초 이내에 이미 삽입이 시도되었습니다. 중복 삽입 방지.');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '중복 삽입 방지',
+                        text: '잠시 후 다시 시도해주세요.',
+                    });
+                    return;
+                }
+                
+                lastInsertTime = currentTime;
                 console.log('예약 삽입 시작...');
                 const insertStartTime = new Date().getTime();
                 
