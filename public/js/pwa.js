@@ -58,15 +58,34 @@ window.addEventListener('appinstalled', (evt) => {
     }
 });
 
-// Update notification
+// Update notification with safe icon handling
 function showUpdateNotification() {
     if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('ICECARE 업데이트', {
+        const notificationOptions = {
             body: '새로운 버전이 사용 가능합니다. 페이지를 새로고침하세요.',
-            icon: '/image/logo.png',
-            badge: '/image/logo.png',
             tag: 'update-notification'
-        });
+        };
+        
+        // Only add icon if it exists and is accessible
+        try {
+            const iconUrl = '/image/logo.png';
+            // Test if icon is accessible
+            fetch(iconUrl, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        notificationOptions.icon = iconUrl;
+                        notificationOptions.badge = iconUrl;
+                    }
+                    new Notification('ICECARE 업데이트', notificationOptions);
+                })
+                .catch(() => {
+                    // If icon fails to load, show notification without icon
+                    new Notification('ICECARE 업데이트', notificationOptions);
+                });
+        } catch (error) {
+            // Fallback: show notification without icon
+            new Notification('ICECARE 업데이트', notificationOptions);
+        }
     }
 }
 

@@ -116,14 +116,12 @@ self.addEventListener('sync', event => {
     }
 });
 
-// Push notification
+// Push notification with safe icon handling
 self.addEventListener('push', event => {
     console.log('Push notification received');
     
     let options = {
         body: 'ICECARE에서 새로운 알림이 있습니다.',
-        icon: '/image/logo.png',
-        badge: '/image/logo.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -132,13 +130,11 @@ self.addEventListener('push', event => {
         actions: [
             {
                 action: 'explore',
-                title: '확인하기',
-                icon: '/image/logo.png'
+                title: '확인하기'
             },
             {
                 action: 'close',
-                title: '닫기',
-                icon: '/image/logo.png'
+                title: '닫기'
             }
         ]
     };
@@ -153,9 +149,20 @@ self.addEventListener('push', event => {
         }
     }
     
-    event.waitUntil(
-        self.registration.showNotification('ICECARE', options)
-    );
+    // Only add icon if it exists and is accessible
+    const iconUrl = '/image/logo.png';
+    fetch(iconUrl, { method: 'HEAD' })
+        .then(response => {
+            if (response.ok) {
+                options.icon = iconUrl;
+                options.badge = iconUrl;
+            }
+            return self.registration.showNotification('ICECARE', options);
+        })
+        .catch(error => {
+            console.log('Icon not accessible, showing notification without icon:', error);
+            return self.registration.showNotification('ICECARE', options);
+        });
 });
 
 // Notification click
