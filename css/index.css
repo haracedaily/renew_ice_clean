@@ -84,7 +84,7 @@ header{
         display: flex;
         align-items: center;
         justify-content: space-between;
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 0 1rem;
         ul {
@@ -748,7 +748,7 @@ body {
     animation: fadeInUp 1500ms forwards 1;
 }
 
-/* ?�브?�더 */
+/* ?브?더 */
 #sub_header {
     position: relative;
     width: 100%;
@@ -887,15 +887,15 @@ body {
     margin: 56px 0 32px 0 !important;
 }
 
-/* ?�로?�스 ?�작 */
+/* ?로?스 ?작 */
 
-/* section1 ?��???*/
+/* section1 ????*/
 .info-section {
     margin: 0 !important;
     padding: 0 !important;
     gap: 0 !important;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     min-height: 80vh;
     display: flex;
     flex-direction: column;
@@ -963,7 +963,7 @@ body {
     }
 }
 
-/* section2 ?��???*/
+/* section2 ????*/
 .section2-bg {
     margin: 0 !important;
     padding: 0 !important;
@@ -977,7 +977,7 @@ body {
 }
 .section2-inner {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -1038,7 +1038,7 @@ body {
     }
 }
 
-/* ?�이?????�과 */
+/* ?이?????과 */
 .fade-in-on-scroll {
     opacity: 0;
     transform: translateY(40px);
@@ -1083,7 +1083,7 @@ body {
 }
 
 .success-gallery {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 60px auto 0 auto;
     padding: 0 20px 40px 20px;
 }
@@ -1160,7 +1160,7 @@ body {
     background: #eaf2ff;
 }
 
-/* 지???�션 ?��???*/
+/* 지???션 ????*/
 #section4 {
     padding: 40px 10px;
     max-width: 100%;
@@ -1183,14 +1183,14 @@ body {
     color: #666;
 }
 
-/* 지??반응???��???*/
+/* 지도반응형 */
 @media (max-width: 768px) {
     #section4 {
-        padding: 20px 5px;
+        padding: 20px 2px;
     }
     
     #section4 .section-title {
-        padding: 0 10px 15px 10px;
+        padding: 0 5px 15px 5px;
     }
     
     #section4 .section-title h2 {
@@ -1204,6 +1204,10 @@ body {
     .map-container {
         max-width: 100%;
         padding: 0;
+        margin: 0 5px;
+        width: calc(100vw - 10px);
+        margin-left: calc(-50vw + 50% + 5px);
+        margin-right: calc(-50vw + 50% + 5px);
     }
     
     .map-controls {
@@ -1229,7 +1233,14 @@ body {
 
 @media (max-width: 480px) {
     #section4 {
-        padding: 15px 2px;
+        padding: 15px 1px;
+    }
+    
+    .map-container {
+        margin: 0 2px;
+        width: calc(100vw - 4px);
+        margin-left: calc(-50vw + 50% + 2px);
+        margin-right: calc(-50vw + 50% + 2px);
     }
     
     #map {
@@ -1241,16 +1252,18 @@ body {
     }
 }
 
-/* 지???��???*/
+/* 지???*/
 .map-container {
     position: relative;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    margin: 0 10px;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-left: calc(-50vw + 50% + 10px);
+    margin-right: calc(-50vw + 50% + 10px);
 }
 
 .map-controls {
@@ -1305,13 +1318,13 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* ?�랜차이즈점 마커 ?��???*/
+/* ?랜차이즈점 마커 ????*/
 .franchise-marker {
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* ?�랜차이즈점 ?�포?�도???��???*/
+/* ?랜차이즈점 ?포도???*/
 .franchise-infowindow {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1354,7 +1367,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* SweetAlert 커스?� ?��???*/
+/* SweetAlert 커스 ????*/
 div.swal2-icon.swal2-warning .swal2-icon-content {
     color: #0066CC !important;
 }

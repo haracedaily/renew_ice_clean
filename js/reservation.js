@@ -128,6 +128,22 @@ function setupFormSubmission() {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // 중복 제출 방지
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn && submitBtn.disabled) {
+                console.log('이미 제출 중입니다.');
+                return;
+            }
+            
+            // 제출 버튼 비활성화 및 로딩 상태 표시
+            if (submitBtn) {
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = '예약 중...';
+                submitBtn.style.opacity = '0.7';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+            
             console.log('폼 제출 시작');
             
             // 데이터 수집
@@ -245,6 +261,14 @@ function setupFormSubmission() {
                     title: '예약 실패',
                     text: `예약 처리 중 오류가 발생했습니다: ${err.message}`,
                 });
+            } finally {
+                // 제출 버튼 상태 복원
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                }
             }
         });
     }

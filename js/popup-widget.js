@@ -24,6 +24,14 @@
     const popups = await getActivePopups();
     if (popups.length > 0) {
         const popup = popups[0];
+        
+        // 24시간 동안 열지 않기 체크
+        const popupKey = `custom_popup_${popup.id}_hidden`;
+        const hiddenUntil = localStorage.getItem(popupKey);
+        if (hiddenUntil && new Date().getTime() < parseInt(hiddenUntil)) {
+            return; // 24시간 동안 열지 않기 설정된 경우 팝업 표시하지 않음
+        }
+        
         const div = document.createElement('div');
         div.id = 'custom-popup';
         div.style.position = 'fixed';
@@ -47,15 +55,53 @@
         div.innerHTML = `
             <div id="popup-close-btn" style="position:absolute;top:5px;right:5px;width:18px;height:18px;background:rgba(255,255,255,0.8);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#333;z-index:10000;">×</div>
             <img src="${popup.image_url}" style="width:100%;display:block;">
+            <div style="padding: 15px; background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button id="dont-show-24h-btn" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; transition: background-color 0.2s;">24시간 동안 열지 않기</button>
+                    <button id="close-popup-btn" style="background: #0066CC; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; transition: background-color 0.2s;">닫기</button>
+                </div>
+            </div>
         `;
-        div.onclick = function() {
+        
+        // 팝업 클릭 시 링크 이동
+        div.onclick = function(e) {
+            // 버튼 클릭은 링크 이동하지 않음
+            if (e.target.closest('button')) {
+                return;
+            }
             window.location.href = popup.link_url || 'reservation.html';
         };
-        // 닫기 버튼만 클릭 시 팝업 닫기(링크 이동 X)
+        
+        // 24시간 동안 열지 않기 버튼
+        div.querySelector('#dont-show-24h-btn').onclick = function(e) {
+            e.stopPropagation();
+            const hideUntil = new Date().getTime() + (24 * 60 * 60 * 1000); // 24시간
+            localStorage.setItem(popupKey, hideUntil.toString());
+            div.remove();
+        };
+        
+        // 닫기 버튼
+        div.querySelector('#close-popup-btn').onclick = function(e) {
+            e.stopPropagation();
+            div.remove();
+        };
+        
+        // 우상단 닫기 버튼
         div.querySelector('#popup-close-btn').onclick = function(e) {
             e.stopPropagation();
             div.remove();
         };
+        
+        // 버튼 호버 효과
+        const dontShowBtn = div.querySelector('#dont-show-24h-btn');
+        const closeBtn = div.querySelector('#close-popup-btn');
+        
+        dontShowBtn.onmouseover = () => dontShowBtn.style.backgroundColor = '#5a6268';
+        dontShowBtn.onmouseout = () => dontShowBtn.style.backgroundColor = '#6c757d';
+        
+        closeBtn.onmouseover = () => closeBtn.style.backgroundColor = '#0052a3';
+        closeBtn.onmouseout = () => closeBtn.style.backgroundColor = '#0066CC';
+        
         document.body.appendChild(div);
     }
 })(); 

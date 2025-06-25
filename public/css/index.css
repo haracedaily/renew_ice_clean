@@ -762,7 +762,7 @@ footer {
     animation: fadeInUp 1500ms forwards 1;
 }
 
-/* ?œë¸Œ?¤ë” */
+/* ?ë¸Œ?ë” */
 #sub_header {
     position: relative;
     width: 100%;
@@ -901,9 +901,9 @@ footer {
     margin: 56px 0 32px 0 !important;
 }
 
-/* ?„ë¡œ?¸ìŠ¤ ?œì‘ */
+/* ?ë¡œ?ìŠ¤ ?ì‘ */
 
-/* section1 ?¤í???*/
+/* section1 ????*/
 .info-section {
     margin: 0 !important;
     padding: 0 !important;
@@ -977,7 +977,7 @@ footer {
     }
 }
 
-/* section2 ?¤í???*/
+/* section2 ????*/
 .section2-bg {
     margin: 0 !important;
     padding: 0 !important;
@@ -1052,7 +1052,7 @@ footer {
     }
 }
 
-/* ?˜ì´?????¨ê³¼ */
+/* ?ì´?????ê³¼ */
 .fade-in-on-scroll {
     opacity: 0;
     transform: translateY(40px);
@@ -1174,7 +1174,7 @@ footer {
     background: #eaf2ff;
 }
 
-/* ì§€???¹ì…˜ ?¤í???*/
+/* ì§€???ì…˜ ????*/
 #section4 {
     padding: 40px 10px;
     max-width: 100%;
@@ -1197,7 +1197,7 @@ footer {
     color: #666;
 }
 
-/* ì§€??ë°˜ì‘???¤í???*/
+/* ì§€??ë°˜ì‘???*/
 @media (max-width: 768px) {
     #section4 {
         padding: 20px 5px;
@@ -1255,16 +1255,18 @@ footer {
     }
 }
 
-/* ì§€???¤í???*/
+/* ì§€ë„ ìŠ¤íƒ€ì¼ */
 .map-container {
     position: relative;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: calc(100vw - 40px);
+    max-width: calc(100vw - 40px);
+    margin: 0 20px;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-left: calc(-50vw + 50% + 20px);
+    margin-right: calc(-50vw + 50% + 20px);
 }
 
 .map-controls {
@@ -1319,13 +1321,13 @@ footer {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* ?„ëœì°¨ì´ì¦ˆì  ë§ˆì»¤ ?¤í???*/
+/* ?ëœì°¨ì´ì¦ˆì  ë§ˆì»¤ ????*/
 .franchise-marker {
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* ?„ëœì°¨ì´ì¦ˆì  ?¸í¬?ˆë„???¤í???*/
+/* ?ëœì°¨ì´ì¦ˆì  ?í¬ë„???*/
 .franchise-infowindow {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1368,7 +1370,7 @@ footer {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* SweetAlert2 ê²½ê³  ?„ì´ì½??´ë?ê¹Œì? ?Œë??‰ìœ¼ë¡?*/
+/* SweetAlert2 ê²½ê³  ?ì´ê¹Œ? ?ìœ¼?*/
 div.swal2-icon.swal2-warning .swal2-icon-content {
     color: #0066cc !important;
 }

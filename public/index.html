@@ -669,52 +669,61 @@ function showForcedPopup(popup) {
   checkboxContainer.appendChild(checkboxLabel);
   content.appendChild(checkboxContainer);
 
-  // 링크 버튼 (있는 경우)
-  if (popup.link_url) {
-    const linkBtn = document.createElement('button');
-    linkBtn.textContent = popup.button_text || '확인';
-    linkBtn.style.cssText = `
-      background: #0066CC;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 500;
-      margin-top: 15px;
-      transition: background-color 0.2s;
-    `;
-    linkBtn.onmouseover = () => linkBtn.style.backgroundColor = '#0052a3';
-    linkBtn.onmouseout = () => linkBtn.style.backgroundColor = '#0066CC';
-    linkBtn.onclick = () => {
-      handlePopupClose();
-      window.location.href = popup.link_url;
-    };
-    content.appendChild(linkBtn);
-  } else {
-    // 링크가 없는 경우 확인 버튼 추가
-    const confirmBtn = document.createElement('button');
-    confirmBtn.textContent = '확인';
-    confirmBtn.style.cssText = `
-      background: #0066CC;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 500;
-      margin-top: 15px;
-      transition: background-color 0.2s;
-    `;
-    confirmBtn.onmouseover = () => confirmBtn.style.backgroundColor = '#0052a3';
-    confirmBtn.onmouseout = () => confirmBtn.style.backgroundColor = '#0066CC';
-    confirmBtn.onclick = () => {
-      handlePopupClose();
-    };
-    content.appendChild(confirmBtn);
-  }
+  // 버튼 컨테이너
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.cssText = `
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  `;
+
+  // 24시간 동안 열지 않기 버튼
+  const dontShowBtn = document.createElement('button');
+  dontShowBtn.textContent = '24시간 동안 열지 않기';
+  dontShowBtn.style.cssText = `
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  `;
+  dontShowBtn.onmouseover = () => dontShowBtn.style.backgroundColor = '#5a6268';
+  dontShowBtn.onmouseout = () => dontShowBtn.style.backgroundColor = '#6c757d';
+  dontShowBtn.onclick = () => {
+    // 24시간 동안 열지 않기 설정
+    const hideUntil = new Date().getTime() + (24 * 60 * 60 * 1000); // 24시간
+    localStorage.setItem(popupKey, hideUntil.toString());
+    closePopup();
+  };
+
+  // 닫기 버튼
+  const closeButton = document.createElement('button');
+  closeButton.textContent = '닫기';
+  closeButton.style.cssText = `
+    background: #0066CC;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  `;
+  closeButton.onmouseover = () => closeButton.style.backgroundColor = '#0052a3';
+  closeButton.onmouseout = () => closeButton.style.backgroundColor = '#0066CC';
+  closeButton.onclick = () => {
+    closePopup();
+  };
+
+  buttonContainer.appendChild(dontShowBtn);
+  buttonContainer.appendChild(closeButton);
+  content.appendChild(buttonContainer);
 
   // 팝업 닫기 처리 함수
   function handlePopupClose() {
@@ -775,6 +784,15 @@ document.head.appendChild(popupStyle);
 // 페이지 로드 시 강제 팝업 확인
 document.addEventListener('DOMContentLoaded', function() {
   checkForcedPopup();
+  // 테스트용 팝업 무조건 표시
+  setTimeout(() => {
+    showForcedPopup({
+      id: 'test',
+      title: '테스트 팝업',
+      content: '이것은 테스트 팝업입니다. 24시간 동안 열지 않기와 닫기 버튼이 표시됩니다.',
+      imgage_url: null
+    });
+  }, 1000);
 });
 </script>
 
