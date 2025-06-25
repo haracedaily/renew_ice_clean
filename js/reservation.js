@@ -206,6 +206,39 @@ function setupFormSubmission() {
                 console.log('Supabase 저장 데이터:', reservationData);
                 console.log('Supabase 클라이언트:', window.supabase);
                 
+                // 삽입 전 예약 데이터 확인
+                console.log('삽입 전 예약 데이터 확인 시작...');
+                const { data: existingData, error: selectError } = await window.supabase
+                    .from('reservation')
+                    .select('res_no, date, time, user_email, created_at')
+                    .eq('user_email', formData.email)
+                    .eq('date', formData.date)
+                    .eq('time', formData.time)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (selectError) {
+                    console.error('기존 데이터 조회 오류:', selectError);
+                } else {
+                    console.log('기존 예약 데이터:', existingData);
+                    if (existingData && existingData.length > 0) {
+                        console.log('최근 예약 시간:', existingData[0].created_at);
+                        const timeDiff = new Date().getTime() - new Date(existingData[0].created_at).getTime();
+                        console.log('마지막 예약과의 시간 차이 (밀리초):', timeDiff);
+                        
+                        // 5초 이내에 동일한 예약이 있으면 중복으로 간주
+                        if (timeDiff < 5000) {
+                            console.warn('중복 예약 감지됨! 5초 이내에 동일한 예약이 존재합니다.');
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '중복 예약 감지',
+                                text: '동일한 예약이 이미 존재합니다. 잠시 후 다시 시도해주세요.',
+                            });
+                            return;
+                        }
+                    }
+                }
+                
                 // Supabase 클라이언트 재확인
                 if (!window.supabase || typeof window.supabase.from !== 'function') {
                     console.error('Supabase 클라이언트가 제대로 초기화되지 않았습니다.');
@@ -217,10 +250,16 @@ function setupFormSubmission() {
                     return;
                 }
                 
+                console.log('예약 삽입 시작...');
+                const insertStartTime = new Date().getTime();
+                
                 const { data, error } = await window.supabase
                     .from('reservation') // ice_res 대신 reservation 테이블 사용
                     .insert([reservationData])
                     .select();
+                
+                const insertEndTime = new Date().getTime();
+                console.log('삽입 완료 시간:', insertEndTime - insertStartTime, '밀리초');
                 
                 if (error) {
                     console.error('Supabase 에러 상세:', error);
@@ -250,6 +289,29 @@ function setupFormSubmission() {
                     }
                 } else {
                     console.log('예약 성공:', data);
+                    console.log('삽입된 예약 개수:', data.length);
+                    
+                    // 삽입 후 즉시 확인
+                    if (data && data.length > 0) {
+                        console.log('삽입된 예약 ID:', data[0].res_no);
+                        
+                        // 삽입 후 중복 확인
+                        const { data: verifyData, error: verifyError } = await window.supabase
+                            .from('reservation')
+                            .select('res_no, date, time, user_email, created_at')
+                            .eq('user_email', formData.email)
+                            .eq('date', formData.date)
+                            .eq('time', formData.time)
+                            .order('created_at', { ascending: false });
+                        
+                        if (!verifyError && verifyData) {
+                            console.log('삽입 후 예약 데이터:', verifyData);
+                            if (verifyData.length > 1) {
+                                console.warn('중복 예약이 생성되었습니다!');
+                                console.warn('총 예약 개수:', verifyData.length);
+                            }
+                        }
+                    }
                     
                     // 알림 시스템을 통한 알림 표시
                     if (window.showNotification) {
