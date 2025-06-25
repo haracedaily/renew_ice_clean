@@ -532,18 +532,9 @@ input[type = "radio"]{
     border-radius: 10px;
     cursor: pointer;
     color: whitesmoke;
-    animation: bounce 1.2s infinite;
     font-weight: bold;
+}
 
-}
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-25px);
-    }
-}
 .reserBtn button:hover{
     transform: scale(1.05);
 }
