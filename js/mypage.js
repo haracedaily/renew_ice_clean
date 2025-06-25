@@ -808,10 +808,14 @@ function displayReservations(reservations) {
         });
         
         return `
-            <div class="reservation-card">
+            <div class="reservation-card ${favoriteReservations.has(Number(reservation.res_no)) ? 'favorite' : ''}">
                 <div class="reservation-header">
                     <div class="reservation-id">
                         <span class="reservation-number">${reservation.name ? reservation.name + '님 ' : ''}예약 #${reservation.res_no}</span>
+                        <i class="fas fa-star favorite-star ${favoriteReservations.has(Number(reservation.res_no)) ? 'active' : ''}" 
+                           style="color: ${favoriteReservations.has(Number(reservation.res_no)) ? '#0066cc' : '#ccc'}; margin-left: 8px; font-size: 16px; cursor: pointer;" 
+                           onclick="toggleFavorite('${reservation.res_no}')" 
+                           title="${favoriteReservations.has(Number(reservation.res_no)) ? '즐겨찾기 해제' : '즐겨찾기 추가'}"></i>
                         <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
                     </div>
                     <div class="reservation-date-time">
@@ -843,9 +847,6 @@ function displayReservations(reservations) {
                 </div>
                 
                 <div class="reservation-actions">
-                    <button class="favorite-btn ${favoriteReservations.has(Number(reservation.res_no)) ? 'active' : ''}" onclick="toggleFavorite('${reservation.res_no}')">
-                        <i class="fas fa-star"></i> ${favoriteReservations.has(Number(reservation.res_no)) ? '즐겨찾기 해제' : '즐겨찾기'}
-                    </button>
                     ${isAssigned && hasEngineer ? `
                         <button class="engineer-info-btn" onclick="showEngineerInfo('${reservation.engineer_id}')">
                             <i class="fas fa-user-tie"></i> 기사 정보
@@ -1345,10 +1346,14 @@ function displayFavorites() {
         const isAssigned = reservation.state === 4;
         
         return `
-            <div class="reservation-card">
+            <div class="reservation-card ${favoriteReservations.has(Number(reservation.res_no)) ? 'favorite' : ''}">
                 <div class="reservation-header">
                     <div class="reservation-id">
                         <span class="reservation-number">${reservation.name ? reservation.name + '님 ' : ''}예약 #${reservation.res_no}</span>
+                        <i class="fas fa-star favorite-star ${favoriteReservations.has(Number(reservation.res_no)) ? 'active' : ''}" 
+                           style="color: ${favoriteReservations.has(Number(reservation.res_no)) ? '#0066cc' : '#ccc'}; margin-left: 8px; font-size: 16px; cursor: pointer;" 
+                           onclick="toggleFavorite('${reservation.res_no}')" 
+                           title="${favoriteReservations.has(Number(reservation.res_no)) ? '즐겨찾기 해제' : '즐겨찾기 추가'}"></i>
                         <span class="reservation-status ${statusInfo.class}">${statusInfo.text}</span>
                     </div>
                     <div class="reservation-date-time">
@@ -1380,9 +1385,6 @@ function displayFavorites() {
                 </div>
                 
                 <div class="reservation-actions">
-                    <button class="favorite-btn ${favoriteReservations.has(Number(reservation.res_no)) ? 'active' : ''}" onclick="toggleFavorite('${reservation.res_no}')">
-                        <i class="fas fa-star"></i> ${favoriteReservations.has(Number(reservation.res_no)) ? '즐겨찾기 해제' : '즐겨찾기'}
-                    </button>
                     ${isAssigned && hasEngineer ? `
                         <button class="engineer-info-btn" onclick="showEngineerInfo('${reservation.engineer_id}')">
                             <i class="fas fa-user-tie"></i> 기사 정보
