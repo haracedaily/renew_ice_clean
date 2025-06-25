@@ -116,7 +116,7 @@
     } else {
         console.log('활성 팝업이 없어서 테스트 팝업을 생성합니다.');
         
-        // 테스트용 팝업 생성
+        // 테스트용 팝업 생성 (항상 표시)
         const div = document.createElement('div');
         div.id = 'custom-popup';
         div.style.position = 'fixed';
@@ -152,19 +152,23 @@
             const hideUntil = new Date().getTime() + (24 * 60 * 60 * 1000); // 24시간
             localStorage.setItem(popupKey, hideUntil.toString());
             console.log('테스트 팝업 24시간 동안 열지 않기 설정:', popupKey, hideUntil);
+            console.log('localStorage에 저장된 값:', localStorage.getItem(popupKey));
             div.remove();
+            alert('24시간 동안 팝업이 표시되지 않습니다.');
         };
         
         // 닫기 버튼
         div.querySelector('#close-popup-btn').onclick = function(e) {
             e.stopPropagation();
             div.remove();
+            console.log('팝업이 닫혔습니다.');
         };
         
         // 우상단 닫기 버튼
         div.querySelector('#popup-close-btn').onclick = function(e) {
             e.stopPropagation();
             div.remove();
+            console.log('팝업이 닫혔습니다.');
         };
         
         // 버튼 호버 효과
@@ -179,5 +183,6 @@
         
         document.body.appendChild(div);
         console.log('테스트 팝업이 DOM에 추가됨');
+        console.log('24시간 열지 않기 버튼이 표시됩니다.');
     }
 })(); 
