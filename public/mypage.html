@@ -3,19 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-  <!-- 파비콘 및 PWA 아이콘 통일 -->
   <link rel="icon" type="image/png" href="/image/logo.png">
-  <link rel="apple-touch-icon" href="/image/logo.png">
-  <link rel="manifest" href="/manifest.json">
-  
-  <!-- PWA 메타 태그 -->
-  <meta name="theme-color" content="#0066cc">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="ICECARE">
-  <meta name="msapplication-TileColor" content="#0066cc">
-  
   <title>ICECARE 마이페이지</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
@@ -26,9 +14,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
-  <!-- PWA 스크립트 추가 -->
-  <script src="/js/pwa.js" defer></script>
-  <script src="/js/mobile-optimization.js" defer></script>
   <script>
     // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
     document.addEventListener('DOMContentLoaded', function() {
