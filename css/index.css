@@ -1186,11 +1186,11 @@ body {
 /* 지도반응형 */
 @media (max-width: 768px) {
     #section4 {
-        padding: 20px 2px;
+        padding: 20px 1px;
     }
     
     #section4 .section-title {
-        padding: 0 5px 15px 5px;
+        padding: 0 2px 15px 2px;
     }
     
     #section4 .section-title h2 {
@@ -1204,10 +1204,10 @@ body {
     .map-container {
         max-width: 100%;
         padding: 0;
-        margin: 0 5px;
-        width: calc(100vw - 10px);
-        margin-left: calc(-50vw + 50% + 5px);
-        margin-right: calc(-50vw + 50% + 5px);
+        margin: 0 2px;
+        width: calc(100vw - 4px);
+        margin-left: calc(-50vw + 50% + 2px);
+        margin-right: calc(-50vw + 50% + 2px);
     }
     
     .map-controls {
@@ -1233,14 +1233,14 @@ body {
 
 @media (max-width: 480px) {
     #section4 {
-        padding: 15px 1px;
+        padding: 15px 0px;
     }
     
     .map-container {
-        margin: 0 2px;
-        width: calc(100vw - 4px);
-        margin-left: calc(-50vw + 50% + 2px);
-        margin-right: calc(-50vw + 50% + 2px);
+        margin: 0 1px;
+        width: calc(100vw - 2px);
+        margin-left: calc(-50vw + 50% + 1px);
+        margin-right: calc(-50vw + 50% + 1px);
     }
     
     #map {
@@ -1252,18 +1252,18 @@ body {
     }
 }
 
-/* 지???*/
+/* 지도 */
 .map-container {
     position: relative;
-    width: calc(100vw - 20px);
-    max-width: calc(100vw - 20px);
-    margin: 0 10px;
+    width: calc(100vw - 10px);
+    max-width: calc(100vw - 10px);
+    margin: 0 5px;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-left: calc(-50vw + 50% + 10px);
-    margin-right: calc(-50vw + 50% + 10px);
+    margin-left: calc(-50vw + 50% + 5px);
+    margin-right: calc(-50vw + 50% + 5px);
 }
 
 .map-controls {
