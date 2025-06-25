@@ -132,332 +132,337 @@ function setupPrivacyDetail() {
 function setupFormSubmission() {
     const form = document.getElementById('reservation-form');
     
-    if (form && !eventListenerAttached) {
-        console.log('폼 제출 이벤트 리스너 설정 시작...');
+    if (!form) {
+        console.error('reservation-form을 찾을 수 없습니다.');
+        return;
+    }
+    
+    if (eventListenerAttached) {
+        console.log('이벤트 리스너가 이미 설정되어 있습니다. 중복 설정 방지됨.');
+        return;
+    }
+    
+    console.log('폼 제출 이벤트 리스너 설정 시작...');
+    
+    // 이벤트 리스너 중복 바인딩 방지
+    eventListenerAttached = true;
+    
+    // 기존 폼의 모든 이벤트 리스너 제거
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+    
+    console.log('기존 폼을 새 폼으로 교체하여 이벤트 리스너 초기화 완료');
+    
+    // 새로운 폼에 이벤트 리스너 추가
+    newForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        // 이벤트 리스너 중복 바인딩 방지
-        eventListenerAttached = true;
+        // 고유 제출 ID 생성
+        const submissionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        formSubmissionCount++;
         
-        // 기존 폼을 복제하여 이벤트 리스너 제거
-        const newForm = form.cloneNode(true);
-        form.parentNode.replaceChild(newForm, form);
+        console.log(`=== 예약 제출 시작 (ID: ${submissionId}, 횟수: ${formSubmissionCount}) ===`);
+        console.log('스택 트레이스:', new Error().stack);
         
-        console.log('기존 폼을 새 폼으로 교체하여 이벤트 리스너 초기화 완료');
+        // 전역 중복 제출 방지
+        if (isSubmitting) {
+            console.log(`[${submissionId}] 이미 제출 중입니다. 중복 제출 방지됨.`);
+            return;
+        }
         
-        newForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // 고유 제출 ID 생성
-            const submissionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            formSubmissionCount++;
-            
-            console.log(`=== 예약 제출 시작 (ID: ${submissionId}, 횟수: ${formSubmissionCount}) ===`);
-            console.log('스택 트레이스:', new Error().stack);
-            
-            // 전역 중복 제출 방지
-            if (isSubmitting) {
-                console.log(`[${submissionId}] 이미 제출 중입니다. 중복 제출 방지됨.`);
+        // 중복 제출 방지
+        const submitBtn = newForm.querySelector('button[type="submit"]');
+        if (submitBtn && submitBtn.disabled) {
+            console.log(`[${submissionId}] 제출 버튼이 이미 비활성화되어 있습니다.`);
+            return;
+        }
+        
+        // 전역 상태 설정
+        isSubmitting = true;
+        
+        // 제출 버튼 완전 비활성화
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '예약 중...';
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.style.pointerEvents = 'none';
+            submitBtn.style.backgroundColor = '#ccc';
+            submitBtn.style.color = '#666';
+        }
+        
+        // 폼 전체 비활성화
+        const formInputs = newForm.querySelectorAll('input, textarea, select, button');
+        formInputs.forEach(input => {
+            if (input !== submitBtn) {
+                input.disabled = true;
+                input.style.opacity = '0.5';
+                input.style.cursor = 'not-allowed';
+            }
+        });
+        
+        console.log(`[${submissionId}] 폼 제출 시작 - 완전 비활성화됨`);
+        
+        // 데이터 수집
+        const formData = {
+            name: document.getElementById('name').value || '',
+            phone: document.getElementById('phone').value || '',
+            email: document.getElementById('email').value || '',
+            date: document.getElementById('reservation-date').value || '',
+            time: document.querySelector('input[name="reservation-time"]:checked')?.value || '',
+            postcode: document.getElementById('postcode').value || '',
+            address: document.getElementById('address').value || '',
+            detailAddress: document.getElementById('detailAddress').value || '',
+            modelname: document.getElementById('modelname').value || '',
+            specialRequest: document.getElementById('specialRequest').value || ''
+        };
+        
+        console.log(`[${submissionId}] 수집된 데이터:`, formData);
+        
+        // Supabase에 저장
+        try {
+            // 데이터 유효성 검사
+            if (!formData.date || !formData.time || !formData.email) {
+                console.log(`[${submissionId}] 유효성 검사 실패`);
+                Swal.fire({
+                    icon: 'error',
+                    title: '입력 오류',
+                    text: '날짜, 시간, 이메일은 필수 입력 항목입니다.',
+                });
                 return;
             }
-            
-            // 중복 제출 방지
-            const submitBtn = newForm.querySelector('button[type="submit"]');
-            if (submitBtn && submitBtn.disabled) {
-                console.log(`[${submissionId}] 제출 버튼이 이미 비활성화되어 있습니다.`);
-                return;
-            }
-            
-            // 전역 상태 설정
-            isSubmitting = true;
-            
-            // 제출 버튼 완전 비활성화
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = '예약 중...';
-                submitBtn.style.opacity = '0.5';
-                submitBtn.style.cursor = 'not-allowed';
-                submitBtn.style.pointerEvents = 'none';
-                submitBtn.style.backgroundColor = '#ccc';
-                submitBtn.style.color = '#666';
-            }
-            
-            // 폼 전체 비활성화
-            const formInputs = newForm.querySelectorAll('input, textarea, select, button');
-            formInputs.forEach(input => {
-                if (input !== submitBtn) {
-                    input.disabled = true;
-                    input.style.opacity = '0.5';
-                    input.style.cursor = 'not-allowed';
-                }
-            });
-            
-            console.log(`[${submissionId}] 폼 제출 시작 - 완전 비활성화됨`);
-            
-            // 데이터 수집
-            const formData = {
-                name: document.getElementById('name').value || '',
-                phone: document.getElementById('phone').value || '',
-                email: document.getElementById('email').value || '',
-                date: document.getElementById('reservation-date').value || '',
-                time: document.querySelector('input[name="reservation-time"]:checked')?.value || '',
-                postcode: document.getElementById('postcode').value || '',
-                address: document.getElementById('address').value || '',
-                detailAddress: document.getElementById('detailAddress').value || '',
-                modelname: document.getElementById('modelname').value || '',
-                specialRequest: document.getElementById('specialRequest').value || ''
+
+            const reservationData = {
+                date: formData.date,
+                time: formData.time,
+                addr: `${formData.postcode} ${formData.address} ${formData.detailAddress}`.trim(),
+                model: formData.modelname,
+                remark: formData.specialRequest,
+                agree: 1,
+                user_email: formData.email, // email 대신 user_email 사용
+                state: 1, // 신규예약(1)
+                price: 0 // 서비스금액 0으로 저장
             };
             
-            console.log(`[${submissionId}] 수집된 데이터:`, formData);
+            console.log(`[${submissionId}] Supabase 저장 데이터:`, reservationData);
+            console.log(`[${submissionId}] Supabase 클라이언트:`, window.supabase);
             
-            // Supabase에 저장
-            try {
-                // 데이터 유효성 검사
-                if (!formData.date || !formData.time || !formData.email) {
-                    console.log(`[${submissionId}] 유효성 검사 실패`);
-                    Swal.fire({
-                        icon: 'error',
-                        title: '입력 오류',
-                        text: '날짜, 시간, 이메일은 필수 입력 항목입니다.',
-                    });
-                    return;
-                }
-
-                const reservationData = {
-                    date: formData.date,
-                    time: formData.time,
-                    addr: `${formData.postcode} ${formData.address} ${formData.detailAddress}`.trim(),
-                    model: formData.modelname,
-                    remark: formData.specialRequest,
-                    agree: 1,
-                    user_email: formData.email, // email 대신 user_email 사용
-                    state: 1, // 신규예약(1)
-                    price: 0 // 서비스금액 0으로 저장
-                };
+            // 마지막 삽입 시간 확인 (추가 보호)
+            const currentTime = new Date().getTime();
+            if (currentTime - lastInsertTime < 10000) {
+                console.warn(`[${submissionId}] 10초 이내에 이미 삽입이 시도되었습니다. 중복 삽입 방지.`);
+                Swal.fire({
+                    icon: 'warning',
+                    title: '중복 삽입 방지',
+                    text: '잠시 후 다시 시도해주세요.',
+                });
+                return;
+            }
+            
+            // 삽입 전 최종 중복 확인
+            console.log(`[${submissionId}] 삽입 전 최종 중복 확인...`);
+            const { data: finalCheck, error: finalCheckError } = await window.supabase
+                .from('reservation')
+                .select('res_no, created_at')
+                .eq('user_email', formData.email)
+                .eq('date', formData.date)
+                .eq('time', formData.time)
+                .order('created_at', { ascending: false })
+                .limit(1);
+            
+            if (!finalCheckError && finalCheck && finalCheck.length > 0) {
+                const lastReservationTime = new Date(finalCheck[0].created_at).getTime();
+                const timeSinceLastReservation = currentTime - lastReservationTime;
                 
-                console.log(`[${submissionId}] Supabase 저장 데이터:`, reservationData);
-                console.log(`[${submissionId}] Supabase 클라이언트:`, window.supabase);
+                console.log(`[${submissionId}] 최근 예약 시간:`, new Date(lastReservationTime));
+                console.log(`[${submissionId}] 시간 차이:`, timeSinceLastReservation, '밀리초');
                 
-                // 마지막 삽입 시간 확인 (추가 보호)
-                const currentTime = new Date().getTime();
-                if (currentTime - lastInsertTime < 10000) {
-                    console.warn(`[${submissionId}] 10초 이내에 이미 삽입이 시도되었습니다. 중복 삽입 방지.`);
+                if (timeSinceLastReservation < 60000) { // 1분 이내
+                    console.warn(`[${submissionId}] 1분 이내에 동일한 예약이 존재합니다. 삽입 중단.`);
                     Swal.fire({
                         icon: 'warning',
-                        title: '중복 삽입 방지',
-                        text: '잠시 후 다시 시도해주세요.',
+                        title: '중복 예약 감지',
+                        text: '동일한 예약이 이미 존재합니다.',
                     });
                     return;
                 }
+            }
+            
+            lastInsertTime = currentTime;
+            
+            // 전역 삽입 잠금 확인
+            if (globalInsertLock) {
+                console.warn(`[${submissionId}] 전역 삽입 잠금이 활성화되어 있습니다. 삽입 중단.`);
+                return;
+            }
+            
+            // 전역 삽입 잠금 설정
+            globalInsertLock = true;
+            insertCount++;
+            console.log(`[${submissionId}] 예약 삽입 시작... (삽입 실행 횟수: ${insertCount})`);
+            console.log(`[${submissionId}] 전역 삽입 잠금 설정됨`);
+            const insertStartTime = new Date().getTime();
+            
+            // 삽입 전 예약 개수 확인
+            const { count: beforeCount } = await window.supabase
+                .from('reservation')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_email', formData.email);
+            
+            console.log(`[${submissionId}] 삽입 전 총 예약 개수:`, beforeCount);
+            
+            const { data, error } = await window.supabase
+                .from('reservation') // ice_res 대신 reservation 테이블 사용
+                .insert([reservationData])
+                .select();
+            
+            const insertEndTime = new Date().getTime();
+            console.log(`[${submissionId}] 삽입 완료 시간:`, insertEndTime - insertStartTime, '밀리초');
+            console.log(`[${submissionId}] 삽입 실행 횟수: ${insertCount}회 완료`);
+            
+            if (error) {
+                console.error(`[${submissionId}] Supabase 에러 상세:`, error);
+                console.error(`[${submissionId}] 에러 코드:`, error.code);
+                console.error(`[${submissionId}] 에러 메시지:`, error.message);
+                console.error(`[${submissionId}] 에러 세부사항:`, error.details);
                 
-                // 삽입 전 최종 중복 확인
-                console.log(`[${submissionId}] 삽입 전 최종 중복 확인...`);
-                const { data: finalCheck, error: finalCheckError } = await window.supabase
-                    .from('reservation')
-                    .select('res_no, created_at')
-                    .eq('user_email', formData.email)
-                    .eq('date', formData.date)
-                    .eq('time', formData.time)
-                    .order('created_at', { ascending: false })
-                    .limit(1);
-                
-                if (!finalCheckError && finalCheck && finalCheck.length > 0) {
-                    const lastReservationTime = new Date(finalCheck[0].created_at).getTime();
-                    const timeSinceLastReservation = currentTime - lastReservationTime;
-                    
-                    console.log(`[${submissionId}] 최근 예약 시간:`, new Date(lastReservationTime));
-                    console.log(`[${submissionId}] 시간 차이:`, timeSinceLastReservation, '밀리초');
-                    
-                    if (timeSinceLastReservation < 60000) { // 1분 이내
-                        console.warn(`[${submissionId}] 1분 이내에 동일한 예약이 존재합니다. 삽입 중단.`);
-                        Swal.fire({
-                            icon: 'warning',
-                            title: '중복 예약 감지',
-                            text: '동일한 예약이 이미 존재합니다.',
-                        });
-                        return;
-                    }
+                // RLS 정책 오류인 경우 특별 처리
+                if (error.code === '42501' || error.message.includes('permission')) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '권한 오류',
+                        text: '예약 저장 권한이 없습니다. 관리자에게 문의하세요.',
+                    });
+                } else if (error.code === '42P01') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '테이블 오류',
+                        text: 'reservation 테이블이 존재하지 않습니다. 관리자에게 문의하세요.',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '예약 실패',
+                        text: `예약 저장 중 오류가 발생했습니다: ${error.message}`,
+                    });
                 }
+            } else {
+                console.log(`[${submissionId}] 예약 성공:`, data);
+                console.log(`[${submissionId}] 삽입된 예약 개수:`, data.length);
                 
-                lastInsertTime = currentTime;
-                
-                // 전역 삽입 잠금 확인
-                if (globalInsertLock) {
-                    console.warn(`[${submissionId}] 전역 삽입 잠금이 활성화되어 있습니다. 삽입 중단.`);
-                    return;
-                }
-                
-                // 전역 삽입 잠금 설정
-                globalInsertLock = true;
-                insertCount++;
-                console.log(`[${submissionId}] 예약 삽입 시작... (삽입 실행 횟수: ${insertCount})`);
-                console.log(`[${submissionId}] 전역 삽입 잠금 설정됨`);
-                const insertStartTime = new Date().getTime();
-                
-                // 삽입 전 예약 개수 확인
-                const { count: beforeCount } = await window.supabase
+                // 삽입 후 예약 개수 확인
+                const { count: afterCount } = await window.supabase
                     .from('reservation')
                     .select('*', { count: 'exact', head: true })
                     .eq('user_email', formData.email);
                 
-                console.log(`[${submissionId}] 삽입 전 총 예약 개수:`, beforeCount);
+                console.log(`[${submissionId}] 삽입 후 총 예약 개수:`, afterCount);
+                console.log(`[${submissionId}] 예약 개수 증가:`, afterCount - beforeCount);
                 
-                const { data, error } = await window.supabase
-                    .from('reservation') // ice_res 대신 reservation 테이블 사용
-                    .insert([reservationData])
-                    .select();
+                if (afterCount - beforeCount > 1) {
+                    console.error(`[${submissionId}] 경고: 예상보다 많은 예약이 생성되었습니다!`);
+                    console.error(`[${submissionId}] 예상: 1개, 실제: ${afterCount - beforeCount}개`);
+                }
                 
-                const insertEndTime = new Date().getTime();
-                console.log(`[${submissionId}] 삽입 완료 시간:`, insertEndTime - insertStartTime, '밀리초');
-                console.log(`[${submissionId}] 삽입 실행 횟수: ${insertCount}회 완료`);
-                
-                if (error) {
-                    console.error(`[${submissionId}] Supabase 에러 상세:`, error);
-                    console.error(`[${submissionId}] 에러 코드:`, error.code);
-                    console.error(`[${submissionId}] 에러 메시지:`, error.message);
-                    console.error(`[${submissionId}] 에러 세부사항:`, error.details);
+                // 삽입 후 즉시 확인
+                if (data && data.length > 0) {
+                    console.log(`[${submissionId}] 삽입된 예약 ID:`, data[0].res_no);
                     
-                    // RLS 정책 오류인 경우 특별 처리
-                    if (error.code === '42501' || error.message.includes('permission')) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '권한 오류',
-                            text: '예약 저장 권한이 없습니다. 관리자에게 문의하세요.',
-                        });
-                    } else if (error.code === '42P01') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '테이블 오류',
-                            text: 'reservation 테이블이 존재하지 않습니다. 관리자에게 문의하세요.',
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '예약 실패',
-                            text: `예약 저장 중 오류가 발생했습니다: ${error.message}`,
-                        });
-                    }
-                } else {
-                    console.log(`[${submissionId}] 예약 성공:`, data);
-                    console.log(`[${submissionId}] 삽입된 예약 개수:`, data.length);
-                    
-                    // 삽입 후 예약 개수 확인
-                    const { count: afterCount } = await window.supabase
+                    // 삽입 후 중복 확인
+                    const { data: verifyData, error: verifyError } = await window.supabase
                         .from('reservation')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('user_email', formData.email);
+                        .select('res_no, date, time, user_email, created_at')
+                        .eq('user_email', formData.email)
+                        .eq('date', formData.date)
+                        .eq('time', formData.time)
+                        .order('created_at', { ascending: false });
                     
-                    console.log(`[${submissionId}] 삽입 후 총 예약 개수:`, afterCount);
-                    console.log(`[${submissionId}] 예약 개수 증가:`, afterCount - beforeCount);
-                    
-                    if (afterCount - beforeCount > 1) {
-                        console.error(`[${submissionId}] 경고: 예상보다 많은 예약이 생성되었습니다!`);
-                        console.error(`[${submissionId}] 예상: 1개, 실제: ${afterCount - beforeCount}개`);
-                    }
-                    
-                    // 삽입 후 즉시 확인
-                    if (data && data.length > 0) {
-                        console.log(`[${submissionId}] 삽입된 예약 ID:`, data[0].res_no);
-                        
-                        // 삽입 후 중복 확인
-                        const { data: verifyData, error: verifyError } = await window.supabase
-                            .from('reservation')
-                            .select('res_no, date, time, user_email, created_at')
-                            .eq('user_email', formData.email)
-                            .eq('date', formData.date)
-                            .eq('time', formData.time)
-                            .order('created_at', { ascending: false });
-                        
-                        if (!verifyError && verifyData) {
-                            console.log(`[${submissionId}] 삽입 후 예약 데이터:`, verifyData);
+                    if (!verifyError && verifyData) {
+                        console.log(`[${submissionId}] 삽입 후 예약 데이터:`, verifyData);
+                        if (verifyData.length > 1) {
+                            console.warn(`[${submissionId}] 중복 예약이 생성되었습니다!`);
+                            console.warn(`[${submissionId}] 총 예약 개수:`, verifyData.length);
+                            
+                            // 중복 예약 삭제 시도
                             if (verifyData.length > 1) {
-                                console.warn(`[${submissionId}] 중복 예약이 생성되었습니다!`);
-                                console.warn(`[${submissionId}] 총 예약 개수:`, verifyData.length);
+                                const duplicateIds = verifyData.slice(1).map(r => r.res_no);
+                                console.log(`[${submissionId}] 중복 예약 삭제 시도:`, duplicateIds);
                                 
-                                // 중복 예약 삭제 시도
-                                if (verifyData.length > 1) {
-                                    const duplicateIds = verifyData.slice(1).map(r => r.res_no);
-                                    console.log(`[${submissionId}] 중복 예약 삭제 시도:`, duplicateIds);
-                                    
-                                    const { error: deleteError } = await window.supabase
-                                        .from('reservation')
-                                        .delete()
-                                        .in('res_no', duplicateIds);
-                                    
-                                    if (deleteError) {
-                                        console.error(`[${submissionId}] 중복 예약 삭제 실패:`, deleteError);
-                                    } else {
-                                        console.log(`[${submissionId}] 중복 예약 삭제 완료`);
-                                    }
+                                const { error: deleteError } = await window.supabase
+                                    .from('reservation')
+                                    .delete()
+                                    .in('res_no', duplicateIds);
+                                
+                                if (deleteError) {
+                                    console.error(`[${submissionId}] 중복 예약 삭제 실패:`, deleteError);
+                                } else {
+                                    console.log(`[${submissionId}] 중복 예약 삭제 완료`);
                                 }
                             }
                         }
                     }
-                    
-                    // 알림 시스템을 통한 알림 표시
-                    if (window.showNotification) {
-                        window.showNotification('신규예약 완료', '신규예약이 완료되었습니다.', 'success');
-                    }
-                    
-                    Swal.fire({
-                        title: '예약이 완료되었습니다!',
-                        icon: 'success',
-                        text: '예약이 성공적으로 저장되었습니다.',
-                        confirmButtonText: '확인',
-                        confirmButtonColor: '#0066cc',
-                        customClass: {
-                            icon: 'swal2-icon-success-custom',
-                            popup: 'swal2-popup-custom'
-                        }
-                    }).then(() => {
-                        // 마이페이지로 이동
-                        window.location.href = 'mypage.html';
-                    });
                 }
-            } catch (err) {
-                console.error(`[${submissionId}] 예약 처리 중 오류:`, err);
+                
+                // 알림 시스템을 통한 알림 표시
+                if (window.showNotification) {
+                    window.showNotification('신규예약 완료', '신규예약이 완료되었습니다.', 'success');
+                }
+                
                 Swal.fire({
-                    icon: 'error',
-                    title: '예약 실패',
-                    text: `예약 처리 중 오류가 발생했습니다: ${err.message}`,
-                });
-            } finally {
-                // 전역 상태 복원
-                isSubmitting = false;
-                
-                // 전역 삽입 잠금 해제
-                globalInsertLock = false;
-                console.log(`[${submissionId}] 전역 삽입 잠금 해제됨`);
-                
-                // 제출 버튼 상태 복원
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '예약하기';
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
-                    submitBtn.style.pointerEvents = 'auto';
-                    submitBtn.style.backgroundColor = '#0066cc';
-                    submitBtn.style.color = 'white';
-                }
-                
-                // 폼 전체 복원
-                formInputs.forEach(input => {
-                    if (input !== submitBtn) {
-                        input.disabled = false;
-                        input.style.opacity = '1';
-                        input.style.cursor = 'auto';
+                    title: '예약이 완료되었습니다!',
+                    icon: 'success',
+                    text: '예약이 성공적으로 저장되었습니다.',
+                    confirmButtonText: '확인',
+                    confirmButtonColor: '#0066cc',
+                    customClass: {
+                        icon: 'swal2-icon-success-custom',
+                        popup: 'swal2-popup-custom'
                     }
+                }).then(() => {
+                    // 마이페이지로 이동
+                    window.location.href = 'mypage.html';
                 });
-                
-                console.log(`[${submissionId}] 예약 제출 완료 - 상태 복원됨`);
             }
-        });
-        
-        console.log('폼 제출 이벤트 리스너 설정 완료');
-    } else if (eventListenerAttached) {
-        console.log('이벤트 리스너가 이미 설정되어 있습니다. 중복 설정 방지됨.');
-    } else {
-        console.error('reservation-form을 찾을 수 없습니다.');
-    }
+        } catch (err) {
+            console.error(`[${submissionId}] 예약 처리 중 오류:`, err);
+            Swal.fire({
+                icon: 'error',
+                title: '예약 실패',
+                text: `예약 처리 중 오류가 발생했습니다: ${err.message}`,
+            });
+        } finally {
+            // 전역 상태 복원
+            isSubmitting = false;
+            
+            // 전역 삽입 잠금 해제
+            globalInsertLock = false;
+            console.log(`[${submissionId}] 전역 삽입 잠금 해제됨`);
+            
+            // 제출 버튼 상태 복원
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '예약하기';
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+                submitBtn.style.pointerEvents = 'auto';
+                submitBtn.style.backgroundColor = '#0066cc';
+                submitBtn.style.color = 'white';
+            }
+            
+            // 폼 전체 복원
+            formInputs.forEach(input => {
+                if (input !== submitBtn) {
+                    input.disabled = false;
+                    input.style.opacity = '1';
+                    input.style.cursor = 'auto';
+                }
+            });
+            
+            console.log(`[${submissionId}] 예약 제출 완료 - 상태 복원됨`);
+        }
+    });
+    
+    console.log('폼 제출 이벤트 리스너 설정 완료');
 }
 
 // 전화번호 입력 이벤트
@@ -481,8 +486,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // 개인정보 상세보기
     setupPrivacyDetail();
     
-    // 폼 제출 처리
-    setupFormSubmission();
+    // 폼 제출 처리 (한 번만 호출)
+    if (!eventListenerAttached) {
+        setupFormSubmission();
+    }
     
     // 전화번호 포맷팅
     setupPhoneFormatting();
@@ -490,7 +497,7 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log('초기화 완료');
 });
 
-// 페이지 로드 완료 후 추가 확인
+// 페이지 로드 완료 후 추가 확인 (setupFormSubmission 호출 제거)
 window.addEventListener('load', () => {
     console.log('페이지 로드 완료, 이벤트 리스너 상태 확인');
     console.log('이벤트 리스너 바인딩 상태:', eventListenerAttached);
@@ -500,6 +507,12 @@ window.addEventListener('load', () => {
     if (form) {
         console.log('reservation-form 존재 확인됨');
         console.log('폼의 이벤트 리스너 개수:', form.onclick ? 'onclick 있음' : 'onclick 없음');
+        
+        // 이벤트 리스너가 설정되지 않았다면 다시 시도
+        if (!eventListenerAttached) {
+            console.log('이벤트 리스너가 설정되지 않음, 다시 시도');
+            setupFormSubmission();
+        }
     } else {
         console.error('reservation-form을 찾을 수 없음');
     }
