@@ -147,14 +147,8 @@ function setupFormSubmission() {
     // 이벤트 리스너 중복 바인딩 방지
     eventListenerAttached = true;
     
-    // 기존 폼의 모든 이벤트 리스너 제거
-    const newForm = form.cloneNode(true);
-    form.parentNode.replaceChild(newForm, form);
-    
-    console.log('기존 폼을 새 폼으로 교체하여 이벤트 리스너 초기화 완료');
-    
-    // 새로운 폼에 이벤트 리스너 추가
-    newForm.addEventListener('submit', async function(e) {
+    // 기존 폼에 직접 이벤트 리스너 추가 (폼 교체 없이)
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // 고유 제출 ID 생성
@@ -171,7 +165,7 @@ function setupFormSubmission() {
         }
         
         // 중복 제출 방지
-        const submitBtn = newForm.querySelector('button[type="submit"]');
+        const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn && submitBtn.disabled) {
             console.log(`[${submissionId}] 제출 버튼이 이미 비활성화되어 있습니다.`);
             return;
@@ -192,7 +186,7 @@ function setupFormSubmission() {
         }
         
         // 폼 전체 비활성화
-        const formInputs = newForm.querySelectorAll('input, textarea, select, button');
+        const formInputs = form.querySelectorAll('input, textarea, select, button');
         formInputs.forEach(input => {
             if (input !== submitBtn) {
                 input.disabled = true;

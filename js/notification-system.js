@@ -4,6 +4,8 @@ if (typeof window.NotificationSystem === 'undefined') {
         constructor() {
             this.container = null;
             this.notifications = [];
+            this.subscription = null; // 실시간 구독 참조 저장
+            this.isMonitoring = false; // 모니터링 상태 추적
             this.init();
         }
 
@@ -11,8 +13,10 @@ if (typeof window.NotificationSystem === 'undefined') {
             // 알림 컨테이너 생성
             this.createContainer();
             
-            // 예약 상태 변경 감지 시작
-            this.startReservationMonitoring();
+            // 예약 페이지가 아닌 경우에만 실시간 모니터링 시작
+            if (!window.location.pathname.includes('reservation.html')) {
+                this.startReservationMonitoring();
+            }
         }
 
         createContainer() {
@@ -135,19 +139,25 @@ if (typeof window.NotificationSystem === 'undefined') {
                 return;
             }
 
+            // 이미 모니터링 중이면 중복 실행 방지
+            if (this.isMonitoring) {
+                console.log('이미 예약 모니터링이 실행 중입니다.');
+                return;
+            }
+
+            this.isMonitoring = true;
+            console.log('예약 모니터링 시작');
+
+            // 기존 구독이 있다면 해제
+            if (this.subscription) {
+                this.subscription.unsubscribe();
+            }
+
             // 실시간 구독 설정
-            const subscription = supabase
+            this.subscription = supabase
                 .channel('reservation_changes')
                 .on('postgres_changes', {
                     event: 'UPDATE',
-                    schema: 'public',
-                    table: 'reservation',
-                    filter: `user_email=eq.${window.currentUser.email}`
-                }, (payload) => {
-                    this.handleReservationChange(payload);
-                })
-                .on('postgres_changes', {
-                    event: 'INSERT',
                     schema: 'public',
                     table: 'reservation',
                     filter: `user_email=eq.${window.currentUser.email}`
