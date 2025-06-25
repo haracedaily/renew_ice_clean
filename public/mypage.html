@@ -3,8 +3,22 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ICECARE MY</title>
-  <link rel="icon" type="image/png" href="/favicon.png">
+  
+  <!-- PWA 메타 태그 -->
+  <meta name="theme-color" content="#0066cc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ICECARE">
+  <meta name="msapplication-TileColor" content="#0066cc">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  
+  <!-- PWA 아이콘 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/image/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/image/logo.png">
+  <link rel="apple-touch-icon" href="/image/logo.png">
+  <link rel="manifest" href="/manifest.json">
+  
+  <title>ICECARE 마이페이지</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <link rel="stylesheet" href="./css/common.css">
@@ -258,6 +272,8 @@
 
 <script src="js/mypage.js"></script>
 <script src="js/notification-system.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/mobile-optimization.js"></script>
 
 <script>
 // 로그인 체크 및 리다이렉트 함수
