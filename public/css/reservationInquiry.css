@@ -1,5 +1,5 @@
 *{
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 @font-face {
     font-family: 'iceFont';
@@ -16,7 +16,7 @@
 body{
     margin: 0;
     /*padding: 60px 0 0;*/
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium';
 }
 
 header {

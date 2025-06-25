@@ -1,8 +1,8 @@
 *{
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 @font-face {
-    font-family: 'iceFont';
+    font-family: 'GmarketSansMedium';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
@@ -105,7 +105,7 @@ header {
 /*    width: 100%;*/
 /*    height: 60px;*/
 /*    z-index: 1000;*/
-/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); !* 그림자 효과 추가 *!*/
+/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); !* 그림???�과 추�? *!*/
 /*}*/
 /*.gomain{*/
 /*    width: 100px;*/
@@ -313,7 +313,7 @@ header {
 }
 
 .view input:focus, .view select:focus, .view textarea:focus {
-    border-color: #66b3ff; /* 소프트 블루 */
+    border-color: #66b3ff; /* ?�프??블루 */
     box-shadow: 0 0 12px rgba(102, 179, 255, 0.6);
     outline: none;
 }
@@ -367,7 +367,7 @@ header {
     display: none;
 }
 
-/* 로그인 정보 표시 */
+/* 로그???�보 ?�시 */
 .login-info {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -388,7 +388,7 @@ header {
     font-size: 18px;
 }
 
-/* 읽기 전용 필드 스타일 */
+/* ?�기 ?�용 ?�드 ?��???*/
 input[readonly] {
     background-color: #f8f9fa;
     color: #6c757d;
@@ -401,7 +401,7 @@ input[readonly]:focus {
     box-shadow: none;
 }
 
-/* 예약 내역 아이템 스타일 */
+/* ?�약 ?�역 ?�이???��???*/
 .reservation-item {
     background: #fff;
     border: 1px solid #e0e0e0;

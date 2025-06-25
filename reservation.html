@@ -4,6 +4,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ICECARE 예약하기</title>
+  <link rel="icon" type="image/png" href="/image/FAB.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="./css/reservation.css">
@@ -18,12 +22,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
   <script>
-    const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
-    const supabasePassword = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k";
-
-    // 전역 변수로 설정
-    window.supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
-    
     // 로그인 체크 및 리다이렉트 함수
     function checkLoginAndRedirect(targetUrl) {
         // 로컬 스토리지에서 로그인 정보 확인
@@ -90,6 +88,64 @@
         div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
             background-color: #0066CC !important;
         }
+        /* 성공 아이콘 파란색 강제 적용 */
+        .swal2-icon-success-custom div:where(.swal2-icon).swal2-success {
+            border-color: #0066CC !important;
+        }
+        .swal2-icon-success-custom div:where(.swal2-icon).swal2-success [class^='swal2-success-circular-line'] {
+            border-color: #0066CC !important;
+        }
+        .swal2-icon-success-custom div:where(.swal2-icon).swal2-success [class^='swal2-success-fix'] {
+            background-color: #0066CC !important;
+        }
+        .swal2-icon-success-custom div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
+            background-color: #0066CC !important;
+        }
+        /* 성공 아이콘 내부 요소들 */
+        .swal2-icon-success-custom .swal2-success-circular-line-left,
+        .swal2-icon-success-custom .swal2-success-circular-line-right {
+            border-color: #0066CC !important;
+        }
+        .swal2-icon-success-custom .swal2-success-fix {
+            background-color: #0066CC !important;
+        }
+        .swal2-icon-success-custom .swal2-success-line-tip,
+        .swal2-icon-success-custom .swal2-success-line-long {
+            background-color: #0066CC !important;
+        }
+        /* 성공 아이콘 전체 강제 적용 */
+        .swal2-success {
+            border-color: #0066CC !important;
+        }
+        .swal2-success [class^='swal2-success-circular-line'] {
+            border-color: #0066CC !important;
+        }
+        .swal2-success [class^='swal2-success-fix'] {
+            background-color: #0066CC !important;
+        }
+        .swal2-success [class^='swal2-success-line'] {
+            background-color: #0066CC !important;
+        }
+        .swal2-success .swal2-success-circular-line-left,
+        .swal2-success .swal2-success-circular-line-right {
+            border-color: #0066CC !important;
+        }
+        .swal2-success .swal2-success-fix {
+            background-color: #0066CC !important;
+        }
+        .swal2-success .swal2-success-line-tip,
+        .swal2-success .swal2-success-line-long {
+            background-color: #0066CC !important;
+        }
+        /* 모든 성공 아이콘 요소 강제 적용 */
+        .swal2-popup .swal2-success,
+        .swal2-popup .swal2-success * {
+            border-color: #0066CC !important;
+        }
+        .swal2-popup .swal2-success [class^='swal2-success-fix'],
+        .swal2-popup .swal2-success [class^='swal2-success-line'] {
+            background-color: #0066CC !important;
+        }
     `;
     document.head.appendChild(style);
   </script>
@@ -98,11 +154,26 @@
     let map;
     let marker;
     let infowindow;
+    let mapInitialized = false;
+
+    // 카카오맵 API 로드 완료 후 지도 초기화
+    function initializeMapAfterLoad() {
+      if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.Map) {
+        initMap();
+        mapInitialized = true;
+        console.log('카카오맵 API 로드 완료, 지도 초기화됨');
+      } else {
+        console.log('카카오맵 API 로드 대기 중...');
+        setTimeout(initializeMapAfterLoad, 200);
+      }
+    }
 
     // 페이지 로드 시 지도 초기화
     document.addEventListener('DOMContentLoaded', function() {
-      // 지도 초기화
-      initMap();
+      console.log('DOM 로드 완료, 지도 초기화 시작');
+      
+      // 지도 초기화 (API 로드 완료 후)
+      initializeMapAfterLoad();
       
       // 기존 flatpickr 설정
       flatpickr("#reservation-date", {
@@ -142,72 +213,106 @@
 
     // 지도 초기화 함수
     function initMap() {
-      const container = document.getElementById('map');
-      const options = {
-        center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
-        level: 3
-      };
-      
-      map = new kakao.maps.Map(container, options);
-      
-      // 인포윈도우 생성
-      infowindow = new kakao.maps.InfoWindow({
-        zIndex: 1
-      });
+      try {
+        const container = document.getElementById('map');
+        if (!container) {
+          console.error('지도 컨테이너를 찾을 수 없습니다.');
+          return;
+        }
+        
+        const options = {
+          center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
+          level: 3
+        };
+        
+        map = new kakao.maps.Map(container, options);
+        
+        // 인포윈도우 생성
+        infowindow = new kakao.maps.InfoWindow({
+          zIndex: 1
+        });
+        
+        console.log('지도 초기화 완료');
+      } catch (error) {
+        console.error('지도 초기화 오류:', error);
+        mapInitialized = false;
+      }
     }
 
     // 주소로 좌표 검색 함수
     function searchAddress(address) {
-      const geocoder = new kakao.maps.services.Geocoder();
+      if (!map || !kakao.maps) {
+        console.error('지도가 초기화되지 않았습니다.');
+        return;
+      }
       
-      geocoder.addressSearch(address, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          
-          // 기존 마커 제거
-          if (marker) {
-            marker.setMap(null);
+      if (!address || address.trim() === '') {
+        console.error('주소가 비어있습니다.');
+        return;
+      }
+      
+      try {
+        const geocoder = new kakao.maps.services.Geocoder();
+        
+        geocoder.addressSearch(address, function(result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            
+            // 기존 마커 제거
+            if (marker) {
+              marker.setMap(null);
+            }
+            
+            // 새 마커 생성
+            marker = new kakao.maps.Marker({
+              map: map,
+              position: coords
+            });
+            
+            // 지도 중심 이동
+            map.setCenter(coords);
+            
+            // 툴팁 내용 설정
+            const detailAddress = document.getElementById('detailAddress').value;
+            const fullAddress = detailAddress ? `${address} ${detailAddress}` : address;
+            
+            const content = `
+              <div style="padding:10px;min-width:200px;">
+                <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
+                <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${fullAddress}</p>
+              </div>
+            `;
+            
+            // 인포윈도우 내용 설정
+            infowindow.setContent(content);
+            
+            // 마커 클릭 시 툴팁 표시
+            kakao.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map, marker);
+            });
+            
+            // 마커에 마우스 오버 시 툴팁 표시
+            kakao.maps.event.addListener(marker, 'mouseover', function() {
+              infowindow.open(map, marker);
+            });
+            
+            // 마커에서 마우스 아웃 시 툴팁 닫기
+            kakao.maps.event.addListener(marker, 'mouseout', function() {
+              infowindow.close();
+            });
+            
+            console.log('주소 검색 완료:', address, '좌표:', coords);
+          } else {
+            console.error('주소 검색 실패:', status, '주소:', address);
+            // 검색 실패 시 사용자에게 알림
+            if (window.showNotification) {
+              window.showNotification('주소 검색 실패', '입력하신 주소를 찾을 수 없습니다. 주소를 다시 확인해주세요.', 'warning');
+            }
           }
-          
-          // 새 마커 생성
-          marker = new kakao.maps.Marker({
-            map: map,
-            position: coords
-          });
-          
-          // 지도 중심 이동
-          map.setCenter(coords);
-          
-          // 툴팁 내용 설정
-          const detailAddress = document.getElementById('detailAddress').value;
-          const fullAddress = detailAddress ? `${address} ${detailAddress}` : address;
-          
-          const content = `
-            <div style="padding:10px;min-width:200px;">
-              <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
-              <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${fullAddress}</p>
-            </div>
-          `;
-          
-          // 인포윈도우 내용 설정
-          infowindow.setContent(content);
-          
-          // 마커 클릭 시 툴팁 표시
-          kakao.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map, marker);
-          });
-          
-          // 마커에 마우스 오버 시 툴팁 표시
-          kakao.maps.event.addListener(marker, 'mouseover', function() {
-            infowindow.open(map, marker);
-          });
-          
-          // 마커에서 마우스 아웃 시 툴팁 닫기
-          kakao.maps.event.addListener(marker, 'mouseout', function() {
-            infowindow.close();
-          });
-        }
-      });
+        });
+      } catch (error) {
+        console.error('주소 검색 오류:', error);
+      }
     }
 
     function openDaumPostcode() {
@@ -227,8 +332,21 @@
           document.getElementById('postcode').value = data.zonecode;
           document.getElementById('address').value = addr;
 
-          // 지도에 마커 표시
-          searchAddress(addr);
+          console.log('주소 선택됨:', addr);
+
+          // 지도에 마커 표시 (더 안정적인 방법)
+          function updateMap() {
+            if (map && kakao.maps && mapInitialized) {
+              searchAddress(addr);
+              console.log('주소 검색 실행:', addr);
+            } else {
+              console.log('지도 초기화 대기 중...');
+              setTimeout(updateMap, 300);
+            }
+          }
+          
+          // 지도 업데이트 시작
+          setTimeout(updateMap, 100);
 
           // 상세주소 입력란으로 커서 이동
           document.getElementById('detailAddress').focus();
@@ -361,20 +479,20 @@
           <label>예약 시간</label>
           <div class="time-options">
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="10:00~12:00" class="reservationTime">
-              <span>10:00~12:00</span>
+              <input type="radio" name="reservation-time" value="10:00" class="reservationTime">
+              <span>10:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="12:00~14:00" class="reservationTime">
-              <span>12:00~14:00</span>
+              <input type="radio" name="reservation-time" value="12:00" class="reservationTime">
+              <span>12:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="14:00~16:00" class="reservationTime">
-              <span>14:00~16:00</span>
+              <input type="radio" name="reservation-time" value="14:00" class="reservationTime">
+              <span>14:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="16:00~18:00" class="reservationTime">
-              <span>16:00~18:00</span>
+              <input type="radio" name="reservation-time" value="16:00" class="reservationTime">
+              <span>16:00</span>
             </label>
           </div>
         </div>
@@ -482,29 +600,6 @@
 </div>
 
   <script>
-    function openDaumPostcode() {
-      new daum.Postcode({
-        oncomplete: function(data) {
-          // 팝업에서 검색 결과 항목을 클릭했을 때 실행할 코드
-          var addr = ''; // 주소 변수
-
-          // 사용자가 선택한 주소 타입에 따라 주소 값을 가져옴
-          if (data.userSelectedType === 'R') { // 도로명 주소
-            addr = data.roadAddress;
-          } else { // 지번 주소
-            addr = data.jibunAddress;
-          }
-
-          // 우편번호와 주소 필드에 값 입력
-          document.getElementById('postcode').value = data.zonecode;
-          document.getElementById('address').value = addr;
-
-          // 상세주소 입력란으로 커서 이동
-          document.getElementById('detailAddress').focus();
-        }
-      }).open();
-    }
-
     //연락처 입력
     function formatPhone(input) {
       // 숫자만 남기고 나머지 제거

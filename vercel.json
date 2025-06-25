@@ -1,6 +1,6 @@
 {
-  "buildCommand": "",
-  "outputDirectory": "public",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "framework": null,
   "env": {
     "SUPABASE_URL": "https://wqetnltlnsvjidubewia.supabase.co",

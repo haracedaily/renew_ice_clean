@@ -1,13 +1,13 @@
-/* 마이페이지 전체 컨테이너 */
+/* 마이?�이지 ?�체 컨테?�너 */
 .mypage-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   min-height: 80vh;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
-/* 모바일 반응형 */
+/* 모바??반응??*/
 @media (max-width: 768px) {
   .mypage-container {
     padding: 1rem;
@@ -24,7 +24,7 @@
   }
   
   .form-group input {
-    font-size: 16px; /* 모바일에서 자동 확대 방지 */
+    font-size: 16px; /* 모바?�에???�동 ?��? 방�? */
   }
   
   .postcode-group {
@@ -63,22 +63,22 @@
     font-size: 0.9rem;
   }
   
-  /* 프로필 폼 모바일 스타일 */
+  /* ?�로????모바???��???*/
   .profile-form .form-group {
-    margin-bottom: 1.2rem; /* 모바일에서 간격 조정 */
+    margin-bottom: 1.2rem; /* 모바?�에??간격 조정 */
   }
   
   .profile-form .form-group:last-of-type {
-    margin-bottom: 2.5rem; /* 모바일에서 상세주소와 버튼 간격 조정 */
+    margin-bottom: 2.5rem; /* 모바?�에???�세주소?� 버튼 간격 조정 */
   }
   
   .save-profile-btn {
-    margin-top: 1.5rem; /* 모바일에서 상단 여백 조정 */
-    max-width: 100%; /* 모바일에서 전체 너비 사용 */
-    padding: 1rem 1.5rem; /* 모바일에서 패딩 증가 */
+    margin-top: 1.5rem; /* 모바?�에???�단 ?�백 조정 */
+    max-width: 100%; /* 모바?�에???�체 ?�비 ?�용 */
+    padding: 1rem 1.5rem; /* 모바?�에???�딩 증�? */
   }
   
-  /* 모바일 네비게이션 */
+  /* 모바???�비게이??*/
   .mobile-nav {
     display: none;
   }
@@ -123,7 +123,7 @@
     padding: 1rem;
     color: #333;
     text-decoration: none;
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
     transition: background-color 0.3s ease;
   }
   
@@ -142,7 +142,7 @@
   }
 }
 
-/* 마이페이지 내부 헤더만 스타일 적용 */
+/* 마이?�이지 ?��? ?�더�??��????�용 */
 .mypage-container .mypage-content-header {
   background: linear-gradient(135deg, #007bff, #0056b3);
   color: white;
@@ -156,16 +156,16 @@
   font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
 }
 
-/* 로그인 섹션 */
+/* 로그???�션 */
 .login-section {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 60vh;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .login-section.hidden {
@@ -202,13 +202,13 @@
   font-weight: bold;
   margin-bottom: 1.5rem;
   color: #666;
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
 }
 
 .login-subtitle {
   color: #666;
   margin-bottom: 2rem;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .login-form {
@@ -227,7 +227,7 @@
 .form-group label {
   font-weight: bold;
   color: #333;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .form-group input {
@@ -236,7 +236,7 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .form-group input:focus {
@@ -254,7 +254,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .login-btn:hover {
@@ -266,20 +266,20 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .login-links a {
   color: #0066cc;
   text-decoration: none;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .login-links a:hover {
   text-decoration: underline;
 }
 
-/* 회원가입 폼 추가 스타일 */
+/* ?�원가????추�? ?��???*/
 #register-section .login-box {
   max-width: 500px;
 }
@@ -292,7 +292,7 @@
   margin-top: 0.5rem;
 }
 
-/* 우편번호 검색 스타일 */
+/* ?�편번호 검???��???*/
 .postcode-group {
   display: flex;
   gap: 0.5rem;
@@ -313,7 +313,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
   white-space: nowrap;
 }
 
@@ -322,7 +322,7 @@
   background: linear-gradient(135deg, #0052a3, #004080);
 }
 
-/* 주소 입력 필드 스타일 */
+/* 주소 ?�력 ?�드 ?��???*/
 .form-group input[readonly] {
   background-color: #f8f9fa;
   color: #495057;
@@ -334,7 +334,7 @@
   box-shadow: none;
 }
 
-/* 비밀번호 확인 불일치 시 스타일 */
+/* 비�?번호 ?�인 불일�????��???*/
 .form-group input.error {
   border-color: #dc3545;
 }
@@ -344,13 +344,13 @@
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-/* 이메일 중복 체크 스타일 */
+/* ?�메??중복 체크 ?��???*/
 .email-status {
   font-size: 0.85rem;
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
   display: none;
 }
 
@@ -384,22 +384,22 @@
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-/* 비밀번호 힌트 스타일 */
+/* 비�?번호 ?�트 ?��???*/
 .password-hint {
   font-size: 0.8rem;
   color: #6c757d;
   margin-top: 0.25rem;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
   display: block;
 }
 
-/* 비밀번호 검증 상태 스타일 */
+/* 비�?번호 검�??�태 ?��???*/
 .password-status {
   font-size: 0.85rem;
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
   display: none;
 }
 
@@ -433,13 +433,13 @@
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-/* 마이페이지 메인 섹션 */
+/* 마이?�이지 메인 ?�션 */
 .mypage-section {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .logout-btn {
@@ -451,7 +451,7 @@
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -469,7 +469,7 @@
   color: white;
 }
 
-/* 사용자 정보 */
+/* ?�용???�보 */
 .user-info {
   display: flex;
   align-items: center;
@@ -490,16 +490,16 @@
   font-weight: bold;
   margin: 0;
   color: #333;
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
 }
 
 .user-email {
   color: #666;
   margin: 0.25rem 0 0 0;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
-/* 마이페이지 콘텐츠 */
+/* 마이?�이지 콘텐�?*/
 .mypage-content {
   padding: 2rem;
 }
@@ -507,7 +507,7 @@
 .content-tabs {
   display: flex;
   border-bottom: 1px solid #e1e5e9;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .tab-btn {
@@ -520,7 +520,7 @@
   font-weight: bold;
   color: #666;
   transition: all 0.3s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .tab-btn.active {
@@ -535,14 +535,14 @@
 .tab-content {
   display: none;
   padding: 2rem;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .tab-content.active {
   display: block;
 }
 
-/* 예약 내역 */
+/* ?�약 ?�역 */
 .reservations-header {
   display: flex;
   justify-content: space-between;
@@ -555,7 +555,7 @@
   font-weight: bold;
   margin: 0;
   color: #333;
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
 }
 
 .refresh-btn {
@@ -566,7 +566,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .refresh-btn:hover {
@@ -584,7 +584,7 @@
   padding: 1.5rem;
   border-radius: 8px;
   border-left: 4px solid #007bff;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .reservation-item h4 {
@@ -592,13 +592,13 @@
   font-weight: bold;
   margin: 0 0 0.5rem 0;
   color: #333;
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
 }
 
 .reservation-item p {
   margin: 0.25rem 0;
   color: #666;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .reservation-item .status {
@@ -608,7 +608,7 @@
   font-size: 0.8rem;
   font-weight: bold;
   margin-top: 0.5rem;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .reservation-item .status.pending {
@@ -631,13 +631,13 @@
   color: #721c24;
 }
 
-/* 프로필 폼 */
+/* ?�로????*/
 .profile-form h3 {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0 0 2rem 0;
   color: #333;
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
 }
 
 .profile-form .form-group {
@@ -658,7 +658,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
   margin-top: 2rem;
   display: block;
   width: 100%;
@@ -671,12 +671,12 @@
   transform: translateY(-2px);
 }
 
-/* 유틸리티 클래스 */
+/* ?�틸리티 ?�래??*/
 .hidden {
   display: none !important;
 }
 
-/* 사이드 버튼 그룹 스타일 */
+/* ?�이??버튼 그룹 ?��???*/
 #side_btn_group{
     width: 45px !important;
     height: 100px !important;
@@ -722,7 +722,7 @@
     }
 }
 
-/* 예약 통계 섹션 */
+/* ?�약 ?�계 ?�션 */
 .reservation-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -751,7 +751,7 @@
   color: #666;
 }
 
-/* 예약 내역 카드 스타일 */
+/* ?�약 ?�역 카드 ?��???*/
 .reservation-card {
     background: #fff;
     border: 1px solid #e0e0e0;
@@ -946,7 +946,7 @@
     background-color: #0052a3;
 }
 
-/* 예약 없음 상태 */
+/* ?�약 ?�음 ?�태 */
 .no-reservations {
     text-align: center;
     padding: 60px 20px;
@@ -990,7 +990,7 @@
     transform: translateY(-2px);
 }
 
-/* 예약 필터 버튼 */
+/* ?�약 ?�터 버튼 */
 .reservation-filters {
   display: flex;
   gap: 0.5rem;
@@ -1007,7 +1007,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  font-family: 'iceFont', sans-serif;
+  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .filter-btn:hover {
@@ -1022,7 +1022,7 @@
   border-color: #007bff;
 }
 
-/* 모바일에서 필터 버튼 */
+/* 모바?�에???�터 버튼 */
 @media (max-width: 768px) {
   .reservation-filters {
     gap: 0.3rem;
@@ -1038,7 +1038,7 @@
   }
 }
 
-/* 예약 통계 섹션 */
+/* ?�약 ?�계 ?�션 */
 .reservation-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1067,7 +1067,7 @@
   color: #666;
 }
 
-/* 예약 내역 카드 스타일 */
+/* ?�약 ?�역 카드 ?��???*/
 .reservation-card {
     background: #fff;
     border: 1px solid #e0e0e0;
@@ -1244,7 +1244,7 @@
     cursor: not-allowed;
 }
 
-/* SweetAlert 아이콘 커스텀 스타일 */
+/* SweetAlert ?�이�?커스?� ?��???*/
 .swal2-icon-custom {
     color: #0066CC !important;
 }
@@ -1277,7 +1277,7 @@ div:where(.swal2-icon).swal2-success .swal2-success-line {
     background-color: #0066CC !important;
 }
 
-/* SweetAlert 성공 아이콘의 체크 표시 색상 */
+/* SweetAlert ?�공 ?�이콘의 체크 ?�시 ?�상 */
 div:where(.swal2-icon).swal2-success .swal2-success-line-tip {
     background-color: #0066CC !important;
 }
@@ -1286,7 +1286,7 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
     background-color: #0066CC !important;
 }
 
-/* SweetAlert 확인 버튼 색상 */
+/* SweetAlert ?�인 버튼 ?�상 */
 .swal2-confirm {
     background-color: #0066CC !important;
 }
@@ -1295,7 +1295,7 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
     box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5) !important;
 }
 
-/* 예약 상태 스타일 */
+/* ?�약 ?�태 ?��???*/
 .status-new {
     background-color: #17a2b8;
     color: white;
@@ -1331,7 +1331,7 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
     color: white;
 }
 
-/* 기존 상태 스타일 유지 (호환성) */
+/* 기존 ?�태 ?��????��? (?�환?? */
 .status-pending {
     background-color: #17a2b8;
     color: white;
@@ -1342,7 +1342,7 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
     color: white;
 }
 
-/* 예약 액션 버튼 스타일 */
+/* ?�약 ?�션 버튼 ?��???*/
 .reservation-actions {
     display: flex;
     gap: 0.5rem;
@@ -1392,7 +1392,7 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
     cursor: not-allowed;
 }
 
-/* SweetAlert2 경고 아이콘 내부까지 파란색으로 */
+/* SweetAlert2 경고 ?�이�??��?까�? ?��??�으�?*/
 div.swal2-icon.swal2-warning .swal2-icon-content {
     color: #0066cc !important;
 }
@@ -1407,7 +1407,7 @@ div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
     border-color: #0066cc !important;
 }
 
-/* 즐겨찾기된 예약 카드 스타일 */
+/* 즐겨찾기???�약 카드 ?��???*/
 .reservation-card.favorite {
   border: 2px solid #0066cc;
   box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
@@ -1417,7 +1417,7 @@ div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
   background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
 }
 
-/* 즐겨찾기 별표 스타일 */
+/* 즐겨찾기 별표 ?��???*/
 .favorite-star {
   transition: all 0.3s ease;
   opacity: 0.8;
@@ -1440,7 +1440,7 @@ div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
   100% { transform: scale(1); }
 }
 
-/* 모바일에서 즐겨찾기 별표 스타일 */
+/* 모바?�에??즐겨찾기 별표 ?��???*/
 @media (max-width: 768px) {
   .favorite-star {
     font-size: 14px !important;
@@ -1449,18 +1449,18 @@ div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
 }
 
 @font-face {
-  font-family: 'iceFont';
+  font-family: 'GmarketSansMedium';
   src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
 * {
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 
 body {
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 
 button,
@@ -1473,5 +1473,5 @@ input,
 textarea,
 h1, h2, h3, h4, h5, h6,
 p, span, div, a, li {
-    font-family: 'iceFont', sans-serif !important;
+    font-family: 'GmarketSansMedium', sans-serif !important;
 } 

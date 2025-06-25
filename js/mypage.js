@@ -797,6 +797,7 @@ function displayReservations(reservations) {
         const canCancel = reservation.state === 1; // 신규예약 상태일 때만 취소 가능
         const hasEngineer = reservation.engineer_id; // 엔지니어 할당 여부
         const isAssigned = reservation.state === 4; // 기사배정 상태
+        const isCancelled = reservation.state === 6; // 예약취소 상태
         
         // 디버깅: 각 예약의 조건 확인
         console.log(`예약 #${reservation.res_no} 조건:`, {
@@ -804,7 +805,8 @@ function displayReservations(reservations) {
             engineer_id: reservation.engineer_id,
             isAssigned,
             hasEngineer,
-            showEngineerButton: isAssigned && hasEngineer
+            showEngineerButton: isAssigned && hasEngineer,
+            isCancelled
         });
         
         return `
@@ -855,6 +857,11 @@ function displayReservations(reservations) {
                     ${canCancel ? `
                         <button class="cancel-btn" onclick="cancelReservation('${reservation.res_no}')">
                             <i class="fas fa-times"></i> 예약 취소
+                        </button>
+                    ` : ''}
+                    ${isCancelled ? `
+                        <button class="delete-btn" onclick="deleteReservation('${reservation.res_no}')">
+                            <i class="fas fa-trash"></i> 삭제
                         </button>
                     ` : ''}
                 </div>
@@ -929,6 +936,56 @@ async function cancelReservation(reservationId) {
                 icon: 'error',
                 title: '예약 취소 실패',
                 text: '예약 취소 중 오류가 발생했습니다.'
+            });
+        }
+    }
+}
+
+// 예약 삭제
+async function deleteReservation(reservationId) {
+    const result = await Swal.fire({
+        title: '예약 삭제',
+        text: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제하기',
+        cancelButtonText: '돌아가기',
+        confirmButtonColor: '#dc3545',
+        customClass: {
+            icon: 'swal2-icon-custom'
+        }
+    });
+    
+    if (result.isConfirmed) {
+        try {
+            const { error } = await window.supabase
+                .from('reservation')
+                .delete()
+                .eq('res_no', reservationId);
+                
+            if (error) throw error;
+            
+            Swal.fire({
+                icon: 'success',
+                title: '예약 삭제 완료',
+                text: '예약이 성공적으로 삭제되었습니다.',
+                customClass: {
+                    icon: 'swal2-icon-success-custom'
+                }
+            });
+            
+            // 예약 내역 새로고침
+            loadUserReservations();
+            
+        } catch (error) {
+            console.error('예약 삭제 오류:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '예약 삭제 실패',
+                text: '예약 삭제 중 오류가 발생했습니다.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
             });
         }
     }

@@ -2,31 +2,34 @@
     /*margin: 0;*/
     /*padding: 0;*/
     /*box-sizing: border-box;*/
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', 'Arial', sans-serif;
 
 }
 @font-face {
-    font-family: 'iceFont';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'pageNum5';
-    src: url('../font/page.ttf') format('truetype');
+    src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'Lora-Bold';
-    src: url('../font/Lora-Bold.ttf') format('truetype');
+    src: url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap');
     font-weight: bold;
     font-style: normal;
+    font-display: swap;
 }
 body{
     margin: 0;
     /*padding: 60px 0 0;*/
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 
 header {
@@ -191,7 +194,7 @@ header {
     margin: 0 auto;
     padding: 2rem;
     min-height: 80vh;
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .r-date{
@@ -763,7 +766,7 @@ input[type = "radio"]{
   flex: 1;
   margin-top: 0;
   align-self: center;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 500;
 }
 
@@ -1070,7 +1073,7 @@ button#confirm-reserve.btn-reserve:focus {
 
         &:nth-child(n+2){
             p{
-                font-family:"iceFont",sans-serif;
+                font-family:"Noto Sans KR",sans-serif;
                 font-weight:500;
             }
         }
@@ -1088,5 +1091,5 @@ input,
 textarea,
 h1, h2, h3, h4, h5, h6,
 p, span, div, a, li {
-  font-family: 'iceFont', sans-serif !important;
+  font-family: 'Noto Sans KR', sans-serif !important;
 }

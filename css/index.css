@@ -34,7 +34,7 @@
 }
 
 @font-face {
-    font-family: 'iceFont';
+    font-family: 'GmarketSansMedium';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
@@ -689,7 +689,7 @@ footer {
 
 
 body {
-    font-family: 'iceFont',sans-serif;
+    font-family: 'GmarketSansMedium';
     color: #333;
 }
 
@@ -748,7 +748,7 @@ body {
     animation: fadeInUp 1500ms forwards 1;
 }
 
-/* 서브헤더 */
+/* ?�브?�더 */
 #sub_header {
     position: relative;
     width: 100%;
@@ -887,9 +887,9 @@ body {
     margin: 56px 0 32px 0 !important;
 }
 
-/* 프로세스 시작 */
+/* ?�로?�스 ?�작 */
 
-/* section1 스타일 */
+/* section1 ?��???*/
 .info-section {
     margin: 0 !important;
     padding: 0 !important;
@@ -963,7 +963,7 @@ body {
     }
 }
 
-/* section2 스타일 */
+/* section2 ?��???*/
 .section2-bg {
     margin: 0 !important;
     padding: 0 !important;
@@ -1038,7 +1038,7 @@ body {
     }
 }
 
-/* 페이드 인 효과 */
+/* ?�이?????�과 */
 .fade-in-on-scroll {
     opacity: 0;
     transform: translateY(40px);
@@ -1160,7 +1160,7 @@ body {
     background: #eaf2ff;
 }
 
-/* 지도 섹션 스타일 */
+/* 지???�션 ?��???*/
 #section4 {
     padding: 40px 10px;
     max-width: 100%;
@@ -1183,7 +1183,7 @@ body {
     color: #666;
 }
 
-/* 지도 반응형 스타일 */
+/* 지??반응???��???*/
 @media (max-width: 768px) {
     #section4 {
         padding: 20px 5px;
@@ -1241,7 +1241,7 @@ body {
     }
 }
 
-/* 지도 스타일 */
+/* 지???��???*/
 .map-container {
     position: relative;
     width: 100%;
@@ -1305,13 +1305,13 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 프랜차이즈점 마커 스타일 */
+/* ?�랜차이즈점 마커 ?��???*/
 .franchise-marker {
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* 프랜차이즈점 인포윈도우 스타일 */
+/* ?�랜차이즈점 ?�포?�도???��???*/
 .franchise-infowindow {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1354,7 +1354,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* SweetAlert 커스텀 스타일 */
+/* SweetAlert 커스?� ?��???*/
 div.swal2-icon.swal2-warning .swal2-icon-content {
     color: #0066CC !important;
 }

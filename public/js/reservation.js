@@ -1,10 +1,19 @@
 console.log('예약 JavaScript 파일 로드됨');
 
-// Supabase 클라이언트 생성
-const SUPABASE_URL = 'https://wqetnltlnsvjidubewia.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
-if (!window.supabase) {
-    window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Supabase 클라이언트 생성 (중복 선언 방지)
+if (typeof window.SUPABASE_URL === 'undefined') {
+    window.SUPABASE_URL = 'https://wqetnltlnsvjidubewia.supabase.co';
+    window.SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
+}
+
+// Supabase 클라이언트가 없거나 제대로 초기화되지 않은 경우에만 생성
+if (!window.supabase || typeof window.supabase.from !== 'function') {
+    if (typeof supabase !== 'undefined') {
+        window.supabase = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+        console.log('Supabase 클라이언트 재초기화됨');
+    } else {
+        console.error('Supabase 라이브러리가 로드되지 않았습니다.');
+    }
 }
 
 // 예약자 자동입력 (로그인정보 있을때)
@@ -61,6 +70,13 @@ function showLoginInfo() {
     
     try {
         const userInfo = JSON.parse(user);
+        
+        // 기존 login-info 요소가 있다면 제거
+        const existingLoginInfo = document.querySelector('.login-info');
+        if (existingLoginInfo) {
+            existingLoginInfo.remove();
+        }
+        
         const loginInfoDiv = document.createElement('div');
         loginInfoDiv.className = 'login-info';
         loginInfoDiv.innerHTML = `
@@ -157,6 +173,17 @@ function setupFormSubmission() {
                 console.log('Supabase 저장 데이터:', reservationData);
                 console.log('Supabase 클라이언트:', window.supabase);
                 
+                // Supabase 클라이언트 재확인
+                if (!window.supabase || typeof window.supabase.from !== 'function') {
+                    console.error('Supabase 클라이언트가 제대로 초기화되지 않았습니다.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: '시스템 오류',
+                        text: '데이터베이스 연결에 문제가 있습니다. 페이지를 새로고침해주세요.',
+                    });
+                    return;
+                }
+                
                 const { data, error } = await window.supabase
                     .from('reservation') // ice_res 대신 reservation 테이블 사용
                     .insert([reservationData])
@@ -203,12 +230,12 @@ function setupFormSubmission() {
                         confirmButtonText: '확인',
                         confirmButtonColor: '#0066cc',
                         customClass: {
-                            icon: 'swal2-icon-success-custom'
+                            icon: 'swal2-icon-success-custom',
+                            popup: 'swal2-popup-custom'
                         }
                     }).then(() => {
-                        // 폼 초기화
-                        form.reset();
-                        location.reload();
+                        // 마이페이지로 이동
+                        window.location.href = 'mypage.html';
                     });
                 }
             } catch (err) {
