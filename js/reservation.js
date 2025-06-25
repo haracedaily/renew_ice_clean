@@ -218,50 +218,6 @@ function setupFormSubmission() {
                 console.log(`[${submissionId}] Supabase 저장 데이터:`, reservationData);
                 console.log(`[${submissionId}] Supabase 클라이언트:`, window.supabase);
                 
-                // 삽입 전 예약 데이터 확인
-                console.log(`[${submissionId}] 삽입 전 예약 데이터 확인 시작...`);
-                const { data: existingData, error: selectError } = await window.supabase
-                    .from('reservation')
-                    .select('res_no, date, time, user_email, created_at')
-                    .eq('user_email', formData.email)
-                    .eq('date', formData.date)
-                    .eq('time', formData.time)
-                    .order('created_at', { ascending: false })
-                    .limit(5);
-                
-                if (selectError) {
-                    console.error(`[${submissionId}] 기존 데이터 조회 오류:`, selectError);
-                } else {
-                    console.log(`[${submissionId}] 기존 예약 데이터:`, existingData);
-                    if (existingData && existingData.length > 0) {
-                        console.log(`[${submissionId}] 최근 예약 시간:`, existingData[0].created_at);
-                        const timeDiff = new Date().getTime() - new Date(existingData[0].created_at).getTime();
-                        console.log(`[${submissionId}] 마지막 예약과의 시간 차이 (밀리초):`, timeDiff);
-                        
-                        // 30초 이내에 동일한 예약이 있으면 중복으로 간주
-                        if (timeDiff < 30000) {
-                            console.warn(`[${submissionId}] 중복 예약 감지됨! 30초 이내에 동일한 예약이 존재합니다.`);
-                            Swal.fire({
-                                icon: 'warning',
-                                title: '중복 예약 감지',
-                                text: '동일한 예약이 이미 존재합니다. 잠시 후 다시 시도해주세요.',
-                            });
-                            return;
-                        }
-                    }
-                }
-                
-                // Supabase 클라이언트 재확인
-                if (!window.supabase || typeof window.supabase.from !== 'function') {
-                    console.error(`[${submissionId}] Supabase 클라이언트가 제대로 초기화되지 않았습니다.`);
-                    Swal.fire({
-                        icon: 'error',
-                        title: '시스템 오류',
-                        text: '데이터베이스 연결에 문제가 있습니다. 페이지를 새로고침해주세요.',
-                    });
-                    return;
-                }
-                
                 // 마지막 삽입 시간 확인 (추가 보호)
                 const currentTime = new Date().getTime();
                 if (currentTime - lastInsertTime < 10000) {
@@ -274,9 +230,46 @@ function setupFormSubmission() {
                     return;
                 }
                 
+                // 삽입 전 최종 중복 확인
+                console.log(`[${submissionId}] 삽입 전 최종 중복 확인...`);
+                const { data: finalCheck, error: finalCheckError } = await window.supabase
+                    .from('reservation')
+                    .select('res_no, created_at')
+                    .eq('user_email', formData.email)
+                    .eq('date', formData.date)
+                    .eq('time', formData.time)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                
+                if (!finalCheckError && finalCheck && finalCheck.length > 0) {
+                    const lastReservationTime = new Date(finalCheck[0].created_at).getTime();
+                    const timeSinceLastReservation = currentTime - lastReservationTime;
+                    
+                    console.log(`[${submissionId}] 최근 예약 시간:`, new Date(lastReservationTime));
+                    console.log(`[${submissionId}] 시간 차이:`, timeSinceLastReservation, '밀리초');
+                    
+                    if (timeSinceLastReservation < 60000) { // 1분 이내
+                        console.warn(`[${submissionId}] 1분 이내에 동일한 예약이 존재합니다. 삽입 중단.`);
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '중복 예약 감지',
+                            text: '동일한 예약이 이미 존재합니다.',
+                        });
+                        return;
+                    }
+                }
+                
                 lastInsertTime = currentTime;
                 console.log(`[${submissionId}] 예약 삽입 시작...`);
                 const insertStartTime = new Date().getTime();
+                
+                // 삽입 전 예약 개수 확인
+                const { count: beforeCount } = await window.supabase
+                    .from('reservation')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_email', formData.email);
+                
+                console.log(`[${submissionId}] 삽입 전 총 예약 개수:`, beforeCount);
                 
                 const { data, error } = await window.supabase
                     .from('reservation') // ice_res 대신 reservation 테이블 사용
@@ -316,6 +309,20 @@ function setupFormSubmission() {
                     console.log(`[${submissionId}] 예약 성공:`, data);
                     console.log(`[${submissionId}] 삽입된 예약 개수:`, data.length);
                     
+                    // 삽입 후 예약 개수 확인
+                    const { count: afterCount } = await window.supabase
+                        .from('reservation')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('user_email', formData.email);
+                    
+                    console.log(`[${submissionId}] 삽입 후 총 예약 개수:`, afterCount);
+                    console.log(`[${submissionId}] 예약 개수 증가:`, afterCount - beforeCount);
+                    
+                    if (afterCount - beforeCount > 1) {
+                        console.error(`[${submissionId}] 경고: 예상보다 많은 예약이 생성되었습니다!`);
+                        console.error(`[${submissionId}] 예상: 1개, 실제: ${afterCount - beforeCount}개`);
+                    }
+                    
                     // 삽입 후 즉시 확인
                     if (data && data.length > 0) {
                         console.log(`[${submissionId}] 삽입된 예약 ID:`, data[0].res_no);
@@ -334,6 +341,23 @@ function setupFormSubmission() {
                             if (verifyData.length > 1) {
                                 console.warn(`[${submissionId}] 중복 예약이 생성되었습니다!`);
                                 console.warn(`[${submissionId}] 총 예약 개수:`, verifyData.length);
+                                
+                                // 중복 예약 삭제 시도
+                                if (verifyData.length > 1) {
+                                    const duplicateIds = verifyData.slice(1).map(r => r.res_no);
+                                    console.log(`[${submissionId}] 중복 예약 삭제 시도:`, duplicateIds);
+                                    
+                                    const { error: deleteError } = await window.supabase
+                                        .from('reservation')
+                                        .delete()
+                                        .in('res_no', duplicateIds);
+                                    
+                                    if (deleteError) {
+                                        console.error(`[${submissionId}] 중복 예약 삭제 실패:`, deleteError);
+                                    } else {
+                                        console.log(`[${submissionId}] 중복 예약 삭제 완료`);
+                                    }
+                                }
                             }
                         }
                     }
