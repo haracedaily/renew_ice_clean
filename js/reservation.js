@@ -6,6 +6,7 @@ let lastInsertTime = 0; // 마지막 삽입 시간 추적
 let formSubmissionCount = 0; // 폼 제출 횟수 추적
 let eventListenerAttached = false; // 이벤트 리스너 중복 바인딩 방지
 let insertCount = 0; // 삽입 실행 횟수 추적
+let globalInsertLock = false; // 전역 삽입 잠금
 
 // Supabase 클라이언트 생성 (중복 선언 방지)
 if (typeof window.SUPABASE_URL === 'undefined') {
@@ -137,7 +138,13 @@ function setupFormSubmission() {
         // 이벤트 리스너 중복 바인딩 방지
         eventListenerAttached = true;
         
-        form.addEventListener('submit', async function(e) {
+        // 기존 폼을 복제하여 이벤트 리스너 제거
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        console.log('기존 폼을 새 폼으로 교체하여 이벤트 리스너 초기화 완료');
+        
+        newForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // 고유 제출 ID 생성
@@ -154,7 +161,7 @@ function setupFormSubmission() {
             }
             
             // 중복 제출 방지
-            const submitBtn = form.querySelector('button[type="submit"]');
+            const submitBtn = newForm.querySelector('button[type="submit"]');
             if (submitBtn && submitBtn.disabled) {
                 console.log(`[${submissionId}] 제출 버튼이 이미 비활성화되어 있습니다.`);
                 return;
@@ -175,7 +182,7 @@ function setupFormSubmission() {
             }
             
             // 폼 전체 비활성화
-            const formInputs = form.querySelectorAll('input, textarea, select, button');
+            const formInputs = newForm.querySelectorAll('input, textarea, select, button');
             formInputs.forEach(input => {
                 if (input !== submitBtn) {
                     input.disabled = true;
@@ -272,7 +279,18 @@ function setupFormSubmission() {
                 }
                 
                 lastInsertTime = currentTime;
-                console.log(`[${submissionId}] 예약 삽입 시작...`);
+                
+                // 전역 삽입 잠금 확인
+                if (globalInsertLock) {
+                    console.warn(`[${submissionId}] 전역 삽입 잠금이 활성화되어 있습니다. 삽입 중단.`);
+                    return;
+                }
+                
+                // 전역 삽입 잠금 설정
+                globalInsertLock = true;
+                insertCount++;
+                console.log(`[${submissionId}] 예약 삽입 시작... (삽입 실행 횟수: ${insertCount})`);
+                console.log(`[${submissionId}] 전역 삽입 잠금 설정됨`);
                 const insertStartTime = new Date().getTime();
                 
                 // 삽입 전 예약 개수 확인
@@ -290,6 +308,7 @@ function setupFormSubmission() {
                 
                 const insertEndTime = new Date().getTime();
                 console.log(`[${submissionId}] 삽입 완료 시간:`, insertEndTime - insertStartTime, '밀리초');
+                console.log(`[${submissionId}] 삽입 실행 횟수: ${insertCount}회 완료`);
                 
                 if (error) {
                     console.error(`[${submissionId}] Supabase 에러 상세:`, error);
@@ -404,6 +423,10 @@ function setupFormSubmission() {
             } finally {
                 // 전역 상태 복원
                 isSubmitting = false;
+                
+                // 전역 삽입 잠금 해제
+                globalInsertLock = false;
+                console.log(`[${submissionId}] 전역 삽입 잠금 해제됨`);
                 
                 // 제출 버튼 상태 복원
                 if (submitBtn) {

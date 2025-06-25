@@ -1213,17 +1213,23 @@ async function showReservationMap(address, reservationId, customerName = '') {
                                 center: coords,
                                 level: 3
                             });
-                            const marker = new kakao.maps.Marker({ position: coords });
+                            
+                            // 마커 생성 시 불필요한 동그라미 제거
+                            const marker = new kakao.maps.Marker({ 
+                                position: coords,
+                                clickable: true
+                            });
                             marker.setMap(map);
+                            
                             const infowindow = new kakao.maps.InfoWindow({
                                 content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">${displayAddress}</p></div>`
                             });
-                            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                            
+                            // 마커 클릭 시 정보창 표시
+                            kakao.maps.event.addListener(marker, 'click', function() {
                                 infowindow.open(map, marker);
                             });
-                            kakao.maps.event.addListener(marker, 'mouseout', function() {
-                                infowindow.close();
-                            });
+                            
                             console.log('지도 표시 완료');
                         } else {
                             // 다음 단계로 진행
@@ -1255,16 +1261,21 @@ async function showReservationMap(address, reservationId, customerName = '') {
                         center: coords,
                         level: 3
                     });
-                    const marker = new kakao.maps.Marker({ position: coords });
+                    
+                    // 마커 생성 시 불필요한 동그라미 제거
+                    const marker = new kakao.maps.Marker({ 
+                        position: coords,
+                        clickable: true
+                    });
                     marker.setMap(map);
+                    
                     const infowindow = new kakao.maps.InfoWindow({
                         content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>원본 주소: ${address}</p></div>`
                     });
-                    kakao.maps.event.addListener(marker, 'mouseover', function() {
+                    
+                    // 마커 클릭 시 정보창 표시
+                    kakao.maps.event.addListener(marker, 'click', function() {
                         infowindow.open(map, marker);
-                    });
-                    kakao.maps.event.addListener(marker, 'mouseout', function() {
-                        infowindow.close();
                     });
                 };
                 
