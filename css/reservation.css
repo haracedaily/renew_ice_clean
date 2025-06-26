@@ -25,7 +25,7 @@ header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 0 1rem;
         ul {
@@ -1063,7 +1063,7 @@ button#confirm-reserve.btn-reserve:focus {
 
         &:nth-child(n+2){
             p{
-                font-family:"Noto Sans KR",sans-serif;
+                font-family:"pageNum5",sans-serif;
                 font-weight:500;
             }
         }
