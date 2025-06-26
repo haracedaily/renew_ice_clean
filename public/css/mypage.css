@@ -905,452 +905,6 @@
     border-top: 1px solid #e9ecef;
 }
 
-.cancel-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.cancel-btn:hover {
-    background-color: #c82333;
-}
-
-.cancel-btn:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-}
-
-.engineer-info-btn {
-    background-color: #0066cc;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.engineer-info-btn:hover {
-    background-color: #0052a3;
-}
-
-/* 예약 없음 상태 */
-.no-reservations {
-    text-align: center;
-    padding: 60px 20px;
-    color: #666;
-}
-
-.no-reservations-icon {
-    font-size: 4rem;
-    color: #ddd;
-    margin-bottom: 20px;
-}
-
-.no-reservations h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.no-reservations p {
-    margin-bottom: 30px;
-    line-height: 1.6;
-}
-
-.new-reservation-btn {
-    background: #0066cc;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.new-reservation-btn:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
-}
-
-/* 예약 필터 버튼 */
-.reservation-filters {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.filter-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  background: white;
-  color: #666;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  font-family: 'iceFont', sans-serif;
-}
-
-.filter-btn:hover {
-  background: #f8f9fa;
-  border-color: #007bff;
-  color: #007bff;
-}
-
-.filter-btn.active {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-/* 모바일에서 필터 버튼 */
-@media (max-width: 768px) {
-  .reservation-filters {
-    gap: 0.3rem;
-    margin-bottom: 1rem;
-  }
-  
-  .filter-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-    flex: 1;
-    min-width: 80px;
-    text-align: center;
-  }
-}
-
-/* 예약 통계 섹션 */
-.reservation-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.stat-item {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  border: 1px solid #ddd;
-}
-
-.stat-number {
-  display: block;
-  font-size: 24px;
-  font-weight: bold;
-  color: #0066CC;
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
-}
-
-/* 예약 내역 카드 스타일 */
-.reservation-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.reservation-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-}
-
-.reservation-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.reservation-id {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.reservation-number {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-}
-
-.reservation-status {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.status-pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-confirmed {
-    background: #d1ecf1;
-    color: #0c5460;
-}
-
-.status-completed {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-cancelled {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.status-unknown {
-    background: #e2e3e5;
-    color: #383d41;
-}
-
-.reservation-date-time {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.reservation-date-time i {
-    color: #0066cc;
-}
-
-.reservation-content {
-    margin-bottom: 20px;
-}
-
-.reservation-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.info-item label {
-    font-size: 0.85rem;
-    color: #666;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.info-item label i {
-    color: #0066cc;
-    width: 16px;
-}
-
-.info-item span {
-    font-size: 0.95rem;
-    color: #333;
-    font-weight: 500;
-}
-
-.info-item .price {
-    color: #0066cc;
-    font-weight: 600;
-}
-
-.reservation-remark {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #0066cc;
-}
-
-.reservation-remark label {
-    font-size: 0.85rem;
-    color: #666;
-    font-weight: 500;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.reservation-remark p {
-    color: #333;
-    line-height: 1.5;
-    margin: 0;
-}
-
-.reservation-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-}
-
-.cancel-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.cancel-btn:hover {
-    background-color: #c82333;
-}
-
-.cancel-btn:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-}
-
-/* SweetAlert 아이콘 커스텀 스타일 */
-.swal2-icon-custom {
-    color: #0066CC !important;
-}
-
-.swal2-icon-custom .swal2-icon-content {
-    color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-warning {
-    border-color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
-    border-color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-success {
-    border-color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-success [class^='swal2-success-circular-line'] {
-    border-color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-success .swal2-success-ring {
-    border-color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-success .swal2-success-line {
-    background-color: #0066CC !important;
-}
-
-/* SweetAlert 성공 아이콘의 체크 표시 색상 */
-div:where(.swal2-icon).swal2-success .swal2-success-line-tip {
-    background-color: #0066CC !important;
-}
-
-div:where(.swal2-icon).swal2-success .swal2-success-line-long {
-    background-color: #0066CC !important;
-}
-
-/* SweetAlert 확인 버튼 색상 */
-.swal2-confirm {
-    background-color: #0066CC !important;
-}
-
-.swal2-confirm:focus {
-    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5) !important;
-}
-
-/* 예약 상태 스타일 */
-.status-new {
-    background-color: #17a2b8;
-    color: white;
-}
-
-.status-payment-waiting {
-    background-color: #ffc107;
-    color: #212529;
-}
-
-.status-payment-completed {
-    background-color: #28a745;
-    color: white;
-}
-
-.status-assigned {
-    background-color: #fd7e14;
-    color: white;
-}
-
-.status-completed {
-    background-color: #6f42c1;
-    color: white;
-}
-
-.status-cancelled {
-    background-color: #dc3545;
-    color: white;
-}
-
-.status-unknown {
-    background-color: #6c757d;
-    color: white;
-}
-
-/* 기존 상태 스타일 유지 (호환성) */
-.status-pending {
-    background-color: #17a2b8;
-    color: white;
-}
-
-.status-confirmed {
-    background-color: #28a745;
-    color: white;
-}
-
-/* 예약 액션 버튼 스타일 */
-.reservation-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-}
-
 .detail-btn {
     background-color: #007bff;
     color: white;
@@ -1390,21 +944,6 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
 .cancel-btn:disabled {
     background-color: #6c757d;
     cursor: not-allowed;
-}
-
-/* SweetAlert2 경고 아이콘 내부까지 파란색으로 */
-div.swal2-icon.swal2-warning .swal2-icon-content {
-    color: #0066cc !important;
-}
-div.swal2-icon.swal2-warning svg path {
-    fill: #0066cc !important;
-    stroke: #0066cc !important;
-}
-div.swal2-icon.swal2-warning {
-    border-color: #0066cc !important;
-}
-div.swal2-icon.swal2-warning [class^='swal2-warning-circular-line'] {
-    border-color: #0066cc !important;
 }
 
 /* 즐겨찾기된 예약 카드 스타일 */
@@ -1530,4 +1069,122 @@ p, span, div, a, li {
   .password-input-group input {
     padding-right: 55px;
   }
+}
+
+/* 예약확인 성공 팝업만 유지하고 모든 팝업 스타일 삭제 후 새로 만들기 */
+.swal2-popup {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+.swal2-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+}
+
+.swal2-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+}
+
+.swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    color: #666 !important;
+}
+
+/* 아이콘 컨테이너 완전 새로 만들기 - 가운데 정렬 */
+.swal2-icon {
+    width: 60px !important;
+    height: 60px !important;
+    margin: 20px auto 15px auto !important;
+    border: none !important;
+    background: transparent !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+}
+
+/* 기존 아이콘 요소들 모두 완전히 숨기기 */
+.swal2-icon .swal2-icon-content,
+.swal2-icon .swal2-success-ring,
+.swal2-icon .swal2-success-line,
+.swal2-icon .swal2-success-line-tip,
+.swal2-icon .swal2-success-line-long,
+.swal2-icon .swal2-success-fix,
+.swal2-icon .swal2-x-mark,
+.swal2-icon svg,
+.swal2-icon [class^='swal2-success-circular-line'],
+.swal2-icon [class^='swal2-warning-circular-line'],
+.swal2-icon [class^='swal2-error-circular-line'] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Success 아이콘 - 체크마크 (예약확인 성공만) */
+.swal2-icon.swal2-success {
+    background: linear-gradient(135deg, #4caf50, #45a049) !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+}
+
+.swal2-icon.swal2-success::before {
+    content: '✓';
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* 버튼 영역 완전 새로 만들기 */
+.swal2-actions {
+    margin-top: 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* 확인 버튼 완전 새로 만들기 */
+.swal2-confirm {
+    background: linear-gradient(135deg, #4caf50, #45a049) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+    min-width: 80px !important;
+}
+
+.swal2-confirm:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.swal2-confirm:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5) !important;
 } 

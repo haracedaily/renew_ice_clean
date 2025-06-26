@@ -1357,4 +1357,91 @@
   .password-input-group input {
     padding-right: 55px;
   }
+}
+
+/* SweetAlert 팝업 아이콘 완전 새로 만들기 */
+.swal2-icon {
+    margin-top: 30px !important;
+    margin-bottom: 20px !important;
+    border: 2px solid #0066cc !important;
+    background: white !important;
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.swal2-html-container {
+    padding: 0 !important;
+}
+
+/* SweetAlert 제목과 내용 사이 여백 줄이기 */
+.swal2-title {
+    margin-bottom: 10px !important;
+}
+
+.swal2-html-container {
+    margin-top: 10px !important;
+}
+
+/* 기존 아이콘 요소들 모두 숨기기 */
+.swal2-icon .swal2-icon-content,
+.swal2-icon .swal2-success-ring,
+.swal2-icon .swal2-success-line,
+.swal2-icon .swal2-success-line-tip,
+.swal2-icon .swal2-success-line-long,
+.swal2-icon .swal2-success-fix,
+.swal2-icon .swal2-x-mark,
+.swal2-icon svg,
+.swal2-icon [class^='swal2-success-circular-line'],
+.swal2-icon [class^='swal2-warning-circular-line'],
+.swal2-icon [class^='swal2-error-circular-line'] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* 새로운 체크표시 만들기 */
+.swal2-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 12px;
+    background-color: #0066cc;
+    border-radius: 1px;
+}
+
+.swal2-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    width: 2px;
+    height: 8px;
+    background-color: #0066cc;
+    border-radius: 1px;
+}
+
+/* 에러 아이콘만 빨간색으로 */
+.swal2-icon.swal2-error {
+    border-color: #dc3545 !important;
+}
+
+.swal2-icon.swal2-error::before {
+    background-color: #dc3545 !important;
+}
+
+.swal2-icon.swal2-error::after {
+    background-color: #dc3545 !important;
+}
+
+/* SweetAlert 확인 버튼 색상 */
+.swal2-confirm {
+    background-color: #0066cc !important;
+}
+
+.swal2-confirm:focus {
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5) !important;
 } 

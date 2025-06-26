@@ -3,40 +3,6 @@
 @tailwind utilities;*/
 /*@import "tailwindcss";*/
 
-/* SweetAlert2 아이콘 중앙 정렬 */
-.swal2-icon {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 0 auto !important;
-}
-.swal2-icon .swal2-icon-content {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    height: 100% !important;
-}
-/* 경고 아이콘 특별 처리 */
-.swal2-warning {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 0 auto !important;
-}
-.swal2-warning .swal2-warning-circular-line-left,
-.swal2-warning .swal2-warning-circular-line-right {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-}
-.swal2-warning .swal2-warning-dot {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 0 auto !important;
-}
-
 *{
     box-sizing: border-box;
     word-break: keep-all;
@@ -600,4 +566,212 @@ body {
   .lazy-image.loaded {
     opacity: 1;
   }
+}
+
+/* 모든 팝업 아이콘을 success 스타일로 통일 */
+.swal2-icon.swal2-success,
+.swal2-icon.swal2-error,
+.swal2-icon.swal2-warning,
+.swal2-icon.swal2-info,
+.swal2-icon.swal2-question {
+    background: linear-gradient(135deg, #0066cc, #0052a3) !important;
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3) !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 모든 아이콘을 체크표시로 통일 - 위치 완전 동일하게 */
+.swal2-icon.swal2-success::before,
+.swal2-icon.swal2-error::before,
+.swal2-icon.swal2-warning::before,
+.swal2-icon.swal2-info::before,
+.swal2-icon.swal2-question::before {
+    content: '✓' !important;
+    font-size: 28px !important;
+    font-weight: bold !important;
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* 모든 SweetAlert 팝업 아이콘 스타일 통합 */
+.swal2-popup {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+.swal2-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+}
+
+.swal2-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+}
+
+.swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    color: #666 !important;
+}
+
+/* 아이콘 컨테이너 완전 새로 만들기 - 가운데 정렬 */
+.swal2-icon {
+    width: 60px !important;
+    height: 60px !important;
+    margin: 20px auto 15px auto !important;
+    border: none !important;
+    background: transparent !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+}
+
+/* 모든 ::after 가상 요소 완전히 제거 */
+.swal2-icon::after {
+    display: none !important;
+    content: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    clip: rect(0, 0, 0, 0) !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+/* 기존 아이콘 요소들 완전히 제거 - 더 강력한 방법 */
+.swal2-icon *,
+.swal2-icon .swal2-icon-content,
+.swal2-icon .swal2-success-ring,
+.swal2-icon .swal2-success-line,
+.swal2-icon .swal2-success-line-tip,
+.swal2-icon .swal2-success-line-long,
+.swal2-icon .swal2-success-fix,
+.swal2-icon .swal2-x-mark,
+.swal2-icon svg,
+.swal2-icon path,
+.swal2-icon circle,
+.swal2-icon rect,
+.swal2-icon line,
+.swal2-icon polyline,
+.swal2-icon polygon,
+.swal2-icon [class*='swal2-success'],
+.swal2-icon [class*='swal2-warning'],
+.swal2-icon [class*='swal2-error'],
+.swal2-icon [class*='swal2-info'],
+.swal2-icon [class*='swal2-question'],
+.swal2-icon [class*='circular-line'],
+.swal2-icon [class*='success-circular-line'],
+.swal2-icon [class*='warning-circular-line'],
+.swal2-icon [class*='error-circular-line'],
+.swal2-icon [class*='info-circular-line'],
+.swal2-icon [class*='question-circular-line'] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    clip: rect(0, 0, 0, 0) !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+/* 버튼 영역 완전 새로 만들기 */
+.swal2-actions {
+    margin-top: 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* 확인 버튼 완전 새로 만들기 */
+.swal2-confirm {
+    background: linear-gradient(135deg, #4caf50, #45a049) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+    min-width: 80px !important;
+}
+
+.swal2-confirm:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.swal2-confirm:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5) !important;
+}
+
+/* 취소 버튼 완전 새로 만들기 */
+.swal2-cancel {
+    background: linear-gradient(135deg, #f44336, #d32f2f) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3) !important;
+    min-width: 80px !important;
+}
+
+.swal2-cancel:hover {
+    background: linear-gradient(135deg, #d32f2f, #c62828) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4) !important;
+}
+
+.swal2-cancel:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.5) !important;
 }

@@ -176,7 +176,7 @@ header {
 }
 #r-container {
     margin: 0 auto;
-    max-width: 900px;
+    max-width: 1136px;
     padding: 24px 30px 64px;
     overflow-y: auto;
     height: auto;
@@ -940,14 +940,17 @@ button#confirm-reserve.btn-reserve:focus {
   display: none !important;
 }
 
-/* 로그???�보 ?�시 */
+/* 로그인 정보 표시 */
 .login-info {
-    background: #0066cc; 
+    background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
+    height: 114px;
     padding: 15px 20px;
     border-radius: 8px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
 }
 
 .login-info-content {
@@ -961,7 +964,25 @@ button#confirm-reserve.btn-reserve:focus {
     font-size: 18px;
 }
 
-/* ?�기 ?�용 ?�드 ?��???*/
+/* 기존 ?????? */
+.toptxt {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.toptxt h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.3;
+}
+
+/* ?��? ?�래??*/
+.hidden2 {
+  display: none !important;
+}
+
+/* ?기 ?용 ?드 ????*/
 .form-input[readonly] {
     background-color: #f8f9fa;
     color: #6c757d;
@@ -1017,4 +1038,209 @@ button#confirm-reserve.btn-reserve:focus {
         }
 
     }
+}
+
+/* 예약확인 성공 팝업만 유지하고 모든 팝업 스타일 삭제 후 새로 만들기 */
+.swal2-popup {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+.swal2-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+}
+
+.swal2-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+}
+
+.swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    color: #666 !important;
+}
+
+/* 아이콘 컨테이너 완전 새로 만들기 - 가운데 정렬 */
+.swal2-icon {
+    width: 60px !important;
+    height: 60px !important;
+    margin: 20px auto 15px auto !important;
+    border: none !important;
+    background: transparent !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+}
+
+/* 기존 아이콘 요소들 모두 완전히 숨기기 */
+.swal2-icon .swal2-icon-content,
+.swal2-icon .swal2-success-ring,
+.swal2-icon .swal2-success-line,
+.swal2-icon .swal2-success-line-tip,
+.swal2-icon .swal2-success-line-long,
+.swal2-icon .swal2-success-fix,
+.swal2-icon .swal2-x-mark,
+.swal2-icon svg,
+.swal2-icon [class^='swal2-success-circular-line'],
+.swal2-icon [class^='swal2-warning-circular-line'],
+.swal2-icon [class^='swal2-error-circular-line'] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* 예약하기완료 아이콘 - 체크마크 (색상만 #0066CC로 변경) */
+.swal2-icon.swal2-success {
+    background: linear-gradient(135deg, #0066cc, #0052a3) !important;
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3) !important;
+}
+
+.swal2-icon.swal2-success::before {
+    content: '✓';
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* Error 아이콘 - X표시 (회원가입실패, 로그인실패) */
+.swal2-icon.swal2-error {
+    background: linear-gradient(135deg, #f44336, #d32f2f) !important;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3) !important;
+}
+
+.swal2-icon.swal2-error::before {
+    content: '✕';
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* Warning 아이콘 - 느낌표 (로그인필요, 확인필요) */
+.swal2-icon.swal2-warning {
+    background: linear-gradient(135deg, #ff9800, #f57c00) !important;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3) !important;
+}
+
+.swal2-icon.swal2-warning::before {
+    content: '!';
+    font-size: 26px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* Info 아이콘 - i표시 (정보성 팝업) */
+.swal2-icon.swal2-info {
+    background: linear-gradient(135deg, #2196f3, #1976d2) !important;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3) !important;
+}
+
+.swal2-icon.swal2-info::before {
+    content: 'i';
+    font-size: 22px;
+    font-weight: bold;
+    font-style: italic;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* Question 아이콘 - 물음표 (확인질문) */
+.swal2-icon.swal2-question {
+    background: linear-gradient(135deg, #9c27b0, #7b1fa2) !important;
+    box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3) !important;
+}
+
+.swal2-icon.swal2-question::before {
+    content: '?';
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* 버튼 영역 완전 새로 만들기 */
+.swal2-actions {
+    margin-top: 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* 확인 버튼 완전 새로 만들기 */
+.swal2-confirm {
+    background: linear-gradient(135deg, #4caf50, #45a049) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+    min-width: 80px !important;
+}
+
+.swal2-confirm:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.swal2-confirm:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5) !important;
+}
+
+/* 취소 버튼 완전 새로 만들기 */
+.swal2-cancel {
+    background: linear-gradient(135deg, #f44336, #d32f2f) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3) !important;
+    min-width: 80px !important;
+}
+
+.swal2-cancel:hover {
+    background: linear-gradient(135deg, #d32f2f, #c62828) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4) !important;
+}
+
+.swal2-cancel:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.5) !important;
 }
