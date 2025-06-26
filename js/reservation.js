@@ -158,7 +158,7 @@ function showLoginInfo() {
         loginInfoDiv.innerHTML = `
             <div class="login-info-content">
                 <i class="fas fa-user-check"></i>
-                <span>로그인된 사용자: ${userInfo.name || userInfo.email}</span>
+                <h1>로그인된 사용자: ${userInfo.name || userInfo.email}</h1>
             </div>
         `;
         

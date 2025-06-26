@@ -1157,30 +1157,29 @@ async function showReservationMap(address, reservationId, customerName = '') {
         if (!address || address.trim() === '') {
             console.error('주소가 비어있습니다:', address);
             Swal.fire({
-                icon: 'error',
                 title: '주소 없음',
                 text: '표시할 주소가 없습니다.',
-                confirmButtonColor: '#0066cc'
+                confirmButtonText: '확인',
+                confirmButtonColor: '#0066cc',
+                customClass: {
+                    popup: 'no-icon-popup'
+                }
             });
             return;
         }
         
-        // 주소 파싱: 우편번호, 기본주소, 상세주소 분리
-        const addressParts = address.split(' ');
-        let searchAddress = '';
-        let displayAddress = '';
+        // 주소 파싱: 우편번호 제거 및 정리
+        let searchAddress = address.trim();
+        let displayAddress = address.trim();
         
-        // 우편번호는 제외하고 나머지 주소 부분만 사용
-        if (addressParts.length >= 2) {
-            // 우편번호(첫 번째)를 제외한 나머지 주소 부분
-            searchAddress = addressParts.slice(1).join(' ');
-            displayAddress = addressParts.slice(1).join(' ');
-        } else {
-            searchAddress = address;
-            displayAddress = address;
-        }
+        // 우편번호 패턴 제거 (5자리 또는 6자리 숫자)
+        searchAddress = searchAddress.replace(/^\d{5,6}\s*/, '');
         
-        console.log('파싱된 주소:', { searchAddress, displayAddress });
+        // 주소 정리 (연속된 공백 제거)
+        searchAddress = searchAddress.replace(/\s+/g, ' ').trim();
+        displayAddress = displayAddress.replace(/\s+/g, ' ').trim();
+        
+        console.log('정리된 주소:', { searchAddress, displayAddress });
         
         const mapId = `swal-map-${reservationId}`;
         const titleText = customerName ? `${customerName}님 서비스 주소` : `예약 #${reservationId} 서비스 주소`;
@@ -1192,36 +1191,73 @@ async function showReservationMap(address, reservationId, customerName = '') {
             showConfirmButton: true,
             confirmButtonText: '닫기',
             confirmButtonColor: '#0066cc',
+            customClass: {
+                popup: 'no-icon-popup'
+            },
             didOpen: () => {
                 console.log('SweetAlert 열림, 지도 초기화 시작');
+                
+                // swal2-icon 요소 완전 제거
+                setTimeout(() => {
+                    const swalIcons = document.querySelectorAll('.swal2-icon');
+                    swalIcons.forEach(icon => {
+                        icon.remove();
+                    });
+                }, 100);
+                
                 const geocoder = new kakao.maps.services.Geocoder();
                 
-                // 단계별 주소 검색 함수
+                // 개선된 주소 검색 함수
                 const searchAddressStep = (searchText, step = 1) => {
                     console.log(`주소 검색 시도 ${step}:`, searchText);
                     
                     geocoder.addressSearch(searchText, function(result, status) {
                         console.log(`주소 검색 결과 ${step}:`, { result, status });
                         
-                        if (status === kakao.maps.services.Status.OK) {
+                        if (status === kakao.maps.services.Status.OK && result && result.length > 0) {
                             const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                            console.log('찾은 좌표:', coords);
+                            
                             const map = new kakao.maps.Map(document.getElementById(mapId), {
                                 center: coords,
                                 level: 3
                             });
-                            const marker = new kakao.maps.Marker({ position: coords });
-                            marker.setMap(map);
-                            const infowindow = new kakao.maps.InfoWindow({
-                                content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">${displayAddress}</p></div>`
+                            
+                            const marker = new kakao.maps.Marker({ 
+                                position: coords,
+                                map: map
                             });
+                            
+                            const infowindow = new kakao.maps.InfoWindow({
+                                content: `<div style="padding:10px;min-width:200px;">
+                                    <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">
+                                        ${customerName ? customerName + '님' : '예약 #' + reservationId}
+                                    </h4>
+                                    <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">
+                                        ${displayAddress}
+                                    </p>
+                                </div>`
+                            });
+                            
+                            // 마커 클릭 시 인포윈도우 표시
+                            kakao.maps.event.addListener(marker, 'click', function() {
+                                infowindow.open(map, marker);
+                            });
+                            
+                            // 마커에 마우스 오버 시 인포윈도우 표시
                             kakao.maps.event.addListener(marker, 'mouseover', function() {
                                 infowindow.open(map, marker);
                             });
+                            
+                            // 마커에서 마우스 아웃 시 인포윈도우 닫기
                             kakao.maps.event.addListener(marker, 'mouseout', function() {
                                 infowindow.close();
                             });
-                            console.log('지도 표시 완료');
+                            
+                            console.log('지도 표시 완료 - 정확한 위치:', searchText);
                         } else {
+                            console.log(`주소 검색 실패 ${step}:`, searchText);
+                            
                             // 다음 단계로 진행
                             if (step === 1) {
                                 // 1단계 실패: 원본 주소로 재시도
@@ -1251,30 +1287,49 @@ async function showReservationMap(address, reservationId, customerName = '') {
                         center: coords,
                         level: 3
                     });
-                    const marker = new kakao.maps.Marker({ position: coords });
-                    marker.setMap(map);
-                    const infowindow = new kakao.maps.InfoWindow({
-                        content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>원본 주소: ${address}</p></div>`
+                    const marker = new kakao.maps.Marker({ 
+                        position: coords,
+                        map: map
                     });
+                    const infowindow = new kakao.maps.InfoWindow({
+                        content: `<div style="padding:10px;min-width:200px;">
+                            <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">
+                                ${customerName ? customerName + '님' : '예약 #' + reservationId}
+                            </h4>
+                            <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">
+                                주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>
+                                원본 주소: ${address}
+                            </p>
+                        </div>`
+                    });
+                    
+                    kakao.maps.event.addListener(marker, 'click', function() {
+                        infowindow.open(map, marker);
+                    });
+                    
                     kakao.maps.event.addListener(marker, 'mouseover', function() {
                         infowindow.open(map, marker);
                     });
+                    
                     kakao.maps.event.addListener(marker, 'mouseout', function() {
                         infowindow.close();
                     });
                 };
                 
-                // 1단계: 파싱된 주소로 검색 시작
+                // 1단계: 정리된 주소로 검색 시작
                 searchAddressStep(searchAddress, 1);
             }
         });
     } catch (error) {
         console.error('지도 표시 오류:', error);
         Swal.fire({
-            icon: 'error',
             title: '지도 표시 실패',
             text: '지도를 불러오는 중 오류가 발생했습니다.',
-            confirmButtonColor: '#0066cc'
+            confirmButtonText: '확인',
+            confirmButtonColor: '#0066cc',
+            customClass: {
+                popup: 'no-icon-popup'
+            }
         });
     }
 }

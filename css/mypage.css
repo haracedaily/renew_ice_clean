@@ -130,6 +130,32 @@
   .mobile-nav-link:hover {
     background-color: #f8f9fa;
   }
+  
+  /* 모바일에서 즐겨찾기 버튼 스타일 */
+  .favorite-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .favorite-star {
+    font-size: 14px !important;
+    margin-left: 6px !important;
+  }
+  
+  /* 모바일에서 사용자 정보 크기 조정 */
+  .user-avatar img {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .user-name {
+    font-size: 1.6rem;
+  }
+  
+  .user-info {
+    padding: 1.5rem;
+    gap: 0.8rem;
+  }
 }
 
 @media (min-width: 769px) {
@@ -479,14 +505,14 @@
 }
 
 .user-avatar img {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .user-name {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
   margin: 0;
   color: #333;
@@ -1231,19 +1257,6 @@
   font-size: 1rem;
 }
 
-/* 모바일에서 즐겨찾기 버튼 스타일 */
-@media (max-width: 768px) {
-  .favorite-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
-  
-  .favorite-star {
-    font-size: 14px !important;
-    margin-left: 6px !important;
-  }
-}
-
 /* 삭제 버튼 스타일 */
 .delete-btn {
     background: #dc3545;
@@ -1444,4 +1457,56 @@
 
 .swal2-confirm:focus {
     box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5) !important;
+}
+
+/* 지도보기 팝업에서 swal2-icon 완전 숨기기 */
+.swal2-popup .swal2-icon {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 더 강력한 규칙으로 swal2-icon 숨기기 */
+.swal2-popup .swal2-icon,
+.swal2-popup div.swal2-icon,
+.swal2-popup [class*="swal2-icon"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+}
+
+/* 지도보기 팝업에서 아이콘 완전 제거 */
+.no-icon-popup .swal2-icon {
+    display: none !important;
+}
+
+.no-icon-popup .swal2-icon::before,
+.no-icon-popup .swal2-icon::after {
+    display: none !important;
+}
+
+/* 모든 swal2-icon 완전 제거 */
+.swal2-icon {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    pointer-events: none !important;
 } 
