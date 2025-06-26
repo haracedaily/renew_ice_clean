@@ -1188,7 +1188,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         Swal.fire({
             title: titleText,
             html: `<div id="${mapId}" style="width:400px;height:300px;border-radius:8px;"></div>`,
-            width: '450px',
+            width: '420px',
             showConfirmButton: true,
             confirmButtonText: '닫기',
             confirmButtonColor: '#0066cc',
