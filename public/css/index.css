@@ -1289,6 +1289,7 @@ footer {
     display: flex;
     gap: 10px;
     margin-right: 10px;
+    justify-content: center;
 }
 
 .address-input {
