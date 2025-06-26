@@ -10,7 +10,21 @@ let currentRouteInfo = null; // 현재 표시된 경로 정보
 
 // 현재 위치 가져오기
 function getCurrentLocation() {
-    if (navigator.geolocation) {
+    if (!navigator.geolocation) {
+        console.error('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+        alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+        return;
+    }
+
+    // 위치 권한 확인
+    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+        if (result.state === 'denied') {
+            console.log('위치 정보 접근이 거부되었습니다.');
+            alert('위치 정보 접근이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해주세요.');
+            return;
+        }
+        
+        // 위치 정보 가져오기
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const latitude = position.coords.latitude;
@@ -45,17 +59,78 @@ function getCurrentLocation() {
                     
                     // 현재 위치에서 카페/커피점 검색 (200m 반경)
                     searchNearbyCafes();
+                } else {
+                    console.log('카카오맵 API가 로드되지 않았습니다.');
                 }
             },
             (error) => {
                 console.error('위치 정보를 가져오는데 실패했습니다:', error);
-                alert('위치 정보를 가져오는데 실패했습니다.');
+                let errorMessage = '위치 정보를 가져오는데 실패했습니다.';
+                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = '위치 정보 접근이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해주세요.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = '위치 정보를 사용할 수 없습니다.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = '위치 정보 요청 시간이 초과되었습니다.';
+                        break;
+                    default:
+                        errorMessage = '알 수 없는 오류가 발생했습니다.';
+                        break;
+                }
+                
+                alert(errorMessage);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
             }
         );
-    } else {
-        console.error('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
-        alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
-    }
+    }).catch(function(error) {
+        console.error('위치 권한 확인 중 오류:', error);
+        // 권한 확인이 실패해도 위치 정보 요청 시도
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                
+                currentPosition = {
+                    lat: latitude,
+                    lng: longitude
+                };
+                
+                console.log('현재 위치:', latitude, longitude);
+                
+                if (typeof kakao !== 'undefined' && map) {
+                    const currentPos = new kakao.maps.LatLng(latitude, longitude);
+                    map.setCenter(currentPos);
+                    
+                    if (currentMarker) {
+                        currentMarker.setMap(null);
+                    }
+                    
+                    currentMarker = new kakao.maps.Marker({
+                        position: currentPos,
+                        map: map,
+                        image: new kakao.maps.MarkerImage(
+                            './image/user.png',
+                            new kakao.maps.Size(30, 30)
+                        )
+                    });
+                    
+                    searchNearbyCafes();
+                }
+            },
+            (error) => {
+                console.error('위치 정보 요청 실패:', error);
+                alert('위치 정보를 가져올 수 없습니다. 수동으로 주소를 입력해주세요.');
+            }
+        );
+    });
 }
 
 // 지도 초기화 함수

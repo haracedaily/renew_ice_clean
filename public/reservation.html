@@ -232,11 +232,13 @@
           document.getElementById('postcode').value = data.zonecode;
           document.getElementById('address').value = addr;
 
-          // 지도에 마커 표시
-          searchAddress(addr);
-
           // 상세주소 입력란으로 커서 이동
           document.getElementById('detailAddress').focus();
+          
+          // 지도 업데이트
+          if (typeof updateReservationMapWithAddress === 'function') {
+            updateReservationMapWithAddress();
+          }
         }
       }).open();
     }

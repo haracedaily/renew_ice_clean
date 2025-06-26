@@ -1,10 +1,102 @@
 console.log('예약 JavaScript 파일 로드됨');
 
+// 전역 변수 선언 (예약 페이지 전용)
+let reservationMap = null;
+let reservationMarker = null;
+let reservationInfowindow = null;
+let reservationGeocoder = null;
+
 // Supabase 클라이언트 생성
 const SUPABASE_URL = 'https://wqetnltlnsvjidubewia.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
 if (!window.supabase) {
     window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+// 지도 초기화 함수
+function initReservationMap() {
+    if (reservationMap) return;
+    
+    const container = document.getElementById('map');
+    if (!container) {
+        console.error('지도 컨테이너 없음');
+        return;
+    }
+    
+    const options = {
+        center: new kakao.maps.LatLng(37.566826, 126.978656), // 서울시청
+        level: 3
+    };
+    
+    reservationMap = new kakao.maps.Map(container, options);
+    reservationGeocoder = new kakao.maps.services.Geocoder();
+    
+    console.log('예약 페이지 지도 초기화 완료');
+}
+
+// 주소 검색 함수
+function searchReservationAddress() {
+    const addressInput = document.getElementById('address');
+    if (!addressInput || !addressInput.value) {
+        alert('주소를 먼저 검색해주세요.');
+        return;
+    }
+
+    const address = addressInput.value;
+    
+    // 기존 마커와 인포윈도우 제거
+    if (reservationMarker) {
+        reservationMarker.setMap(null);
+    }
+    if (reservationInfowindow) {
+        reservationInfowindow.close();
+    }
+
+    reservationGeocoder.addressSearch(address, function(results, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(results[0].y, results[0].x);
+            
+            // 지도 중심 이동
+            reservationMap.setCenter(coords);
+            
+            // 마커 생성
+            reservationMarker = new kakao.maps.Marker({
+                position: coords,
+                map: reservationMap
+            });
+            
+            // 인포윈도우 생성
+            const content = `
+                <div style="padding:10px;min-width:200px;">
+                    <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
+                    <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${address}</p>
+                </div>
+            `;
+            
+            reservationInfowindow = new kakao.maps.InfoWindow({
+                content: content,
+                position: coords
+            });
+            
+            reservationInfowindow.open(reservationMap, reservationMarker);
+            
+            console.log('주소 검색 완료:', address);
+        } else {
+            alert('주소를 찾을 수 없습니다.');
+            console.error('주소 검색 실패:', status);
+        }
+    });
+}
+
+// 다음 우편번호 API 주소 선택 후 지도 업데이트
+function updateReservationMapWithAddress() {
+    const addressInput = document.getElementById('address');
+    if (addressInput && addressInput.value) {
+        // 약간의 지연 후 지도 업데이트 (다음 우편번호 API 완료 대기)
+        setTimeout(() => {
+            searchReservationAddress();
+        }, 500);
+    }
 }
 
 // 예약자 자동입력 (로그인정보 있을때)
@@ -199,16 +291,12 @@ function setupFormSubmission() {
                     Swal.fire({
                         title: '예약이 완료되었습니다!',
                         icon: 'success',
-                        text: '예약이 성공적으로 저장되었습니다.',
-                        confirmButtonText: '확인',
-                        confirmButtonColor: '#0066cc',
-                        customClass: {
-                            icon: 'swal2-icon-success-custom'
-                        }
+                        text: '예약이 성공적으로 저장되었습니다. 마이페이지로 이동합니다.',
+                        confirmButtonText: '마이페이지로 이동',
+                        confirmButtonColor: '#0066cc'
                     }).then(() => {
-                        // 폼 초기화
-                        form.reset();
-                        location.reload();
+                        // 마이페이지로 이동
+                        window.location.href = './mypage.html';
                     });
                 }
             } catch (err) {
@@ -248,6 +336,9 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // 전화번호 포맷팅
     setupPhoneFormatting();
+    
+    // 지도 초기화
+    initReservationMap();
     
     console.log('초기화 완료');
 });

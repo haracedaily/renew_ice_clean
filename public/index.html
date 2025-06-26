@@ -57,6 +57,16 @@
         div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
             border-color: #0066CC !important;
         }
+        /* 성공 아이콘 스타일 수정 */
+        div:where(.swal2-icon).swal2-success.swal2-success-ring {
+            border-color: #0066cc !important;
+        }
+        div:where(.swal2-icon).swal2-success.swal2-success-ring [class^='swal2-success-circular-line'] {
+            border-color: #0066cc !important;
+        }
+        div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
+            background-color: #0066cc !important;
+        }
     </style>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">

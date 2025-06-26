@@ -227,11 +227,13 @@
           document.getElementById('postcode').value = data.zonecode;
           document.getElementById('address').value = addr;
 
-          // 지도에 마커 표시
-          searchAddress(addr);
-
           // 상세주소 입력란으로 커서 이동
           document.getElementById('detailAddress').focus();
+          
+          // 지도 업데이트
+          if (typeof updateReservationMapWithAddress === 'function') {
+            updateReservationMapWithAddress();
+          }
         }
       }).open();
     }
@@ -361,20 +363,20 @@
           <label>예약 시간</label>
           <div class="time-options">
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="10:00~12:00" class="reservationTime">
-              <span>10:00~12:00</span>
+              <input type="radio" name="reservation-time" value="10:00" class="reservationTime">
+              <span>10:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="12:00~14:00" class="reservationTime">
-              <span>12:00~14:00</span>
+              <input type="radio" name="reservation-time" value="12:00" class="reservationTime">
+              <span>12:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="14:00~16:00" class="reservationTime">
-              <span>14:00~16:00</span>
+              <input type="radio" name="reservation-time" value="14:00" class="reservationTime">
+              <span>14:00</span>
             </label>
             <label class="time-option">
-              <input type="radio" name="reservation-time" value="16:00~18:00" class="reservationTime">
-              <span>16:00~18:00</span>
+              <input type="radio" name="reservation-time" value="16:00" class="reservationTime">
+              <span>16:00</span>
             </label>
           </div>
         </div>
@@ -501,6 +503,11 @@
 
           // 상세주소 입력란으로 커서 이동
           document.getElementById('detailAddress').focus();
+          
+          // 지도 업데이트
+          if (typeof updateReservationMapWithAddress === 'function') {
+            updateReservationMapWithAddress();
+          }
         }
       }).open();
     }

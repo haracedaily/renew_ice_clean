@@ -844,6 +844,11 @@ function displayReservations(reservations) {
                             <i class="fas fa-times"></i> 예약 취소
                         </button>
                     ` : ''}
+                    ${reservation.state === 6 ? `
+                        <button class="delete-btn" onclick="deleteReservation('${reservation.res_no}')" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: 8px;">
+                            <i class="fas fa-trash"></i> 삭제
+                        </button>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -878,6 +883,48 @@ function formatDate(dateString) {
         month: 'long',
         day: 'numeric'
     });
+}
+
+// 예약 삭제
+async function deleteReservation(reservationId) {
+    const result = await Swal.fire({
+        title: '예약 삭제',
+        text: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제하기',
+        cancelButtonText: '돌아가기',
+        confirmButtonColor: '#dc3545',
+        dangerMode: true
+    });
+    
+    if (result.isConfirmed) {
+        try {
+            const { error } = await window.supabase
+                .from('reservation')
+                .delete()
+                .eq('res_no', reservationId);
+                
+            if (error) throw error;
+            
+            Swal.fire({
+                icon: 'success',
+                title: '예약 삭제 완료',
+                text: '예약이 성공적으로 삭제되었습니다.'
+            });
+            
+            // 예약 내역 새로고침
+            loadUserReservations();
+            
+        } catch (error) {
+            console.error('예약 삭제 오류:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '예약 삭제 실패',
+                text: '예약 삭제 중 오류가 발생했습니다.'
+            });
+        }
+    }
 }
 
 // 예약 취소
