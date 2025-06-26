@@ -1271,7 +1271,7 @@ footer {
 
 .map-controls {
     position: relative;
-    width: 50% !important;
+    width: 80% !important;
     margin: 0 auto !important;
     display: block !important;
     z-index: 1;
