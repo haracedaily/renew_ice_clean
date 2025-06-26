@@ -129,19 +129,8 @@ async function noticeSelect(categoryId) {
 
     const pagingContainer = document.querySelector('#paging-container');
     pagingContainer.innerHTML = "";
-    for (let i = 1; i <= maxPage; i++) {
-        const pageLink = document.createElement("a");
-        pageLink.href = `?category_id=${categoryId}&pageNum=${i}`;
-        pageLink.textContent = i;
-        pageLink.style.fontFamily = 'pageNum3';
-
-        if (i === pageNum) {
-            pageLink.style.fontWeight = "bold";
-            pageLink.style.color = "#B8001F";
-        }
-        pagingContainer.appendChild(pageLink);
-    }
-
+    pagingContainer.style.display = "none";
+    
     if (params.get('category_id') !== categoryId.toString()) {
         pageNum = 1;
         [from, to] = [(pageNum - 1) * itemPerPage, pageNum * itemPerPage - 1];

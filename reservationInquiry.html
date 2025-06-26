@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ICECARE 예약조회</title>
+    <link rel="icon" type="image/png" href="/image/FAB.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="./css/reservationInquiry.css">
@@ -71,6 +72,22 @@
             }
             div:where(.swal2-icon).swal2-warning [class^='swal2-warning-circular-line'] {
                 border-color: #0066CC !important;
+            }
+            /* 팝업 상단 여백 추가 */
+            .swal2-popup {
+                padding-top: 20px !important;
+                margin-top: 20px !important;
+            }
+            .swal2-title {
+                margin-top: 10px !important;
+                padding-top: 10px !important;
+            }
+            .swal2-html-container {
+                margin-top: 10px !important;
+            }
+            /* 팝업 전체 여백 조정 */
+            .swal2-container {
+                padding: 20px !important;
             }
         `;
         document.head.appendChild(style);

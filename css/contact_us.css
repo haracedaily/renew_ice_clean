@@ -6,7 +6,7 @@
 }
 
 @font-face {
-    font-family: 'iceFont';
+    font-family: 'GmarketSansMedium';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
@@ -14,7 +14,7 @@
 
 
 * {
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 
 body {
@@ -23,6 +23,7 @@ body {
     flex-direction: column;
     margin-bottom: 10vh;
     overflow-y: auto;
+    font-family: 'GmarketSansMedium';
 }
 
 .navbar {
@@ -121,7 +122,7 @@ nav button:hover {
     cursor: pointer;
 }
 
-/*페이지*/
+/*?�이지*/
 .pagination {
     display: flex;
     justify-content: center;
@@ -178,7 +179,7 @@ nav button:hover {
     line-height: 1.5;
     color: #444;
     transition: all 0.3s ease;
-    display: none; /* 기본은 감춤 */
+    display: none; /* 기본?� 감춤 */
 }
 
 .faq-answer.show {

@@ -1,16 +1,16 @@
 @font-face {
-    font-family: 'iceFont';
+    font-family: 'GmarketSansMedium';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
 * {
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 
 body {
-    font-family: 'iceFont', sans-serif;
+    font-family: 'GmarketSansMedium';
 }
 
 button,
@@ -23,7 +23,7 @@ input,
 textarea,
 h1, h2, h3, h4, h5, h6,
 p, span, div, a, li {
-    font-family: 'iceFont', sans-serif !important;
+    font-family: 'GmarketSansMedium', sans-serif !important;
 }
 
 @font-face {
@@ -762,7 +762,7 @@ footer {
     animation: fadeInUp 1500ms forwards 1;
 }
 
-/* 서브헤더 */
+/* ?브?더 */
 #sub_header {
     position: relative;
     width: 100%;
@@ -901,9 +901,9 @@ footer {
     margin: 56px 0 32px 0 !important;
 }
 
-/* 프로세스 시작 */
+/* ?로?스 ?작 */
 
-/* section1 스타일 */
+/* section1 ????*/
 .info-section {
     margin: 0 !important;
     padding: 0 !important;
@@ -977,7 +977,7 @@ footer {
     }
 }
 
-/* section2 스타일 */
+/* section2 ????*/
 .section2-bg {
     margin: 0 !important;
     padding: 0 !important;
@@ -1052,7 +1052,7 @@ footer {
     }
 }
 
-/* 페이드 인 효과 */
+/* ?이?????과 */
 .fade-in-on-scroll {
     opacity: 0;
     transform: translateY(40px);
@@ -1174,7 +1174,7 @@ footer {
     background: #eaf2ff;
 }
 
-/* 지도 섹션 스타일 */
+/* 지???션 ????*/
 #section4 {
     padding: 40px 10px;
     max-width: 100%;
@@ -1197,7 +1197,7 @@ footer {
     color: #666;
 }
 
-/* 지도 반응형 스타일 */
+/* 지??반응???*/
 @media (max-width: 768px) {
     #section4 {
         padding: 20px 5px;
@@ -1258,13 +1258,15 @@ footer {
 /* 지도 스타일 */
 .map-container {
     position: relative;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: calc(100vw - 40px);
+    max-width: calc(100vw - 40px);
+    margin: 0 20px;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-left: calc(-50vw + 50% + 20px);
+    margin-right: calc(-50vw + 50% + 20px);
 }
 
 .map-controls {
@@ -1319,13 +1321,13 @@ footer {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 프랜차이즈점 마커 스타일 */
+/* ?랜차이즈점 마커 ????*/
 .franchise-marker {
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* 프랜차이즈점 인포윈도우 스타일 */
+/* ?랜차이즈점 ?포도???*/
 .franchise-infowindow {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1368,7 +1370,7 @@ footer {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* SweetAlert2 경고 아이콘 내부까지 파란색으로 */
+/* SweetAlert2 경고 ?이까? ?으?*/
 div.swal2-icon.swal2-warning .swal2-icon-content {
     color: #0066cc !important;
 }
