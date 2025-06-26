@@ -1,4 +1,32 @@
 @font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'GmarketSansMedium', sans-serif;
+}
+
+body {
+    font-family: 'GmarketSansMedium';
+}
+
+button,
+.reservation-card,
+.form-section,
+#side_btn_group span,
+.stat-item,
+.tab-btn,
+input,
+textarea,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li {
+    font-family: 'GmarketSansMedium', sans-serif !important;
+}
+
+@font-face {
     font-family: 'pageNum';
     src: url('../font/page.ttf') format('truetype');
     font-weight: normal;
@@ -33,12 +61,6 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'GmarketSansMedium';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
 #side_btn_group{
     background-color:rgba(217,217,217,0.7);
     span{
@@ -748,7 +770,7 @@ body {
     animation: fadeInUp 1500ms forwards 1;
 }
 
-/* ?브?더 */
+/* ?브더 */
 #sub_header {
     position: relative;
     width: 100%;
@@ -887,7 +909,7 @@ body {
     margin: 56px 0 32px 0 !important;
 }
 
-/* ?로?스 ?작 */
+/* ?로스 작 */
 
 /* section1 ????*/
 .info-section {
@@ -1268,7 +1290,9 @@ body {
 
 .map-controls {
     position: relative;
-    width: 100%;
+    width: 50% !important;
+    margin: 0 auto !important;
+    display: block !important;
     z-index: 1;
     display: flex;
     flex-direction: row;
@@ -1312,8 +1336,10 @@ body {
 }
 
 #map {
-    width: 100%;
-    height: 600px;
+    width: 80% !important;
+    height: 500px !important;
+    margin: 0 auto !important;
+    display: block !important;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

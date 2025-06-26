@@ -245,11 +245,9 @@ header {
     flex-direction: row;
     align-items: center;
 }
-input[type = "radio"]{
-    
-    
-    margin-right: 10px;
-    cursor: pointer;
+input[type="radio"] {
+    width: 15px;
+    height: 20px;
 }
 .r-info{
     display: flex;
@@ -766,7 +764,7 @@ input[type = "radio"]{
   flex: 1;
   margin-top: 0;
   align-self: center;
-  font-size: 25px;
+  font-size: 21px;
   font-weight: 500;
 }
 
