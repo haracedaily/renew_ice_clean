@@ -143,8 +143,18 @@ function setupPasswordToggle(passwordInputId, toggleButtonId) {
         const type = passwordInput.type === 'password' ? 'text' : 'password';
         passwordInput.type = type;
         
-        // 아이콘 변경
-        this.innerHTML = type === 'password' ? '👁️' : '🙈';
+        // FontAwesome 아이콘 변경
+        const icon = this.querySelector('i');
+        if (icon) {
+            if (type === 'password') {
+                icon.className = 'fas fa-eye';
+                this.classList.remove('show-password');
+            } else {
+                icon.className = 'fas fa-eye-slash';
+                this.classList.add('show-password');
+            }
+        }
+        
         this.title = type === 'password' ? '패스워드 표시' : '패스워드 숨김';
     });
 }

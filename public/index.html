@@ -67,6 +67,38 @@
         div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
             background-color: #0066cc !important;
         }
+        /* 성공 아이콘 크기 조정 */
+        div:where(.swal2-icon).swal2-success {
+            width: 80px !important;
+            height: 80px !important;
+            border-width: 4px !important;
+        }
+        div:where(.swal2-icon).swal2-success [class^='swal2-success-line'] {
+            height: 4px !important;
+            border-radius: 2px !important;
+        }
+        div:where(.swal2-icon).swal2-success .swal2-success-line-tip {
+            width: 25px !important;
+            left: 14px !important;
+            top: 46px !important;
+        }
+        div:where(.swal2-icon).swal2-success .swal2-success-line-long {
+            width: 47px !important;
+            right: 8px !important;
+            top: 38px !important;
+        }
+        div:where(.swal2-icon).swal2-success .swal2-success-circular-line-left {
+            width: 40px !important;
+            height: 80px !important;
+            left: -4px !important;
+            top: -4px !important;
+        }
+        div:where(.swal2-icon).swal2-success .swal2-success-circular-line-right {
+            width: 40px !important;
+            height: 80px !important;
+            right: -4px !important;
+            top: -4px !important;
+        }
     </style>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full" oncontextmenu="return false">

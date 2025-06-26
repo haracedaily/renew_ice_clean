@@ -8,129 +8,99 @@ let currentMarker = null;
 let currentRoute = null; // 현재 표시된 경로
 let currentRouteInfo = null; // 현재 표시된 경로 정보
 
-// 현재 위치 가져오기
-function getCurrentLocation() {
+// 간단한 현재위치 테스트 함수
+function testCurrentLocation() {
+    console.log('=== 현재위치 테스트 시작 ===');
+    
+    // 1. 브라우저 지원 확인
     if (!navigator.geolocation) {
-        console.error('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+        console.error('❌ 이 브라우저에서는 위치 정보를 지원하지 않습니다.');
         alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
         return;
     }
-
-    // 위치 권한 확인
-    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
-        if (result.state === 'denied') {
-            console.log('위치 정보 접근이 거부되었습니다.');
-            alert('위치 정보 접근이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해주세요.');
-            return;
+    console.log('✅ 브라우저에서 위치 정보 지원됨');
+    
+    // 2. 간단한 위치 정보 요청
+    console.log('📍 위치 정보 요청 중...');
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            console.log('✅ 위치 정보 성공!');
+            console.log('위도:', position.coords.latitude);
+            console.log('경도:', position.coords.longitude);
+            console.log('정확도:', position.coords.accuracy, '미터');
+            
+            // 전역 변수에 저장
+            currentPosition = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            
+            // 지도에 표시
+            if (typeof kakao !== 'undefined' && map) {
+                const currentPos = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                map.setCenter(currentPos);
+                map.setLevel(3);
+                
+                // 현재 위치 마커 생성
+                if (currentMarker) {
+                    currentMarker.setMap(null);
+                }
+                
+                currentMarker = new kakao.maps.Marker({
+                    position: currentPos,
+                    map: map,
+                    image: new kakao.maps.MarkerImage(
+                        './image/user.png', // user.png 마커 사용
+                        new kakao.maps.Size(30, 30)
+                    )
+                });
+                
+                console.log('✅ 지도에 현재위치 마커 표시 완료');
+                
+                // 현재 위치에서 카페/커피점 검색 (100m 반경)
+                setTimeout(() => {
+                    console.log('🔍 주변 커피점 검색 시작');
+                    searchNearbyCafes();
+                }, 1000);
+            } else {
+                console.log('❌ 카카오맵이 로드되지 않음');
+            }
+        },
+        function(error) {
+            console.error('❌ 위치 정보 가져오기 실패:', error);
+            
+            let errorMessage = '';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = '위치 정보 접근이 거부되었습니다.\n브라우저 설정에서 위치 정보 접근을 허용해주세요.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = '위치 정보를 사용할 수 없습니다.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = '위치 정보 요청 시간이 초과되었습니다.';
+                    break;
+                default:
+                    errorMessage = '알 수 없는 오류가 발생했습니다.';
+                    break;
+            }
+            
+            alert('위치 정보 오류:\n' + errorMessage);
+        },
+        {
+            enableHighAccuracy: true, // 정확도 높임
+            timeout: 10000, // 10초로 증가
+            maximumAge: 30000 // 30초
         }
-        
-        // 위치 정보 가져오기
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                
-                currentPosition = {
-                    lat: latitude,
-                    lng: longitude
-                };
-                
-                console.log('현재 위치:', latitude, longitude);
-                
-                // 카카오맵에 현재 위치 표시
-                if (typeof kakao !== 'undefined' && map) {
-                    const currentPos = new kakao.maps.LatLng(latitude, longitude);
-                    map.setCenter(currentPos);
-                    
-                    // 기존 현재 위치 마커가 있다면 제거
-                    if (currentMarker) {
-                        currentMarker.setMap(null);
-                    }
-                    
-                    // 현재 위치 마커 생성 (user.png 마커 사용)
-                    currentMarker = new kakao.maps.Marker({
-                        position: currentPos,
-                        map: map,
-                        image: new kakao.maps.MarkerImage(
-                            './image/user.png', // user.png 마커 사용
-                            new kakao.maps.Size(30, 30)
-                        )
-                    });
-                    
-                    // 현재 위치에서 카페/커피점 검색 (200m 반경)
-                    searchNearbyCafes();
-                } else {
-                    console.log('카카오맵 API가 로드되지 않았습니다.');
-                }
-            },
-            (error) => {
-                console.error('위치 정보를 가져오는데 실패했습니다:', error);
-                let errorMessage = '위치 정보를 가져오는데 실패했습니다.';
-                
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage = '위치 정보 접근이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해주세요.';
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage = '위치 정보를 사용할 수 없습니다.';
-                        break;
-                    case error.TIMEOUT:
-                        errorMessage = '위치 정보 요청 시간이 초과되었습니다.';
-                        break;
-                    default:
-                        errorMessage = '알 수 없는 오류가 발생했습니다.';
-                        break;
-                }
-                
-                alert(errorMessage);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 300000
-            }
-        );
-    }).catch(function(error) {
-        console.error('위치 권한 확인 중 오류:', error);
-        // 권한 확인이 실패해도 위치 정보 요청 시도
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                
-                currentPosition = {
-                    lat: latitude,
-                    lng: longitude
-                };
-                
-                console.log('현재 위치:', latitude, longitude);
-                
-                if (typeof kakao !== 'undefined' && map) {
-                    const currentPos = new kakao.maps.LatLng(latitude, longitude);
-                    map.setCenter(currentPos);
-                    
-                    if (currentMarker) {
-                        currentMarker.setMap(null);
-                    }
-                    
-                    currentMarker = new kakao.maps.Marker({
-                        position: currentPos,
-                        map: map,
-                        image: new kakao.maps.MarkerImage(
-                            './image/user.png',
-                            new kakao.maps.Size(30, 30)
-                        )
-                    });
-                    
-                    searchNearbyCafes();
-                }
-            },
-            (error) => {
-                console.error('위치 정보 요청 실패:', error);
-                alert('위치 정보를 가져올 수 없습니다. 수동으로 주소를 입력해주세요.');
-            }
-        );
-    });
+    );
+}
+
+function getCurrentLocation() {
+    console.log('getCurrentLocation 함수 호출됨');
+    
+    // 간단한 테스트 함수 호출
+    testCurrentLocation();
 }
 
 // 지도 초기화 함수
@@ -141,10 +111,14 @@ function initMap() {
         console.error('지도 컨테이너 없음');
         return;
     }
+    
+    // 대구 중심점으로 설정 (대구 중구 동성로)
     const options = {
-        center: new kakao.maps.LatLng(37.566826, 126.978656),
+        center: new kakao.maps.LatLng(35.8714354, 128.601763),
         level: 3
     };
+    
+    console.log('🗺️ 지도 초기화 - 대구 중심점으로 설정');
     map = new kakao.maps.Map(container, options);
     geocoder = new kakao.maps.services.Geocoder();
 
@@ -194,20 +168,39 @@ function setupEventListeners() {
 
 // 페이지 로드 시 초기화
 window.addEventListener('load', function() {
+    console.log('=== 페이지 로드 시작 ===');
+    
     const checkKakaoMap = setInterval(function() {
         if (typeof kakao !== 'undefined') {
+            console.log('✅ 카카오맵 API 로드 완료');
             clearInterval(checkKakaoMap);
             initMap();
             setupEventListeners();
-            getCurrentLocation(); // 페이지 로드 시 현재 위치 자동 표시
+            
+            // 페이지 로드 시 자동으로 현재 위치 가져오기
+            setTimeout(() => {
+                console.log('🔄 페이지 로드 후 자동으로 현재 위치 가져오기 시작');
+                testCurrentLocation(); // 직접 테스트 함수 호출
+            }, 2000);
         }
     }, 100);
-    setTimeout(function() {
-        if (typeof kakao === 'undefined') {
-            clearInterval(checkKakaoMap);
-            console.error('카카오맵 API 로드 타임아웃');
-        }
-    }, 5000);
+});
+
+// DOMContentLoaded 이벤트도 추가
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== DOMContentLoaded 이벤트 발생 ===');
+    
+    // 카카오맵이 이미 로드되어 있다면 바로 초기화
+    if (typeof kakao !== 'undefined') {
+        console.log('✅ 카카오맵 API가 이미 로드됨');
+        initMap();
+        setupEventListeners();
+        
+        setTimeout(() => {
+            console.log('🔄 DOMContentLoaded 후 현재 위치 가져오기 시작');
+            testCurrentLocation(); // 직접 테스트 함수 호출
+        }, 1000);
+    }
 });
 
 // 현재 위치 좌표 가져오기
@@ -249,7 +242,7 @@ function getCurrentCoordinates() {
     }
 }
 
-// 두 지점 간의 거리 계산 (Haversine 공식)
+// 두 지점 간의 거리 계산 (Haversine 공식) - 미터 단위로 반환
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // 지구의 반경 (km)
     const dLat = toRad(lat2 - lat1);
@@ -259,7 +252,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
               Math.sin(dLon/2) * Math.sin(dLon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     const distance = R * c;
-    return distance;
+    return distance * 1000; // km를 미터로 변환
 }
 
 // 각도를 라디안으로 변환
@@ -269,10 +262,10 @@ function toRad(degrees) {
 
 // 거리 포맷팅
 function formatDistance(distance) {
-    if (distance < 1) {
-        return `${Math.round(distance * 1000)}m`;
+    if (distance < 1000) {
+        return `${Math.round(distance)}m`;
     } else {
-        return `${distance.toFixed(1)}km`;
+        return `${(distance / 1000).toFixed(1)}km`;
     }
 }
 
@@ -1127,63 +1120,42 @@ function searchPlaces(keyword) {
                 )
             });
             
-            // 인포윈도우 생성
-            const infowindow = new kakao.maps.InfoWindow({
-                content: `<div class="franchise-infowindow" style="padding:8px;font-size:13px;position:relative;min-width:200px;">
-                    <button onclick="window.closeCafeRoute(this)" style="position:absolute;top:2px;right:2px;background:transparent;border:none;font-size:14px;cursor:pointer;color:#888;z-index:10;">✖</button>
-                    <div class="franchise-name">${place.place_name}</div>
-                    <div class="franchise-address">${place.road_address_name || place.address_name}</div>
-                    <div class="franchise-phone">${place.phone || '전화번호 없음'}</div>
-                    <button class="route-btn" onclick="showKakaoMapRoute(${place.y}, ${place.x}, '${place.place_name}')">길찾기</button>
-                </div>`,
-                removable: true
-            });
-            
-            let isOpen = false; // 인포윈도우 상태 추적
-            let isRouteShown = false; // 경로 표시 상태 추적
-            
-            // 마커 클릭 이벤트
+            // 마커 클릭 시 카카오맵 상세페이지로 이동
             kakao.maps.event.addListener(marker, 'click', function() {
-                if (isOpen && isRouteShown) {
-                    // 이미 열려있고 경로가 표시되어 있으면 모두 닫기
-                    infowindow.close();
-                    if (currentRoute) {
-                        currentRoute.setMap(null);
-                        currentRoute = null;
-                    }
-                    if (currentRouteInfo) {
-                        currentRouteInfo.close();
-                        currentRouteInfo = null;
-                    }
-                    isOpen = false;
-                    isRouteShown = false;
-                } else {
-                    // 다른 모든 인포윈도우와 경로 닫기
-                    infowindows.forEach((iw) => {
-                        iw.close();
-                    });
-                    if (currentRoute) {
-                        currentRoute.setMap(null);
-                        currentRoute = null;
-                    }
-                    if (currentRouteInfo) {
-                        currentRouteInfo.close();
-                        currentRouteInfo = null;
-                    }
-                    
-                    // 클릭한 마커의 인포윈도우 열기
-                    infowindow.open(map, marker);
-                    
-                    // 카카오맵 길찾기 경로 표시
-                    showKakaoMapRoute(place.y, place.x, place.place_name);
-                    
-                    isOpen = true;
-                    isRouteShown = true;
-                }
+                // 기존 InfoWindow 모두 닫기
+                infowindows.forEach((iw) => iw.close());
+                // 도보 예상 시간 계산 (평균 도보 속도: 4km/h, 직선거리의 1.3배 보정)
+                const distance = calculateDistance(
+                    currentPosition.lat,
+                    currentPosition.lng,
+                    parseFloat(place.y),
+                    parseFloat(place.x)
+                );
+                const walkingDistance = distance * 1.3; // 보정값 적용
+                const walkingSpeed = 67; // m/분 (4km/h)
+                const walkingTimeMinutes = Math.round(walkingDistance / walkingSpeed);
+                const placeId = place.id || place.place_id;
+                const kakaoMapUrl = placeId ? `https://place.map.kakao.com/${placeId}` : null;
+                const infoHtml = `
+                    <div style='padding:8px;min-width:200px;'>
+                        <b>${place.place_name}</b><br>
+                        ${place.road_address_name || place.address_name}<br>
+                        ${place.phone || ''}<br>
+                        <span style='color:#0066CC;font-size:12px;'>도보 약 ${walkingTimeMinutes}분</span><br>
+                        ${kakaoMapUrl ? `<button onclick=\"window.open('${kakaoMapUrl}', '_blank')\" style='margin-top:6px;padding:4px 10px;background:#007bff;color:white;border:none;border-radius:3px;font-size:12px;cursor:pointer;'>카카오맵 상세보기</button>` : ''}
+                    </div>
+                `;
+                const infoWindow = new kakao.maps.InfoWindow({
+                    position: marker.getPosition(),
+                    content: infoHtml
+                });
+                infoWindow.open(map, marker);
+                // 현재 열린 InfoWindow만 배열에 저장
+                infowindows.length = 0;
+                infowindows.push(infoWindow);
             });
             
             markers.push(marker);
-            infowindows.push(infowindow);
         });
         
         // 검색 결과가 있는 경우 지도 중심 이동
@@ -1193,15 +1165,17 @@ function searchPlaces(keyword) {
                 bounds.extend(new kakao.maps.LatLng(place.y, place.x));
             });
             map.setBounds(bounds);
-        } else {
-            alert('100m 반경 내에 유명 프랜차이즈 카페/커피점이 없습니다.');
+            
+            console.log(`✅ 100m 반경 내에서 ${franchiseResults.length}개의 커피점을 찾았습니다.`);
         }
     }
     
     // 각 프랜차이즈 키워드로 검색
     franchiseKeywords.forEach((keyword, index) => {
         places.keywordSearch(keyword, (results, status) => {
-            if (status === kakao.maps.services.Status.OK) {
+            console.log(`"${keyword}" 키워드 검색 결과:`, status, results?.length || 0);
+            
+            if (status === kakao.maps.services.Status.OK && results) {
                 allResults.push(...results);
                 console.log(`"${keyword}" 키워드 검색 결과: ${results.length}개`);
             }
@@ -1311,48 +1285,55 @@ window.closeCafeRoute = function(button) {
     }
 };
 
-// 주변 카페/커피점 검색 함수 (200m 반경)
+// 주변 카페/커피점 검색 함수 (100m 반경)
 function searchNearbyCafes() {
     if (!currentPosition) {
-        alert('먼저 위치를 확인해주세요.');
+        Swal.fire({
+            icon: 'warning',
+            title: '위치 정보 없음',
+            text: '먼저 현재 위치를 확인해주세요.',
+            confirmButtonColor: '#0066CC'
+        });
         return;
     }
+
+    console.log('현재 위치에서 카페 검색 시작:', currentPosition);
 
     // 기존 마커와 인포윈도우 제거
     removeMarkers();
 
     const places = new kakao.maps.services.Places();
     const allResults = []; // 모든 검색 결과를 저장할 배열
-    let searchCount = 0; // 검색 완료 카운트
     
-    // 카페/커피점 키워드 배열
-    const cafeKeywords = [
-        '카페',
-        '커피',
+    // 주요 프랜차이즈 키워드 (간소화)
+    const franchiseKeywords = [
         '스타벅스',
-        '백다방',
         '투썸플레이스',
         '할리스커피',
         '이디야커피',
-        '탐앤탐스',
+        '메가MGC커피',
+        '빽다방',
+        '커피에반하다',
         '커피빈',
         '엔제리너스',
         '파스쿠찌',
         '카페베네',
         '드롭탑',
-        '커피스미스',
-        '메가MGC커피',
-        '커피에반하다',
-        '빽다방'
+        '커피스미스'
     ];
     
-    const totalSearches = cafeKeywords.length; // 총 검색 횟수
-    const searchRadius = 100; // 100m 반경으로 제한
+    let searchCount = 0;
+    const totalSearches = franchiseKeywords.length + 1; // +1은 일반 카페 검색
     
     // 검색 완료 후 마커 생성 함수
     function createCafeMarkers() {
         searchCount++;
+        console.log(`검색 진행률: ${searchCount}/${totalSearches}`);
+        
         if (searchCount < totalSearches) return; // 모든 검색이 완료될 때까지 대기
+        
+        console.log('모든 검색 완료, 결과 처리 시작');
+        console.log('총 검색 결과:', allResults.length);
         
         // 중복 제거 (같은 장소명과 주소)
         const uniqueResults = [];
@@ -1366,75 +1347,83 @@ function searchNearbyCafes() {
             }
         });
         
-        // 카페(CE7) 카테고리만 필터링
-        const cafeResults = uniqueResults.filter(place => place.category_group_code === 'CE7');
+        console.log('중복 제거 후 결과:', uniqueResults.length);
         
-        console.log(`총 ${allResults.length}개 검색, 중복 제거 후 ${uniqueResults.length}개, 카페 ${cafeResults.length}개 발견`);
+        // 카페 필터링 및 거리 계산
+        const cafeResults = uniqueResults.filter(place => {
+            // 카테고리 또는 장소명으로 카페 확인
+            const isCafe = place.category_group_code === 'CE7' || 
+                          place.category_group_name?.includes('카페') ||
+                          place.category_group_name?.includes('커피') ||
+                          place.place_name?.includes('카페') ||
+                          place.place_name?.includes('커피') ||
+                          franchiseKeywords.some(keyword => 
+                              place.place_name?.includes(keyword)
+                          );
+            
+            if (isCafe) {
+                // 현재 위치에서의 거리 계산
+                const distance = calculateDistance(
+                    currentPosition.lat, 
+                    currentPosition.lng, 
+                    parseFloat(place.y), 
+                    parseFloat(place.x)
+                );
+                console.log(`${place.place_name}: ${distance}m`);
+                return distance <= 100; // 100m 이내만 포함
+            }
+            return false;
+        });
         
-        // 검색 결과 마커 표시 (카페만)
+        console.log(`100m 내 카페 ${cafeResults.length}개 발견`);
+        
+        if (cafeResults.length === 0) {
+            console.log('100m 반경 내에 카페/커피점이 없습니다.');
+            return;
+        }
+        
+        // 검색 결과 마커 표시
         cafeResults.forEach((place) => {
             const marker = new kakao.maps.Marker({
                 position: new kakao.maps.LatLng(place.y, place.x),
                 map: map
             });
-            
-            // 인포윈도우 생성
-            const infowindow = new kakao.maps.InfoWindow({
-                content: `<div style="padding:8px;font-size:13px;position:relative;min-width:200px;">
-                    <button onclick="window.closeCafeRoute(this)" style="position:absolute;top:2px;right:2px;background:transparent;border:none;font-size:14px;cursor:pointer;color:#888;z-index:10;">✖</button>
-                    <strong style="color:#333;font-size:14px;">${place.place_name}</strong><br>
-                    <span style="color:#666;font-size:12px;">${place.road_address_name || place.address_name}</span><br>
-                    <span style="color:#888;font-size:11px;">${place.phone || '전화번호 없음'}</span><br>
-                    <button onclick="showKakaoMapRoute(${place.y}, ${place.x}, '${place.place_name}')" style="margin-top:5px;padding:3px 8px;background:#007bff;color:white;border:none;border-radius:3px;font-size:11px;cursor:pointer;">길찾기</button>
-                </div>`,
-                removable: true
-            });
-            
-            let isOpen = false; // 인포윈도우 상태 추적
-            let isRouteShown = false; // 경로 표시 상태 추적
-            
-            // 마커 클릭 이벤트
+
+            // 마커 클릭 시 카카오맵 상세페이지로 이동
             kakao.maps.event.addListener(marker, 'click', function() {
-                if (isOpen && isRouteShown) {
-                    // 이미 열려있고 경로가 표시되어 있으면 모두 닫기
-                    infowindow.close();
-                    if (currentRoute) {
-                        currentRoute.setMap(null);
-                        currentRoute = null;
-                    }
-                    if (currentRouteInfo) {
-                        currentRouteInfo.close();
-                        currentRouteInfo = null;
-                    }
-                    isOpen = false;
-                    isRouteShown = false;
-                } else {
-                    // 다른 모든 인포윈도우와 경로 닫기
-                    infowindows.forEach((iw) => {
-                        iw.close();
-                    });
-                    if (currentRoute) {
-                        currentRoute.setMap(null);
-                        currentRoute = null;
-                    }
-                    if (currentRouteInfo) {
-                        currentRouteInfo.close();
-                        currentRouteInfo = null;
-                    }
-                    
-                    // 클릭한 마커의 인포윈도우 열기
-                    infowindow.open(map, marker);
-                    
-                    // 카카오맵 길찾기 경로 표시
-                    showKakaoMapRoute(place.y, place.x, place.place_name);
-                    
-                    isOpen = true;
-                    isRouteShown = true;
-                }
+                // 기존 InfoWindow 모두 닫기
+                infowindows.forEach((iw) => iw.close());
+                // 도보 예상 시간 계산 (평균 도보 속도: 4km/h, 직선거리의 1.3배 보정)
+                const distance = calculateDistance(
+                    currentPosition.lat,
+                    currentPosition.lng,
+                    parseFloat(place.y),
+                    parseFloat(place.x)
+                );
+                const walkingDistance = distance * 1.3; // 보정값 적용
+                const walkingSpeed = 67; // m/분 (4km/h)
+                const walkingTimeMinutes = Math.round(walkingDistance / walkingSpeed);
+                const placeId = place.id || place.place_id;
+                const kakaoMapUrl = placeId ? `https://place.map.kakao.com/${placeId}` : null;
+                const infoHtml = `
+                    <div style='padding:8px;min-width:200px;'>
+                        <b>${place.place_name}</b><br>
+                        ${place.road_address_name || place.address_name}<br>
+                        ${place.phone || ''}<br>
+                        <span style='color:#0066CC;font-size:12px;'>도보 약 ${walkingTimeMinutes}분</span><br>
+                        ${kakaoMapUrl ? `<button onclick=\"window.open('${kakaoMapUrl}', '_blank')\" style='margin-top:6px;padding:4px 10px;background:#007bff;color:white;border:none;border-radius:3px;font-size:12px;cursor:pointer;'>카카오맵 상세보기</button>` : ''}
+                    </div>
+                `;
+                const infoWindow = new kakao.maps.InfoWindow({
+                    position: marker.getPosition(),
+                    content: infoHtml
+                });
+                infoWindow.open(map, marker);
+                // 현재 열린 InfoWindow만 배열에 저장
+                infowindows.length = 0;
+                infowindows.push(infoWindow);
             });
-            
             markers.push(marker);
-            infowindows.push(infowindow);
         });
         
         // 검색 결과가 있는 경우 지도 중심 이동
@@ -1443,23 +1432,45 @@ function searchNearbyCafes() {
             cafeResults.forEach((place) => {
                 bounds.extend(new kakao.maps.LatLng(place.y, place.x));
             });
+            // 현재 위치도 포함
+            bounds.extend(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
             map.setBounds(bounds);
-        } else {
-            alert('100m 반경 내에 카페/커피점이 없습니다.');
+            
+            console.log(`✅ 100m 반경 내에서 ${cafeResults.length}개의 커피점을 찾았습니다.`);
         }
     }
     
-    // 각 카페 키워드로 검색
-    cafeKeywords.forEach((keyword, index) => {
+    // 일반 카페 검색
+    places.keywordSearch('카페', (results, status) => {
+        console.log('일반 카페 검색 결과:', status, results?.length || 0);
+        
+        if (status === kakao.maps.services.Status.OK && results) {
+            allResults.push(...results);
+            console.log('일반 카페 검색 결과:', results.length, '개');
+        }
+        createCafeMarkers();
+    }, {
+        location: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
+        radius: 100,
+        size: 15
+    });
+    
+    // 각 프랜차이즈 키워드로 검색
+    franchiseKeywords.forEach((keyword) => {
+        console.log(`"${keyword}" 키워드로 검색 시작`);
+        
         places.keywordSearch(keyword, (results, status) => {
-            if (status === kakao.maps.services.Status.OK) {
+            console.log(`"${keyword}" 검색 결과:`, status, results?.length || 0);
+            
+            if (status === kakao.maps.services.Status.OK && results) {
                 allResults.push(...results);
                 console.log(`"${keyword}" 키워드 검색 결과: ${results.length}개`);
             }
             createCafeMarkers();
         }, {
             location: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
-            radius: searchRadius
+            radius: 100,
+            size: 15
         });
     });
 }

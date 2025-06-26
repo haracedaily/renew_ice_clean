@@ -26,12 +26,18 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPhoneFormatting();
     setupAddressSearch();
     setupFilterButtons();
+    setupPasswordToggles();
     const refreshFavoritesBtn = document.getElementById('refresh-favorites');
     if (refreshFavoritesBtn) {
         refreshFavoritesBtn.addEventListener('click', function() {
             loadFavorites();
             Swal.fire({ icon: 'success', title: '즐겨찾기 새로고침 완료', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
         });
+    }
+    
+    // 비밀번호 보안 기능 초기화
+    if (typeof initializePasswordSecurity === 'function') {
+        initializePasswordSecurity();
     }
 });
 
@@ -1012,7 +1018,7 @@ function showMypage() {
     }
 }
 function goToReservation() {
-    window.location.href = './reservation.html';
+    checkLoginAndRedirect('./reservation.html');
 }
 
 // === 기존 평문 비밀번호 마이그레이션 ===
@@ -1408,4 +1414,26 @@ async function deleteCancelledReservation(reservationId) {
             });
         }
     }
+}
+
+// 비밀번호 토글 기능 설정
+function setupPasswordToggles() {
+    const toggleButtons = document.querySelectorAll('.password-toggle-btn');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+                this.classList.add('show-password');
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+                this.classList.remove('show-password');
+            }
+        });
+    });
 }

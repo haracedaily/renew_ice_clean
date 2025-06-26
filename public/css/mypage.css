@@ -1474,4 +1474,60 @@ textarea,
 h1, h2, h3, h4, h5, h6,
 p, span, div, a, li {
     font-family: 'iceFont', sans-serif !important;
+}
+
+/* 비밀번호 입력 그룹 스타일 */
+.password-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-group input {
+  flex: 1;
+  padding-right: 50px; /* 토글 버튼 공간 확보 */
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 16px;
+  transition: color 0.3s ease;
+  z-index: 10;
+}
+
+.password-toggle-btn:hover {
+  color: #0066CC;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  color: #0066CC;
+}
+
+.password-toggle-btn i {
+  transition: transform 0.3s ease;
+}
+
+.password-toggle-btn.show-password i {
+  transform: scale(1.1);
+}
+
+/* 모바일에서 비밀번호 토글 버튼 크기 조정 */
+@media (max-width: 768px) {
+  .password-toggle-btn {
+    font-size: 18px;
+    padding: 8px;
+  }
+  
+  .password-input-group input {
+    padding-right: 55px;
+  }
 } 
