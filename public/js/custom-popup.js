@@ -386,10 +386,10 @@ function ensurePopupStyles() {
 document.addEventListener('DOMContentLoaded', function() {
     ensurePopupStyles();
     initializeCustomPopup();
-});
 
-// 전역 함수로 노출
-window.customPopup = customPopup;
-window.customToast = customToast;
-window.overrideAlert = overrideAlert;
-window.overrideConfirm = overrideConfirm; 
+    // 전역 함수로 노출 (이 시점에 customPopup이 보장됨)
+    window.customPopup = customPopup;
+    window.customToast = customToast;
+    window.overrideAlert = overrideAlert;
+    window.overrideConfirm = overrideConfirm;
+});
