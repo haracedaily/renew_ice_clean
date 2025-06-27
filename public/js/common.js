@@ -5,18 +5,24 @@ function checkLoginAndRedirect(targetUrl) {
     console.log('checkLoginAndRedirect 호출됨:', targetUrl);
     
     try {
-        // 현재 사용자 상태 확인
-        const currentUser = JSON.parse(localStorage.getItem('mypageUser') || 'null');
-        console.log('현재 사용자 정보:', currentUser);
+        // 여러 로그인 키 확인
+        const mypageUser = JSON.parse(localStorage.getItem('mypageUser') || 'null');
+        const userInfo = localStorage.getItem('userInfo');
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
         
-        if (!currentUser || !currentUser.email) {
+        console.log('로그인 상태 확인:', { mypageUser, userInfo, isLoggedIn });
+        
+        // 로그인 상태 확인 (여러 키 중 하나라도 있으면 로그인된 것으로 판단)
+        const isUserLoggedIn = (mypageUser && mypageUser.email) || 
+                              (userInfo && isLoggedIn === 'true');
+        
+        if (!isUserLoggedIn) {
             console.log('로그인되지 않은 상태 - 팝업 표시');
             
             // SweetAlert 사용 가능 여부 확인
             if (typeof Swal === 'undefined') {
                 console.error('SweetAlert가 로드되지 않음');
                 alert('예약을 하려면 먼저 로그인해주세요.');
-                // 마이페이지로 이동하여 로그인 폼 표시
                 window.location.href = './mypage.html';
                 return;
             }
@@ -33,12 +39,10 @@ function checkLoginAndRedirect(targetUrl) {
             }).then((result) => {
                 console.log('팝업 결과:', result);
                 if (result.isConfirmed) {
-                    // 마이페이지로 이동하여 로그인 폼 표시
                     window.location.href = './mypage.html';
                 }
             }).catch((error) => {
                 console.error('SweetAlert 오류:', error);
-                // 오류 발생 시 기본 alert 사용
                 alert('예약을 하려면 먼저 로그인해주세요.');
                 window.location.href = './mypage.html';
             });
@@ -46,15 +50,11 @@ function checkLoginAndRedirect(targetUrl) {
         }
         
         console.log('로그인된 상태 - 예약 페이지로 이동');
-        // 로그인된 경우 예약 페이지로 이동
         window.location.href = targetUrl;
         
     } catch (error) {
         console.error('checkLoginAndRedirect 오류:', error);
-        
-        // 오류 발생 시 기본 alert 사용
         const shouldLogin = confirm('예약을 하려면 먼저 로그인해주세요.\n\n로그인하시겠습니까?');
-        
         if (shouldLogin) {
             window.location.href = './mypage.html';
         }
@@ -91,8 +91,11 @@ function openPopup(url, name, features) {
 // 로그인 상태 확인 함수
 function isLoggedIn() {
     try {
-        const currentUser = JSON.parse(localStorage.getItem('mypageUser') || 'null');
-        return !!(currentUser && currentUser.email);
+        const mypageUser = JSON.parse(localStorage.getItem('mypageUser') || 'null');
+        const userInfo = localStorage.getItem('userInfo');
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        
+        return (mypageUser && mypageUser.email) || (userInfo && isLoggedIn === 'true');
     } catch (error) {
         console.error('로그인 상태 확인 오류:', error);
         return false;
@@ -102,7 +105,19 @@ function isLoggedIn() {
 // 현재 사용자 정보 가져오기
 function getCurrentUser() {
     try {
-        return JSON.parse(localStorage.getItem('mypageUser') || 'null');
+        const mypageUser = JSON.parse(localStorage.getItem('mypageUser') || 'null');
+        if (mypageUser && mypageUser.email) {
+            return mypageUser;
+        }
+        
+        const userInfo = localStorage.getItem('userInfo');
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        
+        if (userInfo && isLoggedIn === 'true') {
+            return JSON.parse(userInfo);
+        }
+        
+        return null;
     } catch (error) {
         console.error('사용자 정보 가져오기 오류:', error);
         return null;
