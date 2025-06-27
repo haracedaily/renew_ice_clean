@@ -379,6 +379,26 @@ function updateTimeOptions(selectedDate) {
     });
 }
 
+// 서비스 위치 지도보기 함수
+function showServiceLocationMap() {
+    const address = document.getElementById('address').value;
+    const detailAddress = document.getElementById('detailAddress').value;
+    
+    if (!address) {
+        alert('먼저 주소를 검색해주세요.');
+        return;
+    }
+    
+    const fullAddress = detailAddress ? address + ' ' + detailAddress : address;
+    
+    // 팝업 창 열기
+    const popup = window.open('./map-popup.html?address=' + encodeURIComponent(fullAddress), 'mapPopup', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    
+    if (!popup) {
+        alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+    }
+}
+
 // 페이지 로드 시 초기화
 window.addEventListener('DOMContentLoaded', () => {
     console.log('DOM 로드 완료, 초기화 시작');
