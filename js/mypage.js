@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPhoneFormatting();
     setupAddressSearch();
     setupPasswordToggles();
+    setupFilterButtons();
     
     // 비밀번호 보안 기능 초기화
     if (typeof initializePasswordSecurity === 'function') {
@@ -604,19 +605,52 @@ tabBtns.forEach(btn => {
     });
 });
 
-// 필터 버튼 이벤트 리스너
-document.addEventListener('DOMContentLoaded', function() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            filterBtns.forEach(b => b.classList.remove('active'));
+// 필터 적용 함수
+function applyFilter() {
+    let filteredReservations = [];
+    
+    if (currentFilter === 'all') {
+        filteredReservations = allReservations;
+    } else {
+        // 텍스트 기반 필터링
+        const filterMap = {
+            '신규예약': 1,
+            '결제대기': 2,
+            '결제완료': 3,
+            '기사배정': 4,
+            '청소완료': 5,
+            '예약취소': 6
+        };
+        
+        const filterState = filterMap[currentFilter];
+        if (filterState !== undefined) {
+            filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
+        } else {
+            filteredReservations = allReservations;
+        }
+    }
+    
+    displayReservations(filteredReservations);
+}
+
+// 필터 버튼 이벤트 설정
+function setupFilterButtons() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // 모든 버튼에서 active 클래스 제거
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // 클릭된 버튼에 active 클래스 추가
             this.classList.add('active');
-            currentFilter = filter;
+            
+            // 필터 적용
+            currentFilter = this.getAttribute('data-filter');
             applyFilter();
         });
     });
-});
+}
 
 refreshBtn.addEventListener('click', function() {
     loadUserReservations();
@@ -678,20 +712,6 @@ async function loadUserReservations() {
         console.error('예약 내역 로드 오류:', error);
         alert('예약 내역을 불러오는 중 오류가 발생했습니다.');
     }
-}
-
-// 필터 적용 함수
-function applyFilter() {
-    let filteredReservations = [];
-    
-    if (currentFilter === 'all') {
-        filteredReservations = allReservations;
-    } else {
-        const filterState = parseInt(currentFilter);
-        filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
-    }
-    
-    displayReservations(filteredReservations);
 }
 
 function updateReservationStats(reservations) {

@@ -25,15 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileOptimization();
     setupPhoneFormatting();
     setupAddressSearch();
-    setupFilterButtons();
     setupPasswordToggles();
-    const refreshFavoritesBtn = document.getElementById('refresh-favorites');
-    if (refreshFavoritesBtn) {
-        refreshFavoritesBtn.addEventListener('click', function() {
-            loadFavorites();
-            alert('즐겨찾기 새로고침 완료');
-        });
-    }
+    setupFilterButtons();
     
     // 비밀번호 보안 기능 초기화
     if (typeof initializePasswordSecurity === 'function') {
@@ -1004,10 +997,13 @@ async function migratePlainPassword(userEmail, plainPassword) {
 
 // === 필터 버튼 설정 ===
 function setupFilterButtons() {
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // 모든 필터 버튼에서 active 클래스 제거
-            filterBtns.forEach(b => b.classList.remove('active'));
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // 모든 버튼에서 active 클래스 제거
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
             // 클릭된 버튼에 active 클래스 추가
             this.classList.add('active');
             
@@ -1025,8 +1021,22 @@ function applyFilter() {
     if (currentFilter === 'all') {
         filteredReservations = allReservations;
     } else {
-        const filterState = parseInt(currentFilter);
-        filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
+        // 텍스트 기반 필터링
+        const filterMap = {
+            '신규예약': 1,
+            '결제대기': 2,
+            '결제완료': 3,
+            '기사배정': 4,
+            '청소완료': 5,
+            '예약취소': 6
+        };
+        
+        const filterState = filterMap[currentFilter];
+        if (filterState !== undefined) {
+            filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
+        } else {
+            filteredReservations = allReservations;
+        }
     }
     
     displayReservations(filteredReservations);
