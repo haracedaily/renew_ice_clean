@@ -614,6 +614,25 @@ function setupProfileForm() {
 
 // === 로그아웃 ===
 logoutBtn.addEventListener('click', function() {
+    console.log('로그아웃 버튼 클릭됨');
+    console.log('SweetAlert 상태:', typeof Swal);
+    
+    // SweetAlert 로드 상태 확인
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert가 로드되지 않음 - 기본 confirm 사용');
+        const shouldLogout = confirm('정말 로그아웃 하시겠습니까?');
+        if (shouldLogout) {
+            localStorage.removeItem('mypageUser');
+            localStorage.removeItem('userInfo');
+            localStorage.removeItem('isLoggedIn');
+            currentUser = null;
+            showLogin();
+            alert('안전하게 로그아웃되었습니다.');
+        }
+        return;
+    }
+    
+    // SweetAlert 사용
     Swal.fire({
         icon: 'question',
         title: '로그아웃',
@@ -626,13 +645,30 @@ logoutBtn.addEventListener('click', function() {
             icon: 'swal2-icon-question-custom'
         }
     }).then((result) => {
+        console.log('로그아웃 팝업 결과:', result);
         if (result.isConfirmed) {
             localStorage.removeItem('mypageUser');
             localStorage.removeItem('userInfo');
             localStorage.removeItem('isLoggedIn');
             currentUser = null;
             showLogin();
-            Swal.fire({ icon: 'success', title: '로그아웃 완료', text: '안전하게 로그아웃되었습니다.' });
+            Swal.fire({ 
+                icon: 'success', 
+                title: '로그아웃 완료', 
+                text: '안전하게 로그아웃되었습니다.' 
+            });
+        }
+    }).catch((error) => {
+        console.error('SweetAlert 오류:', error);
+        // 오류 발생 시 기본 confirm 사용
+        const shouldLogout = confirm('정말 로그아웃 하시겠습니까?');
+        if (shouldLogout) {
+            localStorage.removeItem('mypageUser');
+            localStorage.removeItem('userInfo');
+            localStorage.removeItem('isLoggedIn');
+            currentUser = null;
+            showLogin();
+            alert('안전하게 로그아웃되었습니다.');
         }
     });
 });
@@ -667,7 +703,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 refreshBtn.addEventListener('click', function() {
     loadUserReservations();
-    Swal.fire({ icon: 'success', title: '새로고침 완료', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+    
+    // SweetAlert 로드 상태 확인
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({ 
+            icon: 'success', 
+            title: '새로고침 완료', 
+            toast: true, 
+            position: 'top-end', 
+            showConfirmButton: false, 
+            timer: 1500 
+        });
+    } else {
+        console.log('새로고침 완료');
+    }
 });
 
 // 예약 내역 불러오기(reservation 테이블에 user_email 기준)
@@ -929,6 +978,30 @@ function formatDate(dateString) {
 
 // 예약 삭제
 async function deleteReservation(reservationId) {
+    // SweetAlert 로드 상태 확인
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert가 로드되지 않음 - 기본 confirm 사용');
+        const shouldDelete = confirm('정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
+        if (!shouldDelete) return;
+        
+        try {
+            const { error } = await window.supabase
+                .from('reservation')
+                .delete()
+                .eq('res_no', reservationId);
+                
+            if (error) throw error;
+            
+            alert('예약이 성공적으로 삭제되었습니다.');
+            loadUserReservations();
+            
+        } catch (error) {
+            console.error('예약 삭제 오류:', error);
+            alert('예약 삭제 중 오류가 발생했습니다.');
+        }
+        return;
+    }
+    
     const result = await Swal.fire({
         title: '예약 삭제',
         text: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
@@ -971,6 +1044,30 @@ async function deleteReservation(reservationId) {
 
 // 예약 취소
 async function cancelReservation(reservationId) {
+    // SweetAlert 로드 상태 확인
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert가 로드되지 않음 - 기본 confirm 사용');
+        const shouldCancel = confirm('정말로 이 예약을 취소하시겠습니까?');
+        if (!shouldCancel) return;
+        
+        try {
+            const { error } = await window.supabase
+                .from('reservation')
+                .update({ state: 6 }) // 6 = 예약취소
+                .eq('res_no', reservationId);
+                
+            if (error) throw error;
+            
+            alert('예약이 성공적으로 취소되었습니다.');
+            loadUserReservations();
+            
+        } catch (error) {
+            console.error('예약 취소 오류:', error);
+            alert('예약 취소 중 오류가 발생했습니다.');
+        }
+        return;
+    }
+    
     const result = await Swal.fire({
         title: '예약 취소',
         text: '정말로 이 예약을 취소하시겠습니까?',
