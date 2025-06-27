@@ -46,16 +46,7 @@ function openPopup(url, name, features) {
         
         if (!popup || popup.closed || typeof popup.closed === 'undefined') {
             // 팝업이 차단된 경우
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: '팝업 차단됨',
-                    text: '팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.',
-                    confirmButtonText: '확인'
-                });
-            } else {
-                alert('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
-            }
+            simplePopup.show('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
             return null;
         }
         

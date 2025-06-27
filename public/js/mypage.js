@@ -122,110 +122,37 @@ loginForm.addEventListener('submit', async function(e) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
+    // 입력 검증
     if (!email || !password) {
-        customPopup.warning('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
+        simplePopup.warning('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
         return;
     }
 
     try {
-        // customer 테이블에서 직접 로그인
-        const { data, error } = await supabase
-            .from('customer')
-            .select('*')
-            .eq('email', email)
-            .single();
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
         if (error) {
-            console.error('로그인 조회 오류:', error);
-            if (error.code === 'PGRST116') {
-                customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+            if (error.message.includes('Invalid login credentials')) {
+                simplePopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             } else {
-                customPopup.error('시스템 오류', '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+                simplePopup.error('시스템 오류', '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
             }
+            console.error('Login error:', error);
             return;
         }
 
-        if (!data) {
-            customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+        if (data.user) {
+            // 로그인 성공 처리
+            simplePopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
-        // 비밀번호 검증 (SHA-256 해시 사용)
-        let isPasswordValid = false;
-        
-        try {
-            if (data.password && data.password.includes(':')) {
-                // SHA-256 해시로 저장된 경우
-                const [salt, storedHash] = data.password.split(':');
-                const encoder = new TextEncoder();
-                const dataToHash = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', dataToHash);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                isPasswordValid = (hashHex === storedHash);
-            } else {
-                // 평문 또는 다른 형태로 저장된 경우 (기존 사용자 호환성)
-                isPasswordValid = (data.password === password);
-                
-                // 평문 비밀번호인 경우 자동 마이그레이션
-                if (isPasswordValid && !data.password.includes(':')) {
-                    console.log('평문 비밀번호 감지, 자동 마이그레이션 시작');
-                    const migrationSuccess = await migratePlainPassword(data.email, password);
-                    if (migrationSuccess) {
-                        console.log('비밀번호 마이그레이션 완료');
-                    } else {
-                        console.warn('비밀번호 마이그레이션 실패');
-                    }
-                }
-            }
-        } catch (hashError) {
-            console.warn('비밀번호 검증 중 오류:', hashError);
-            // 오류 발생 시 평문 비교로 폴백
-            isPasswordValid = (data.password === password);
-        }
-        
-        if (!isPasswordValid) {
-            customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
-            return;
-        }
-
-        currentUser = {
-            res_no: data.res_no,
-            email: data.email,
-            name: data.name,
-            phone: data.phone || '',
-            addr: data.addr || '',
-            password: data.password || '',
-            img_url: data.img_url || '',
-            state: data.state || ''
-        };
-
-        // 전역 변수로 설정 (알림 시스템에서 접근)
-        window.currentUser = currentUser;
-
-        localStorage.setItem('mypageUser', JSON.stringify(currentUser));
-        localStorage.setItem('userInfo', JSON.stringify(currentUser));
-        localStorage.setItem('isLoggedIn', 'true');
-
-        showMypage();
-        
-        // 비동기 작업들을 안전하게 처리
-        try {
-            // 프로필과 예약 내역을 병렬로 로드
-            await Promise.allSettled([
-                loadUserProfile(),
-                loadUserReservations()
-            ]);
-            
-            customPopup.success('로그인 성공', '마이페이지로 이동합니다.');
-        } catch (error) {
-            console.error('마이페이지 로드 중 오류:', error);
-            // 오류가 발생해도 로그인은 성공한 상태로 유지
-            customPopup.success('로그인 성공', '마이페이지로 이동합니다.');
-        }
     } catch (error) {
-        console.error('로그인 오류:', error);
-        customPopup.error('시스템 오류', '로그인 중 오류가 발생했습니다.');
+        console.error('Login error:', error);
+        simplePopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
     }
 });
 
@@ -320,7 +247,7 @@ async function registerUser(email, password, name, phone, addr) {
             }
         }
         
-        customPopup.error('회원가입 실패', errorMessage);
+        simplePopup.error('회원가입 실패', errorMessage);
     }
 }
 
@@ -334,7 +261,7 @@ function setupRegisterForm() {
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
         if (!email || !password || !name) {
-            customPopup.warning('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
+            simplePopup.warning('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
             return;
         }
         try {
@@ -355,11 +282,11 @@ function setupRegisterForm() {
                 localStorage.setItem('isLoggedIn', 'true');
                 showMypage();
                 loadUserReservations();
-                customPopup.success('회원가입 성공', '자동으로 로그인되었습니다.');
+                simplePopup.success('회원가입 성공', '자동으로 로그인되었습니다.');
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
-            customPopup.error('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
+            simplePopup.error('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
         }
     });
 }
@@ -569,10 +496,10 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
-            customPopup.success('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
+            simplePopup.success('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
         } catch (error) {
             console.error('프로필 저장 오류:', error);
-            customPopup.error('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
+            simplePopup.error('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
         }
     });
 }
@@ -581,14 +508,14 @@ function setupProfileForm() {
 logoutBtn.addEventListener('click', async function() {
     console.log('로그아웃 버튼 클릭됨');
     
-    const shouldLogout = await customPopup.confirm('로그아웃 확인', '정말 로그아웃 하시겠습니까?');
+    const shouldLogout = await simplePopup.confirm('로그아웃 확인', '정말 로그아웃 하시겠습니까?');
     if (shouldLogout) {
         localStorage.removeItem('mypageUser');
         localStorage.removeItem('userInfo');
         localStorage.removeItem('isLoggedIn');
         currentUser = null;
         showLogin();
-        customPopup.success('로그아웃 완료', '안전하게 로그아웃되었습니다.');
+        simplePopup.success('로그아웃 완료', '안전하게 로그아웃되었습니다.');
     }
 });
 
@@ -676,7 +603,7 @@ async function loadUserReservations() {
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
-        customPopup.error('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
+        simplePopup.error('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -851,7 +778,7 @@ function formatDate(dateString) {
 
 // 예약 삭제
 async function deleteReservation(reservationId) {
-    const shouldDelete = await customPopup.confirm('예약 삭제 확인', '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
+    const shouldDelete = await simplePopup.confirm('예약 삭제 확인', '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
     if (!shouldDelete) return;
     
     try {
@@ -862,18 +789,18 @@ async function deleteReservation(reservationId) {
             
         if (error) throw error;
         
-        customPopup.success('예약 삭제 성공', '예약이 성공적으로 삭제되었습니다.');
+        simplePopup.success('예약 삭제 성공', '예약이 성공적으로 삭제되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 삭제 오류:', error);
-        customPopup.error('예약 삭제 실패', '예약 삭제 중 오류가 발생했습니다.');
+        simplePopup.error('예약 삭제 실패', '예약 삭제 중 오류가 발생했습니다.');
     }
 }
 
 // 예약 취소
 async function cancelReservation(reservationId) {
-    const shouldCancel = await customPopup.confirm('예약 취소 확인', '정말로 이 예약을 취소하시겠습니까?');
+    const shouldCancel = await simplePopup.confirm('예약 취소 확인', '정말로 이 예약을 취소하시겠습니까?');
     if (!shouldCancel) return;
     
     try {
@@ -884,12 +811,12 @@ async function cancelReservation(reservationId) {
             
         if (error) throw error;
         
-        customPopup.success('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
+        simplePopup.success('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 취소 오류:', error);
-        customPopup.error('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
+        simplePopup.error('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
     }
 }
 
@@ -946,7 +873,7 @@ function checkLoginAndRedirect(targetUrl) {
         console.log('로그인되지 않은 상태 - 팝업 표시');
         
         // 로그인되지 않은 경우
-        customPopup.warning('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
+        simplePopup.warning('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
         showLoginForm();
         return;
     }
@@ -1073,7 +1000,7 @@ async function showEngineerInfo(engineerId) {
         const engineer = await getEngineerInfo(engineerId);
         
         if (!engineer) {
-            customPopup.warning('엔지니어 정보 없음', '할당된 엔지니어 정보를 찾을 수 없습니다.');
+            simplePopup.warning('엔지니어 정보 없음', '할당된 엔지니어 정보를 찾을 수 없습니다.');
             return;
         }
 
@@ -1098,11 +1025,11 @@ async function showEngineerInfo(engineerId) {
             </div>
         `;
 
-        customPopup.info('담당 엔지니어 정보', engineerInfoHtml);
+        simplePopup.info('담당 엔지니어 정보', engineerInfoHtml);
 
     } catch (error) {
         console.error('엔지니어 정보 표시 중 오류:', error);
-        customPopup.error('엔지니어 정보 표시 실패', '엔지니어 정보를 불러오는 중 오류가 발생했습니다.');
+        simplePopup.error('엔지니어 정보 표시 실패', '엔지니어 정보를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1114,7 +1041,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         // 주소가 비어있는지 확인
         if (!address || address.trim() === '') {
             console.error('주소가 비어있습니다:', address);
-            customPopup.warning('주소 없음', '표시할 주소가 없습니다.');
+            simplePopup.warning('주소 없음', '표시할 주소가 없습니다.');
             return;
         }
         
@@ -1133,7 +1060,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         
         const titleText = customerName ? `${customerName}님 서비스 주소` : `예약 #${reservationId} 서비스 주소`;
         
-        customPopup.info(titleText, displayAddress);
+        simplePopup.info(titleText, displayAddress);
         
         const geocoder = new kakao.maps.services.Geocoder();
         
@@ -1150,7 +1077,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
                         <div id="map-${reservationId}" style="width:400px;height:300px;border-radius:8px;margin:10px 0;"></div>
                     `;
                     
-                    customPopup.info(titleText, mapHtml);
+                    simplePopup.info(titleText, mapHtml);
                     
                     // 지도 초기화
                     setTimeout(() => {
@@ -1206,7 +1133,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
                 <p style="margin:10px 0;color:#666;font-size:12px;">주소: ${displayAddress}</p>
             `;
             
-            customPopup.info(titleText, mapHtml);
+            simplePopup.info(titleText, mapHtml);
             
             // 기본 지도 초기화 (서울 시청)
             setTimeout(() => {
@@ -1225,7 +1152,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         
     } catch (error) {
         console.error('지도 표시 오류:', error);
-        customPopup.error('지도 표시 실패', '지도를 불러오는 중 오류가 발생했습니다.');
+        simplePopup.error('지도 표시 실패', '지도를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1273,71 +1200,75 @@ async function toggleFavorite(reservationId) {
                 });
             if (error) {
                 if (error.code === '23505' || error.message?.includes('unique')) {
-                    customPopup.fire({
-                        icon: 'info',
+                    simplePopup.show({
+                        type: 'info',
                         title: '즐겨찾기 처리',
-                        text: '이미 즐겨찾기됨'
+                        message: '이미 즐겨찾기에 추가된 예약입니다.'
                     });
-                    return;
+                } else {
+                    throw error;
                 }
-                throw error;
+            } else {
+                // 즐겨찾기 추가 성공
+                const button = event.target;
+                button.innerHTML = '<i class="fas fa-heart" style="color: #ff4757;"></i>';
+                button.title = '즐겨찾기에서 제거';
+                button.onclick = () => removeFromFavorites(reservationId, button);
             }
-            favoriteReservations.add(numericReservationId);
         }
         loadUserReservations();
     } catch (error) {
         console.error('즐겨찾기 토글 오류:', error);
-        customPopup.fire({
-            icon: 'error',
+        simplePopup.show({
+            type: 'error',
             title: '즐겨찾기 처리 중 오류',
-            text: '즐겨찾기 처리 중 오류가 발생했습니다.'
+            message: '즐겨찾기 처리 중 오류가 발생했습니다.'
         });
     }
 }
 
 // 취소된 예약 삭제
 async function deleteCancelledReservation(reservationId) {
-    const result = customPopup.fire({
-        icon: 'warning',
+    const result = await simplePopup.show({
+        type: 'warning',
         title: '취소된 예약 삭제 확인',
-        text: '정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
-        showCancelButton: true,
-        confirmButtonText: '삭제',
-        cancelButtonText: '취소'
+        message: '정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
+        buttons: [
+            {
+                text: '삭제',
+                action: 'confirm',
+                class: 'simple-popup-btn-danger'
+            },
+            {
+                text: '취소',
+                action: 'cancel',
+                class: 'simple-popup-btn-secondary'
+            }
+        ]
     });
-    
+
     if (result) {
         try {
-            // 먼저 즐겨찾기에서 제거
-            await window.supabase
-                .from('favorite_reservations')
-                .delete()
-                .eq('user_email', currentUser.email)
-                .eq('reservation_id', reservationId);
-            
-            // 예약 삭제
-            const { error } = await window.supabase
+            const { error } = await supabase
                 .from('reservation')
                 .delete()
                 .eq('res_no', reservationId);
-                
+
             if (error) throw error;
             
-            customPopup.fire({
-                icon: 'success',
+            simplePopup.show({
+                type: 'success',
                 title: '취소된 예약 삭제 성공',
-                text: '취소된 예약이 성공적으로 삭제되었습니다.'
+                message: '취소된 예약이 성공적으로 삭제되었습니다.'
             });
-            
-            // 예약 내역 새로고침
             loadUserReservations();
             
         } catch (error) {
             console.error('예약 삭제 오류:', error);
-            customPopup.fire({
-                icon: 'error',
+            simplePopup.show({
+                type: 'error',
                 title: '예약 삭제 중 오류',
-                text: '예약 삭제 중 오류가 발생했습니다.'
+                message: '예약 삭제 중 오류가 발생했습니다.'
             });
         }
     }
