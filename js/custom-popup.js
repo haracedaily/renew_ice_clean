@@ -386,10 +386,16 @@ function ensurePopupStyles() {
 document.addEventListener('DOMContentLoaded', function() {
     ensurePopupStyles();
     initializeCustomPopup();
+    
+    // DOM 로딩 후 전역 함수로 노출
+    window.customPopup = customPopup;
+    window.customToast = customToast;
+    window.overrideAlert = overrideAlert;
+    window.overrideConfirm = overrideConfirm;
 });
 
 // 전역 함수로 노출
-window.customPopup = customPopup;
-window.customToast = customToast;
-window.overrideAlert = overrideAlert;
-window.overrideConfirm = overrideConfirm; 
+// window.customPopup = customPopup;
+// window.customToast = customToast;
+// window.overrideAlert = overrideAlert;
+// window.overrideConfirm = overrideConfirm; 
