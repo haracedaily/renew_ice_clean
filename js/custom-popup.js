@@ -9,95 +9,94 @@ class CustomPopup {
 
     // 팝업 생성
     createPopup(options = {}) {
-        // DOM이 준비되지 않은 경우 대기
-        if (!document.body) {
-            return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+            // DOM이 준비되지 않은 경우 대기
+            if (!document.body) {
                 setTimeout(() => {
                     this.createPopup(options).then(resolve).catch(reject);
                 }, 100);
-            });
-        }
+                return;
+            }
 
-        const {
-            type = 'info',
-            title = '',
-            message = '',
-            subtitle = '',
-            icon = '',
-            buttons = [],
-            showClose = true,
-            autoClose = false,
-            autoCloseTime = 3000
-        } = options;
+            const {
+                type = 'info',
+                title = '',
+                message = '',
+                subtitle = '',
+                icon = '',
+                buttons = [],
+                showClose = true,
+                autoClose = false,
+                autoCloseTime = 3000
+            } = options;
 
-        // 아이콘 설정
-        const iconMap = {
-            success: 'fas fa-check',
-            error: 'fas fa-times',
-            warning: 'fas fa-exclamation-triangle',
-            info: 'fas fa-info-circle',
-            question: 'fas fa-question-circle'
-        };
+            // 아이콘 설정
+            const iconMap = {
+                success: 'fas fa-check',
+                error: 'fas fa-times',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle',
+                question: 'fas fa-question-circle'
+            };
 
-        const iconClass = icon || iconMap[type] || iconMap.info;
+            const iconClass = icon || iconMap[type] || iconMap.info;
 
-        // 버튼 HTML 생성
-        const buttonsHtml = buttons.length > 0 ? `
-            <div class="custom-popup-buttons">
-                ${buttons.map(btn => `
-                    <button class="custom-popup-btn ${btn.class || 'custom-popup-btn-primary'}" 
-                            data-action="${btn.action || 'close'}">
-                        ${btn.text}
-                    </button>
-                `).join('')}
-            </div>
-        ` : '';
-
-        // 팝업 HTML 생성
-        const popupHtml = `
-            <div class="custom-popup-overlay" id="custom-popup-overlay">
-                <div class="custom-popup ${type}">
-                    ${showClose ? '<button class="custom-popup-close" onclick="customPopup.close()">&times;</button>' : ''}
-                    <div class="custom-popup-header">
-                        <div class="custom-popup-icon">
-                            <i class="${iconClass}"></i>
-                        </div>
-                        <h3 class="custom-popup-title">${title}</h3>
-                        ${subtitle ? `<p class="custom-popup-subtitle">${subtitle}</p>` : ''}
-                    </div>
-                    <div class="custom-popup-content">
-                        <p class="custom-popup-message">${message}</p>
-                    </div>
-                    ${buttonsHtml}
+            // 버튼 HTML 생성
+            const buttonsHtml = buttons.length > 0 ? `
+                <div class="custom-popup-buttons">
+                    ${buttons.map(btn => `
+                        <button class="custom-popup-btn ${btn.class || 'custom-popup-btn-primary'}" 
+                                data-action="${btn.action || 'close'}">
+                            ${btn.text}
+                        </button>
+                    `).join('')}
                 </div>
-            </div>
-        `;
+            ` : '';
 
-        // 기존 팝업 제거
-        this.removePopup();
+            // 팝업 HTML 생성
+            const popupHtml = `
+                <div class="custom-popup-overlay" id="custom-popup-overlay">
+                    <div class="custom-popup ${type}">
+                        ${showClose ? '<button class="custom-popup-close" onclick="window.customPopupInstance.close()">&times;</button>' : ''}
+                        <div class="custom-popup-header">
+                            <div class="custom-popup-icon">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <h3 class="custom-popup-title">${title}</h3>
+                            ${subtitle ? `<p class="custom-popup-subtitle">${subtitle}</p>` : ''}
+                        </div>
+                        <div class="custom-popup-content">
+                            <p class="custom-popup-message">${message}</p>
+                        </div>
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            `;
 
-        // 새 팝업 추가
-        document.body.insertAdjacentHTML('beforeend', popupHtml);
-        
-        this.overlay = document.getElementById('custom-popup-overlay');
-        this.popup = this.overlay.querySelector('.custom-popup');
+            // 기존 팝업 제거
+            this.removePopup();
 
-        // 버튼 이벤트 설정
-        this.setupButtonEvents();
+            // 새 팝업 추가
+            document.body.insertAdjacentHTML('beforeend', popupHtml);
+            
+            this.overlay = document.getElementById('custom-popup-overlay');
+            this.popup = this.overlay.querySelector('.custom-popup');
 
-        // 자동 닫기 설정
-        if (autoClose) {
+            // 버튼 이벤트 설정
+            this.setupButtonEvents();
+
+            // 자동 닫기 설정
+            if (autoClose) {
+                setTimeout(() => {
+                    this.close();
+                }, autoCloseTime);
+            }
+
+            // 애니메이션 시작
             setTimeout(() => {
-                this.close();
-            }, autoCloseTime);
-        }
+                this.overlay.classList.add('show');
+            }, 10);
 
-        // 애니메이션 시작
-        setTimeout(() => {
-            this.overlay.classList.add('show');
-        }, 10);
-
-        return new Promise((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
         });
@@ -336,40 +335,18 @@ class CustomToast {
     }
 }
 
-// 전역 인스턴스 생성
-let customPopup;
-let customToast;
+// 전역 인스턴스 변수
+let customPopupInstance = null;
+let customToastInstance = null;
 
 // DOM 로딩 후 초기화
 function initializeCustomPopup() {
-    if (!customPopup) {
-        customPopup = new CustomPopup();
+    if (!customPopupInstance) {
+        customPopupInstance = new CustomPopup();
     }
-    if (!customToast) {
-        customToast = new CustomToast();
+    if (!customToastInstance) {
+        customToastInstance = new CustomToast();
     }
-}
-
-// 기존 alert 함수 오버라이드 (선택적)
-function overrideAlert() {
-    const originalAlert = window.alert;
-    window.alert = function(message) {
-        if (customPopup) {
-            return customPopup.alert('알림', message);
-        }
-        return originalAlert(message);
-    };
-}
-
-// 기존 confirm 함수 오버라이드 (선택적)
-function overrideConfirm() {
-    const originalConfirm = window.confirm;
-    window.confirm = function(message) {
-        if (customPopup) {
-            return customPopup.confirm('확인', message);
-        }
-        return originalConfirm(message);
-    };
 }
 
 // 팝업 스타일 로드 확인
@@ -387,15 +364,33 @@ document.addEventListener('DOMContentLoaded', function() {
     ensurePopupStyles();
     initializeCustomPopup();
     
-    // DOM 로딩 후 전역 함수로 노출
-    window.customPopup = customPopup;
-    window.customToast = customToast;
-    window.overrideAlert = overrideAlert;
-    window.overrideConfirm = overrideConfirm;
+    // 전역 함수로 노출
+    window.customPopup = customPopupInstance;
+    window.customToast = customToastInstance;
 });
 
+// 기존 alert 함수 오버라이드 (선택적)
+function overrideAlert() {
+    const originalAlert = window.alert;
+    window.alert = function(message) {
+        if (customPopupInstance) {
+            return customPopupInstance.alert('알림', message);
+        }
+        return originalAlert(message);
+    };
+}
+
+// 기존 confirm 함수 오버라이드 (선택적)
+function overrideConfirm() {
+    const originalConfirm = window.confirm;
+    window.confirm = function(message) {
+        if (customPopupInstance) {
+            return customPopupInstance.confirm('확인', message);
+        }
+        return originalConfirm(message);
+    };
+}
+
 // 전역 함수로 노출
-// window.customPopup = customPopup;
-// window.customToast = customToast;
-// window.overrideAlert = overrideAlert;
-// window.overrideConfirm = overrideConfirm; 
+window.overrideAlert = overrideAlert;
+window.overrideConfirm = overrideConfirm; 
