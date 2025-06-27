@@ -337,14 +337,27 @@ class CustomToast {
 }
 
 // 전역 인스턴스 생성
-const customPopup = new CustomPopup();
-const customToast = new CustomToast();
+let customPopup;
+let customToast;
+
+// DOM 로딩 후 초기화
+function initializeCustomPopup() {
+    if (!customPopup) {
+        customPopup = new CustomPopup();
+    }
+    if (!customToast) {
+        customToast = new CustomToast();
+    }
+}
 
 // 기존 alert 함수 오버라이드 (선택적)
 function overrideAlert() {
     const originalAlert = window.alert;
     window.alert = function(message) {
-        return customPopup.alert('알림', message);
+        if (customPopup) {
+            return customPopup.alert('알림', message);
+        }
+        return originalAlert(message);
     };
 }
 
@@ -352,7 +365,10 @@ function overrideAlert() {
 function overrideConfirm() {
     const originalConfirm = window.confirm;
     window.confirm = function(message) {
-        return customPopup.confirm('확인', message);
+        if (customPopup) {
+            return customPopup.confirm('확인', message);
+        }
+        return originalConfirm(message);
     };
 }
 
@@ -366,9 +382,10 @@ function ensurePopupStyles() {
     }
 }
 
-// 페이지 로드 시 스타일 확인
+// 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     ensurePopupStyles();
+    initializeCustomPopup();
 });
 
 // 전역 함수로 노출
