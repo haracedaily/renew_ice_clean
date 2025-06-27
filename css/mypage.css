@@ -1509,4 +1509,35 @@
     left: -9999px !important;
     top: -9999px !important;
     pointer-events: none !important;
+}
+
+/* aria-labelledby 안의 swal2-icon 완전 제거 */
+[aria-labelledby] .swal2-icon,
+[aria-labelledby] [class*="swal2-icon"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    pointer-events: none !important;
+}
+
+/* 모든 swal2-icon 관련 요소 완전 제거 */
+[class*="swal2-icon"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    pointer-events: none !important;
 } 

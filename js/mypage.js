@@ -1203,6 +1203,21 @@ async function showReservationMap(address, reservationId, customerName = '') {
                     swalIcons.forEach(icon => {
                         icon.remove();
                     });
+                    
+                    // aria-labelledby 안의 swal2-icon도 제거
+                    const ariaLabelledByElements = document.querySelectorAll('[aria-labelledby]');
+                    ariaLabelledByElements.forEach(element => {
+                        const iconInside = element.querySelector('.swal2-icon');
+                        if (iconInside) {
+                            iconInside.remove();
+                        }
+                    });
+                    
+                    // 모든 swal2-icon 관련 요소 제거
+                    const allSwalIcons = document.querySelectorAll('[class*="swal2-icon"]');
+                    allSwalIcons.forEach(icon => {
+                        icon.remove();
+                    });
                 }, 100);
                 
                 const geocoder = new kakao.maps.services.Geocoder();
@@ -1223,12 +1238,9 @@ async function showReservationMap(address, reservationId, customerName = '') {
                                 level: 3
                             });
                             
-                            const marker = new kakao.maps.Marker({ 
-                                position: coords,
-                                map: map
-                            });
-                            
+                            // 마커 없이 인포윈도우만 표시
                             const infowindow = new kakao.maps.InfoWindow({
+                                position: coords,
                                 content: `<div style="padding:10px;min-width:200px;">
                                     <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">
                                         ${customerName ? customerName + '님' : '예약 #' + reservationId}
@@ -1239,20 +1251,8 @@ async function showReservationMap(address, reservationId, customerName = '') {
                                 </div>`
                             });
                             
-                            // 마커 클릭 시 인포윈도우 표시
-                            kakao.maps.event.addListener(marker, 'click', function() {
-                                infowindow.open(map, marker);
-                            });
-                            
-                            // 마커에 마우스 오버 시 인포윈도우 표시
-                            kakao.maps.event.addListener(marker, 'mouseover', function() {
-                                infowindow.open(map, marker);
-                            });
-                            
-                            // 마커에서 마우스 아웃 시 인포윈도우 닫기
-                            kakao.maps.event.addListener(marker, 'mouseout', function() {
-                                infowindow.close();
-                            });
+                            // 인포윈도우를 지도에 표시
+                            infowindow.open(map);
                             
                             console.log('지도 표시 완료 - 정확한 위치:', searchText);
                         } else {
@@ -1287,11 +1287,10 @@ async function showReservationMap(address, reservationId, customerName = '') {
                         center: coords,
                         level: 3
                     });
-                    const marker = new kakao.maps.Marker({ 
-                        position: coords,
-                        map: map
-                    });
+                    
+                    // 마커 없이 인포윈도우만 표시
                     const infowindow = new kakao.maps.InfoWindow({
+                        position: coords,
                         content: `<div style="padding:10px;min-width:200px;">
                             <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">
                                 ${customerName ? customerName + '님' : '예약 #' + reservationId}
@@ -1303,17 +1302,8 @@ async function showReservationMap(address, reservationId, customerName = '') {
                         </div>`
                     });
                     
-                    kakao.maps.event.addListener(marker, 'click', function() {
-                        infowindow.open(map, marker);
-                    });
-                    
-                    kakao.maps.event.addListener(marker, 'mouseover', function() {
-                        infowindow.open(map, marker);
-                    });
-                    
-                    kakao.maps.event.addListener(marker, 'mouseout', function() {
-                        infowindow.close();
-                    });
+                    // 인포윈도우를 지도에 표시
+                    infowindow.open(map);
                 };
                 
                 // 1단계: 정리된 주소로 검색 시작
