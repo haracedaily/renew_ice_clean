@@ -123,11 +123,7 @@ loginForm.addEventListener('submit', async function(e) {
     const password = document.getElementById('login-password').value;
 
     if (!email || !password) {
-        customPopup.fire({
-            icon: 'warning',
-            title: '로그인 실패',
-            text: '이메일과 비밀번호를 모두 입력해주세요.'
-        });
+        customPopup.warning('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
         return;
     }
 
@@ -142,27 +138,15 @@ loginForm.addEventListener('submit', async function(e) {
         if (error) {
             console.error('로그인 조회 오류:', error);
             if (error.code === 'PGRST116') {
-                customPopup.fire({
-                    icon: 'warning',
-                    title: '로그인 실패',
-                    text: '이메일 또는 비밀번호가 올바르지 않습니다.'
-                });
+                customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             } else {
-                customPopup.fire({
-                    icon: 'error',
-                    title: '로그인 중 오류',
-                    text: '관리자에게 문의하세요.'
-                });
+                customPopup.error('시스템 오류', '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
             }
             return;
         }
 
         if (!data) {
-            customPopup.fire({
-                icon: 'warning',
-                title: '로그인 실패',
-                text: '이메일 또는 비밀번호가 올바르지 않습니다.'
-            });
+            customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
@@ -201,11 +185,7 @@ loginForm.addEventListener('submit', async function(e) {
         }
         
         if (!isPasswordValid) {
-            customPopup.fire({
-                icon: 'warning',
-                title: '로그인 실패',
-                text: '이메일 또는 비밀번호가 올바르지 않습니다.'
-            });
+            customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
@@ -237,27 +217,15 @@ loginForm.addEventListener('submit', async function(e) {
                 loadUserReservations()
             ]);
             
-            customPopup.fire({
-                icon: 'success',
-                title: '로그인 성공',
-                text: '마이페이지로 이동합니다.'
-            });
+            customPopup.success('로그인 성공', '마이페이지로 이동합니다.');
         } catch (error) {
             console.error('마이페이지 로드 중 오류:', error);
             // 오류가 발생해도 로그인은 성공한 상태로 유지
-            customPopup.fire({
-                icon: 'success',
-                title: '로그인 성공',
-                text: '마이페이지로 이동합니다.'
-            });
+            customPopup.success('로그인 성공', '마이페이지로 이동합니다.');
         }
     } catch (error) {
         console.error('로그인 오류:', error);
-        customPopup.fire({
-            icon: 'error',
-            title: '로그인 중 오류',
-            text: '로그인 중 오류가 발생했습니다.'
-        });
+        customPopup.error('시스템 오류', '로그인 중 오류가 발생했습니다.');
     }
 });
 
@@ -352,15 +320,11 @@ async function registerUser(email, password, name, phone, addr) {
             }
         }
         
-        customPopup.fire({
-            icon: 'error',
-            title: '회원가입 중 오류',
-            text: errorMessage
-        });
+        customPopup.error('회원가입 실패', errorMessage);
     }
 }
 
-// 회원가입 폼 이벤트
+// === 회원가입 폼 이벤트 ===
 function setupRegisterForm() {
     registerForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -370,11 +334,7 @@ function setupRegisterForm() {
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
         if (!email || !password || !name) {
-            customPopup.fire({
-                icon: 'warning',
-                title: '회원가입 실패',
-                text: '이메일, 비밀번호, 이름은 필수 항목입니다.'
-            });
+            customPopup.warning('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
             return;
         }
         try {
@@ -395,19 +355,11 @@ function setupRegisterForm() {
                 localStorage.setItem('isLoggedIn', 'true');
                 showMypage();
                 loadUserReservations();
-                customPopup.fire({
-                    icon: 'success',
-                    title: '회원가입 성공',
-                    text: '자동으로 로그인되었습니다.'
-                });
+                customPopup.success('회원가입 성공', '자동으로 로그인되었습니다.');
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
-            customPopup.fire({
-                icon: 'error',
-                title: '회원가입 중 오류',
-                text: error.message || '회원가입 중 오류가 발생했습니다.'
-            });
+            customPopup.error('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
         }
     });
 }
@@ -617,45 +569,26 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
-            customPopup.fire({
-                icon: 'success',
-                title: '프로필 저장 완료',
-                text: '프로필 정보가 성공적으로 저장되었습니다.'
-            });
+            customPopup.success('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
         } catch (error) {
             console.error('프로필 저장 오류:', error);
-            customPopup.fire({
-                icon: 'error',
-                title: '프로필 저장 중 오류',
-                text: error.message || '프로필 저장 중 오류가 발생했습니다.'
-            });
+            customPopup.error('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
         }
     });
 }
 
 // === 로그아웃 ===
-logoutBtn.addEventListener('click', function() {
+logoutBtn.addEventListener('click', async function() {
     console.log('로그아웃 버튼 클릭됨');
     
-    const shouldLogout = customPopup.fire({
-        icon: 'warning',
-        title: '로그아웃 확인',
-        text: '정말 로그아웃 하시겠습니까?',
-        showCancelButton: true,
-        confirmButtonText: '로그아웃',
-        cancelButtonText: '취소'
-    });
+    const shouldLogout = await customPopup.confirm('로그아웃 확인', '정말 로그아웃 하시겠습니까?');
     if (shouldLogout) {
         localStorage.removeItem('mypageUser');
         localStorage.removeItem('userInfo');
         localStorage.removeItem('isLoggedIn');
         currentUser = null;
         showLogin();
-        customPopup.fire({
-            icon: 'success',
-            title: '안전하게 로그아웃되었습니다.',
-            text: '로그아웃되었습니다.'
-        });
+        customPopup.success('로그아웃 완료', '안전하게 로그아웃되었습니다.');
     }
 });
 
@@ -743,11 +676,7 @@ async function loadUserReservations() {
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
-        customPopup.fire({
-            icon: 'error',
-            title: '예약 내역 로드 중 오류',
-            text: '예약 내역을 불러오는 중 오류가 발생했습니다.'
-        });
+        customPopup.error('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -922,75 +851,45 @@ function formatDate(dateString) {
 
 // 예약 삭제
 async function deleteReservation(reservationId) {
-    const shouldDelete = customPopup.fire({
-        icon: 'warning',
-        title: '예약 삭제 확인',
-        text: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
-        showCancelButton: true,
-        confirmButtonText: '삭제',
-        cancelButtonText: '취소'
-    });
+    const shouldDelete = await customPopup.confirm('예약 삭제 확인', '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
     if (!shouldDelete) return;
     
     try {
-        const { error } = await window.supabase
+        const { error } = await supabase
             .from('reservation')
             .delete()
             .eq('res_no', reservationId);
             
         if (error) throw error;
         
-        customPopup.fire({
-            icon: 'success',
-            title: '예약 삭제 성공',
-            text: '예약이 성공적으로 삭제되었습니다.'
-        });
+        customPopup.success('예약 삭제 성공', '예약이 성공적으로 삭제되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 삭제 오류:', error);
-        customPopup.fire({
-            icon: 'error',
-            title: '예약 삭제 중 오류',
-            text: '예약 삭제 중 오류가 발생했습니다.'
-        });
+        customPopup.error('예약 삭제 실패', '예약 삭제 중 오류가 발생했습니다.');
     }
 }
 
 // 예약 취소
 async function cancelReservation(reservationId) {
-    const shouldCancel = customPopup.fire({
-        icon: 'warning',
-        title: '예약 취소 확인',
-        text: '정말로 이 예약을 취소하시겠습니까?',
-        showCancelButton: true,
-        confirmButtonText: '취소',
-        cancelButtonText: '취소'
-    });
+    const shouldCancel = await customPopup.confirm('예약 취소 확인', '정말로 이 예약을 취소하시겠습니까?');
     if (!shouldCancel) return;
     
     try {
-        const { error } = await window.supabase
+        const { error } = await supabase
             .from('reservation')
-            .update({ state: 6 }) // 6 = 예약취소
+            .update({ state: 6 }) // 6: 취소
             .eq('res_no', reservationId);
             
         if (error) throw error;
         
-        customPopup.fire({
-            icon: 'success',
-            title: '예약 취소 성공',
-            text: '예약이 성공적으로 취소되었습니다.'
-        });
+        customPopup.success('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 취소 오류:', error);
-        customPopup.fire({
-            icon: 'error',
-            title: '예약 취소 중 오류',
-            text: '예약 취소 중 오류가 발생했습니다.'
-        });
+        customPopup.error('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
     }
 }
 
@@ -1040,20 +939,14 @@ function showMypage() {
 
 // === 로그인 상태 확인 및 리다이렉트 ===
 function checkLoginAndRedirect(targetUrl) {
-    console.log('checkLoginAndRedirect 호출됨:', targetUrl);
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
     
-    const currentUser = JSON.parse(localStorage.getItem('mypageUser'));
-    console.log('현재 사용자 정보:', currentUser);
-    
-    if (!currentUser || !currentUser.email) {
+    if (!isLoggedIn || !userInfo) {
         console.log('로그인되지 않은 상태 - 팝업 표시');
         
         // 로그인되지 않은 경우
-        customPopup.fire({
-            icon: 'warning',
-            title: '로그인 필요',
-            text: '예약을 하려면 먼저 로그인해주세요.'
-        });
+        customPopup.warning('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
         showLoginForm();
         return;
     }
@@ -1180,11 +1073,7 @@ async function showEngineerInfo(engineerId) {
         const engineer = await getEngineerInfo(engineerId);
         
         if (!engineer) {
-            customPopup.fire({
-                icon: 'warning',
-                title: '엔지니어 정보 조회 실패',
-                text: '할당된 엔지니어 정보를 찾을 수 없습니다.'
-            });
+            customPopup.warning('엔지니어 정보 없음', '할당된 엔지니어 정보를 찾을 수 없습니다.');
             return;
         }
 
@@ -1209,19 +1098,11 @@ async function showEngineerInfo(engineerId) {
             </div>
         `;
 
-        customPopup.fire({
-            icon: 'info',
-            title: '엔지니어 정보',
-            html: engineerInfoHtml
-        });
+        customPopup.info('담당 엔지니어 정보', engineerInfoHtml);
 
     } catch (error) {
         console.error('엔지니어 정보 표시 중 오류:', error);
-        customPopup.fire({
-            icon: 'error',
-            title: '엔지니어 정보 표시 중 오류',
-            text: '엔지니어 정보를 불러오는 중 오류가 발생했습니다.'
-        });
+        customPopup.error('엔지니어 정보 표시 실패', '엔지니어 정보를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1233,118 +1114,118 @@ async function showReservationMap(address, reservationId, customerName = '') {
         // 주소가 비어있는지 확인
         if (!address || address.trim() === '') {
             console.error('주소가 비어있습니다:', address);
-            customPopup.fire({
-                icon: 'warning',
-                title: '주소 표시 실패',
-                text: '표시할 주소가 없습니다.'
-            });
+            customPopup.warning('주소 없음', '표시할 주소가 없습니다.');
             return;
         }
         
-        // 주소 파싱: 우편번호, 기본주소, 상세주소 분리
-        const addressParts = address.split(' ');
-        let searchAddress = '';
-        let displayAddress = '';
+        // 주소 파싱: 우편번호 제거 및 정리
+        let searchAddress = address.trim();
+        let displayAddress = address.trim();
         
-        // 우편번호는 제외하고 나머지 주소 부분만 사용
-        if (addressParts.length >= 2) {
-            // 우편번호(첫 번째)를 제외한 나머지 주소 부분
-            searchAddress = addressParts.slice(1).join(' ');
-            displayAddress = addressParts.slice(1).join(' ');
-        } else {
-            searchAddress = address;
-            displayAddress = address;
-        }
+        // 우편번호 패턴 제거 (5자리 또는 6자리 숫자)
+        searchAddress = searchAddress.replace(/^\d{5,6}\s*/, '');
         
-        console.log('파싱된 주소:', { searchAddress, displayAddress });
+        // 주소 정리 (연속된 공백 제거)
+        searchAddress = searchAddress.replace(/\s+/g, ' ').trim();
+        displayAddress = displayAddress.replace(/\s+/g, ' ').trim();
         
-        const mapId = `swal-map-${reservationId}`;
+        console.log('정리된 주소:', { searchAddress, displayAddress });
+        
         const titleText = customerName ? `${customerName}님 서비스 주소` : `예약 #${reservationId} 서비스 주소`;
         
-        customPopup.fire({
-            title: titleText,
-            text: displayAddress
-        });
+        customPopup.info(titleText, displayAddress);
         
         const geocoder = new kakao.maps.services.Geocoder();
         
-        // 단계별 주소 검색 함수
+        // 주소 검색 함수 (재시도 로직 포함)
         const searchAddressStep = (searchText, step = 1) => {
-            console.log(`주소 검색 시도 ${step}:`, searchText);
-            
             geocoder.addressSearch(searchText, function(result, status) {
-                console.log(`주소 검색 결과 ${step}:`, { result, status });
-                
                 if (status === kakao.maps.services.Status.OK) {
+                    console.log('주소 검색 성공:', result[0]);
+                    
+                    // 팝업으로 지도 표시
                     const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-                    const map = new kakao.maps.Map(document.getElementById(mapId), {
-                        center: coords,
-                        level: 3
-                    });
-                    const marker = new kakao.maps.Marker({ position: coords });
-                    marker.setMap(map);
-                    const infowindow = new kakao.maps.InfoWindow({
-                        content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">${displayAddress}</p></div>`
-                    });
-                    kakao.maps.event.addListener(marker, 'mouseover', function() {
-                        infowindow.open(map, marker);
-                    });
-                    kakao.maps.event.addListener(marker, 'mouseout', function() {
-                        infowindow.close();
-                    });
-                    console.log('지도 표시 완료');
-                } else {
-                    // 다음 단계로 진행
-                    if (step === 1) {
-                        // 1단계 실패: 원본 주소로 재시도
-                        searchAddressStep(address, 2);
-                    } else if (step === 2) {
-                        // 2단계 실패: 주소의 첫 번째 부분만 사용
-                        const firstPart = searchAddress.split(' ')[0];
-                        if (firstPart && firstPart !== searchAddress) {
-                            searchAddressStep(firstPart, 3);
-                        } else {
-                            // 3단계 실패: 서울 시청으로 기본 표시
-                            showDefaultMap();
+                    
+                    const mapHtml = `
+                        <div id="map-${reservationId}" style="width:400px;height:300px;border-radius:8px;margin:10px 0;"></div>
+                    `;
+                    
+                    customPopup.info(titleText, mapHtml);
+                    
+                    // 지도 초기화
+                    setTimeout(() => {
+                        const mapContainer = document.getElementById(`map-${reservationId}`);
+                        if (mapContainer) {
+                            const map = new kakao.maps.Map(mapContainer, {
+                                center: coords,
+                                level: 3
+                            });
+                            
+                            // 마커 생성
+                            const marker = new kakao.maps.Marker({
+                                position: coords
+                            });
+                            marker.setMap(map);
+                            
+                            // 인포윈도우 생성
+                            const infowindow = new kakao.maps.InfoWindow({
+                                content: `<div style="padding:10px;min-width:200px;">
+                                    <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
+                                    <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${displayAddress}</p>
+                                </div>`
+                            });
+                            infowindow.open(map, marker);
                         }
-                    } else {
-                        // 모든 단계 실패: 서울 시청으로 기본 표시
-                        showDefaultMap();
+                    }, 100);
+                    
+                } else {
+                    console.error('주소 검색 실패:', status);
+                    
+                    // 단계별 재시도
+                    if (step === 1 && searchText.includes(' ')) {
+                        // 첫 번째 시도 실패 시, 주소의 일부만 사용하여 재시도
+                        const addressParts = searchText.split(' ');
+                        if (addressParts.length > 2) {
+                            const shorterAddress = addressParts.slice(0, -1).join(' ');
+                            console.log('주소 단축하여 재시도:', shorterAddress);
+                            searchAddressStep(shorterAddress, 2);
+                            return;
+                        }
                     }
+                    
+                    // 모든 시도 실패 시 기본 지도 표시
+                    showDefaultMap();
                 }
             });
         };
         
-        // 기본 지도 표시 함수 (서울 시청)
         const showDefaultMap = () => {
-            console.log('기본 지도 표시 (서울 시청)');
-            const coords = new kakao.maps.LatLng(37.5665, 126.9780);
-            const map = new kakao.maps.Map(document.getElementById(mapId), {
-                center: coords,
-                level: 3
-            });
-            const marker = new kakao.maps.Marker({ position: coords });
-            marker.setMap(map);
-            const infowindow = new kakao.maps.InfoWindow({
-                content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>원본 주소: ${address}</p></div>`
-            });
-            kakao.maps.event.addListener(marker, 'mouseover', function() {
-                infowindow.open(map, marker);
-            });
-            kakao.maps.event.addListener(marker, 'mouseout', function() {
-                infowindow.close();
-            });
+            console.log('기본 지도 표시');
+            const mapHtml = `
+                <div id="map-${reservationId}" style="width:400px;height:300px;border-radius:8px;margin:10px 0;"></div>
+                <p style="margin:10px 0;color:#666;font-size:12px;">주소: ${displayAddress}</p>
+            `;
+            
+            customPopup.info(titleText, mapHtml);
+            
+            // 기본 지도 초기화 (서울 시청)
+            setTimeout(() => {
+                const mapContainer = document.getElementById(`map-${reservationId}`);
+                if (mapContainer) {
+                    const map = new kakao.maps.Map(mapContainer, {
+                        center: new kakao.maps.LatLng(37.5665, 126.9780),
+                        level: 3
+                    });
+                }
+            }, 100);
         };
         
-        // 1단계: 파싱된 주소로 검색 시작
-        searchAddressStep(searchAddress, 1);
+        // 주소 검색 시작
+        searchAddressStep(searchAddress);
+        
     } catch (error) {
         console.error('지도 표시 오류:', error);
-        customPopup.fire({
-            icon: 'error',
-            title: '지도 표시 중 오류',
-            text: '지도를 불러오는 중 오류가 발생했습니다.'
-        });
+        customPopup.error('지도 표시 실패', '지도를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
