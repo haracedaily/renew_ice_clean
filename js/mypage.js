@@ -206,10 +206,33 @@ loginForm.addEventListener('submit', async function(e) {
         localStorage.setItem('isLoggedIn', 'true');
 
         showMypage();
-        loadUserReservations();
-        loadUserProfile();
-
-        Swal.fire({ icon: 'success', title: '로그인 성공!', text: '마이페이지로 이동합니다.' });
+        
+        // 비동기 작업들을 안전하게 처리
+        try {
+            // 프로필과 예약 내역을 병렬로 로드
+            await Promise.allSettled([
+                loadUserProfile(),
+                loadUserReservations()
+            ]);
+            
+            Swal.fire({ 
+                icon: 'success', 
+                title: '로그인 성공!', 
+                text: '마이페이지로 이동합니다.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } catch (error) {
+            console.error('마이페이지 로드 중 오류:', error);
+            // 오류가 발생해도 로그인은 성공한 상태로 유지
+            Swal.fire({ 
+                icon: 'success', 
+                title: '로그인 성공!', 
+                text: '마이페이지로 이동합니다.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     } catch (error) {
         console.error('로그인 오류:', error);
         Swal.fire({ icon: 'error', title: '로그인 실패', text: '로그인 중 오류가 발생했습니다.' });
@@ -1030,6 +1053,54 @@ function showMypage() {
         // img_url, state 등 필요시 추가
     }
 }
+
+// === 로그인 상태 확인 및 리다이렉트 ===
+function checkLoginAndRedirect(targetUrl) {
+    console.log('checkLoginAndRedirect 호출됨:', targetUrl);
+    
+    const currentUser = JSON.parse(localStorage.getItem('mypageUser'));
+    console.log('현재 사용자 정보:', currentUser);
+    
+    if (!currentUser || !currentUser.email) {
+        console.log('로그인되지 않은 상태 - 팝업 표시');
+        
+        // SweetAlert 사용 가능 여부 확인
+        if (typeof Swal === 'undefined') {
+            console.error('SweetAlert가 로드되지 않음');
+            alert('예약을 하려면 먼저 로그인해주세요.');
+            showLoginForm();
+            return;
+        }
+        
+        // 로그인되지 않은 경우
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인 필요',
+            text: '예약을 하려면 먼저 로그인해주세요.',
+            confirmButtonText: '로그인하기',
+            cancelButtonText: '취소',
+            confirmButtonColor: '#0066cc',
+            showCancelButton: true
+        }).then((result) => {
+            console.log('팝업 결과:', result);
+            if (result.isConfirmed) {
+                // 로그인 폼 표시
+                showLoginForm();
+            }
+        }).catch((error) => {
+            console.error('SweetAlert 오류:', error);
+            // 오류 발생 시 기본 alert 사용
+            alert('예약을 하려면 먼저 로그인해주세요.');
+            showLoginForm();
+        });
+        return;
+    }
+    
+    console.log('로그인된 상태 - 예약 페이지로 이동');
+    // 로그인된 경우 예약 페이지로 이동
+    window.location.href = targetUrl;
+}
+
 function goToReservation() {
     checkLoginAndRedirect('./reservation.html');
 }

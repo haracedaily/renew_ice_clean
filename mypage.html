@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="./css/mypage.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/common.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
   <script>
@@ -30,7 +31,7 @@
     <ul class="flex gap-8 mobile-nav">
       <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
-      <li><a href="#" class="nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
       <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
     </ul>
     <!-- 모바일 메뉴 버튼 -->
@@ -43,7 +44,7 @@
     <ul class="mobile-menu-list">
       <li><a href="./contact_us.html" class="mobile-nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="mobile-nav-link">FAQ</a></li>
-      <li><a href="#" class="mobile-nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="#" class="mobile-nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
       <li><a href="./mypage.html" class="mobile-nav-link">마이페이지</a></li>
     </ul>
   </div>
@@ -355,39 +356,6 @@
 <script src="js/notification-system.js"></script>
 
 <script>
-// 로그인 체크 및 리다이렉트 함수
-function checkLoginAndRedirect(targetUrl) {
-    // 로컬 스토리지에서 로그인 정보 확인
-    const userInfo = localStorage.getItem('userInfo');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    
-    if (!isLoggedIn || !userInfo) {
-        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-        Swal.fire({
-            icon: 'warning',
-            title: '로그인이 필요합니다',
-            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
-            confirmButtonText: '로그인하기',
-            showCancelButton: true,
-            cancelButtonText: '취소',
-            confirmButtonColor: '#0066CC',
-            customClass: {
-                icon: 'swal2-icon-custom'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
-                window.location.href = './mypage.html';
-            }
-        });
-        return false;
-    }
-    
-    // 로그인된 경우 목표 페이지로 이동
-    window.location.href = targetUrl;
-    return true;
-}
-
 // SweetAlert 아이콘 커스텀 스타일
 const swalStyle = document.createElement('style');
 swalStyle.textContent = `

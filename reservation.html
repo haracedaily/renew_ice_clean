@@ -25,39 +25,6 @@
     // 전역 변수로 설정
     window.supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
     
-    // 로그인 체크 및 리다이렉트 함수
-    function checkLoginAndRedirect(targetUrl) {
-        // 로컬 스토리지에서 로그인 정보 확인
-        const userInfo = localStorage.getItem('userInfo');
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        
-        if (!isLoggedIn || !userInfo) {
-            // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-            Swal.fire({
-                icon: 'warning',
-                title: '로그인이 필요합니다',
-                text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
-                confirmButtonText: '로그인하기',
-                showCancelButton: true,
-                cancelButtonText: '취소',
-                confirmButtonColor: '#0066CC',
-                customClass: {
-                    icon: 'swal2-icon-custom'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // 로그인 페이지로 이동
-                    window.location.href = './mypage.html';
-                }
-            });
-            return false;
-        }
-        
-        // 로그인된 경우 목표 페이지로 이동
-        window.location.href = targetUrl;
-        return true;
-    }
-    
     // SweetAlert 아이콘 커스텀 스타일
     const style = document.createElement('style');
     style.textContent = `
