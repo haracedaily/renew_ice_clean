@@ -15,7 +15,7 @@ function testCurrentLocation() {
     // 1. 브라우저 지원 확인
     if (!navigator.geolocation) {
         console.error('❌ 이 브라우저에서는 위치 정보를 지원하지 않습니다.');
-        alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+        customPopup.show('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
         return;
     }
     console.log('✅ 브라우저에서 위치 정보 지원됨');
@@ -86,7 +86,7 @@ function testCurrentLocation() {
                     break;
             }
             
-            alert('위치 정보 오류:\n' + errorMessage);
+            customPopup.show('위치 정보 오류:\n' + errorMessage);
         },
         {
             enableHighAccuracy: true, // 정확도 높임
@@ -669,7 +669,7 @@ async function galleryPagination_search(d,keyword,key){
         $next.innerHTML = '';
         $pagination.innerHTML = '';
         document.querySelector("#galleryPage").innerHTML = `<div>조회 결과가 없습니다.</div>`;
-        Swal.fire({icon:'error',title:'실패',text:'조회된 결과가 없습니다.'});
+        customPopup.show('조회된 결과가 없습니다.');
     }
 }
 //갤러리 페이지 구성하기
@@ -965,7 +965,7 @@ function removeMarkers() {
 // 카페 마커 클릭 시 카카오맵 길찾기로 이동하는 함수
 function showKakaoMapRoute(destinationLat, destinationLng, placeName) {
     if (!currentPosition) {
-        alert('현재 위치를 먼저 확인해주세요.');
+        customPopup.show('현재 위치를 먼저 확인해주세요.');
         return;
     }
     
@@ -1045,7 +1045,7 @@ function showKakaoMapRoute(destinationLat, destinationLng, placeName) {
 // 장소 검색 함수 개선 (유명 프랜차이즈 카페/커피점 전용 검색 - ice.png 마커 사용)
 function searchPlaces(keyword) {
     if (!currentPosition) {
-        alert('먼저 위치를 확인해주세요.');
+        customPopup.show('먼저 위치를 확인해주세요.');
         return;
     }
 
@@ -1194,7 +1194,7 @@ function searchAddress() {
 
     const address = addressInput.value;
     if (!address) {
-        alert('주소를 입력해주세요.');
+        customPopup.show('주소를 입력해주세요.');
         return;
     }
 
@@ -1234,7 +1234,7 @@ function searchAddress() {
             // 주변 카페 자동 검색
             searchPlaces('카페');
         } else {
-            alert('주소를 찾을 수 없습니다.');
+            customPopup.show('주소를 찾을 수 없습니다.');
         }
     });
 }
@@ -1288,12 +1288,7 @@ window.closeCafeRoute = function(button) {
 // 주변 카페/커피점 검색 함수 (100m 반경)
 function searchNearbyCafes() {
     if (!currentPosition) {
-        Swal.fire({
-            icon: 'warning',
-            title: '위치 정보 없음',
-            text: '먼저 현재 위치를 확인해주세요.',
-            confirmButtonColor: '#0066CC'
-        });
+        customPopup.show('위치 정보 없음', '먼저 현재 위치를 확인해주세요.', '#0066CC');
         return;
     }
 

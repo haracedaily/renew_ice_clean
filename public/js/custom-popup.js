@@ -1,271 +1,361 @@
 // 커스텀 팝업 시스템
 class CustomPopup {
     constructor() {
-        this.createPopupContainer();
-        this.createToastContainer();
+        this.overlay = null;
+        this.popup = null;
+        this.resolve = null;
+        this.reject = null;
     }
 
-    // 팝업 컨테이너 생성
-    createPopupContainer() {
-        const overlay = document.createElement('div');
-        overlay.className = 'custom-popup-overlay';
-        overlay.id = 'custom-popup-overlay';
-        
-        const popup = document.createElement('div');
-        popup.className = 'custom-popup';
-        popup.id = 'custom-popup';
-        
-        overlay.appendChild(popup);
-        document.body.appendChild(overlay);
-        
-        // 오버레이 클릭 시 팝업 닫기
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                this.close();
-            }
-        });
-    }
-
-    // 토스트 컨테이너 생성
-    createToastContainer() {
-        const container = document.createElement('div');
-        container.id = 'custom-toast-container';
-        container.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10000;';
-        document.body.appendChild(container);
-    }
-
-    // 팝업 표시
-    show(options = {}) {
+    // 팝업 생성
+    createPopup(options = {}) {
         const {
+            type = 'info',
             title = '',
             message = '',
+            subtitle = '',
             icon = '',
-            type = 'info',
-            showCancelButton = false,
-            confirmButtonText = '확인',
-            cancelButtonText = '취소',
-            confirmButtonColor = 'primary',
-            onConfirm = null,
-            onCancel = null,
-            html = null
+            buttons = [],
+            showClose = true,
+            autoClose = false,
+            autoCloseTime = 3000
         } = options;
 
-        const overlay = document.getElementById('custom-popup-overlay');
-        const popup = document.getElementById('custom-popup');
+        // 아이콘 설정
+        const iconMap = {
+            success: 'fas fa-check',
+            error: 'fas fa-times',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle',
+            question: 'fas fa-question-circle'
+        };
 
-        // 아이콘 HTML
-        let iconHtml = '';
-        if (icon) {
-            iconHtml = `<div class="custom-popup-icon ${type}">${icon}</div>`;
-        }
+        const iconClass = icon || iconMap[type] || iconMap.info;
 
-        // 버튼 HTML
-        let buttonsHtml = '';
-        if (showCancelButton) {
-            buttonsHtml = `
-                <button class="custom-popup-btn custom-popup-btn-secondary" id="custom-popup-cancel">${cancelButtonText}</button>
-                <button class="custom-popup-btn custom-popup-btn-${confirmButtonColor}" id="custom-popup-confirm">${confirmButtonText}</button>
-            `;
-        } else {
-            buttonsHtml = `<button class="custom-popup-btn custom-popup-btn-${confirmButtonColor}" id="custom-popup-confirm">${confirmButtonText}</button>`;
-        }
-
-        // 팝업 내용 설정
-        popup.innerHTML = `
-            <div class="custom-popup-header">
-                <h3 class="custom-popup-title">${title}</h3>
-                <button class="custom-popup-close" id="custom-popup-close">&times;</button>
-            </div>
-            <div class="custom-popup-content">
-                ${iconHtml}
-                ${html || `<p class="custom-popup-message">${message}</p>`}
-            </div>
+        // 버튼 HTML 생성
+        const buttonsHtml = buttons.length > 0 ? `
             <div class="custom-popup-buttons">
-                ${buttonsHtml}
+                ${buttons.map(btn => `
+                    <button class="custom-popup-btn ${btn.class || 'custom-popup-btn-primary'}" 
+                            data-action="${btn.action || 'close'}">
+                        ${btn.text}
+                    </button>
+                `).join('')}
+            </div>
+        ` : '';
+
+        // 팝업 HTML 생성
+        const popupHtml = `
+            <div class="custom-popup-overlay" id="custom-popup-overlay">
+                <div class="custom-popup ${type}">
+                    ${showClose ? '<button class="custom-popup-close" onclick="customPopup.close()">&times;</button>' : ''}
+                    <div class="custom-popup-header">
+                        <div class="custom-popup-icon">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <h3 class="custom-popup-title">${title}</h3>
+                        ${subtitle ? `<p class="custom-popup-subtitle">${subtitle}</p>` : ''}
+                    </div>
+                    <div class="custom-popup-content">
+                        <p class="custom-popup-message">${message}</p>
+                    </div>
+                    ${buttonsHtml}
+                </div>
             </div>
         `;
 
-        // 이벤트 리스너 추가
-        const closeBtn = document.getElementById('custom-popup-close');
-        const confirmBtn = document.getElementById('custom-popup-confirm');
-        const cancelBtn = document.getElementById('custom-popup-cancel');
+        // 기존 팝업 제거
+        this.removePopup();
 
-        closeBtn.addEventListener('click', () => this.close());
-        confirmBtn.addEventListener('click', () => {
-            if (onConfirm) onConfirm();
-            this.close();
-        });
+        // 새 팝업 추가
+        document.body.insertAdjacentHTML('beforeend', popupHtml);
+        
+        this.overlay = document.getElementById('custom-popup-overlay');
+        this.popup = this.overlay.querySelector('.custom-popup');
 
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                if (onCancel) onCancel();
+        // 버튼 이벤트 설정
+        this.setupButtonEvents();
+
+        // 자동 닫기 설정
+        if (autoClose) {
+            setTimeout(() => {
                 this.close();
-            });
+            }, autoCloseTime);
         }
 
-        // 팝업 표시
-        overlay.classList.add('show');
+        // 애니메이션 시작
+        setTimeout(() => {
+            this.overlay.classList.add('show');
+        }, 10);
 
-        // Promise 반환
-        return new Promise((resolve) => {
-            this.resolvePromise = resolve;
-            
-            // 확인 버튼 클릭 시
-            confirmBtn.addEventListener('click', () => {
-                resolve({ isConfirmed: true, isDismissed: false });
-            }, { once: true });
-
-            // 취소 버튼 클릭 시
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    resolve({ isConfirmed: false, isDismissed: true });
-                }, { once: true });
-            }
-
-            // 닫기 버튼 클릭 시
-            closeBtn.addEventListener('click', () => {
-                resolve({ isConfirmed: false, isDismissed: true });
-            }, { once: true });
-
-            // 오버레이 클릭 시
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    resolve({ isConfirmed: false, isDismissed: true });
-                }
-            }, { once: true });
+        return new Promise((resolve, reject) => {
+            this.resolve = resolve;
+            this.reject = reject;
         });
+    }
+
+    // 버튼 이벤트 설정
+    setupButtonEvents() {
+        const buttons = this.popup.querySelectorAll('.custom-popup-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const action = button.getAttribute('data-action');
+                this.handleButtonAction(action);
+            });
+        });
+    }
+
+    // 버튼 액션 처리
+    handleButtonAction(action) {
+        switch (action) {
+            case 'confirm':
+                this.resolve(true);
+                break;
+            case 'cancel':
+                this.resolve(false);
+                break;
+            case 'close':
+            default:
+                this.resolve(null);
+                break;
+        }
+        this.close();
     }
 
     // 팝업 닫기
     close() {
-        const overlay = document.getElementById('custom-popup-overlay');
-        overlay.classList.remove('show');
-        
-        if (this.resolvePromise) {
-            this.resolvePromise({ isConfirmed: false, isDismissed: true });
+        if (this.overlay) {
+            this.overlay.classList.remove('show');
+            setTimeout(() => {
+                this.removePopup();
+            }, 300);
         }
     }
 
-    // 토스트 메시지 표시
-    showToast(options = {}) {
-        const {
-            title = '',
-            message = '',
-            type = 'info',
-            timer = 3000,
-            position = 'top-end'
-        } = options;
-
-        const container = document.getElementById('custom-toast-container');
-        const toast = document.createElement('div');
-        toast.className = `custom-toast ${type}`;
-        
-        toast.innerHTML = `
-            <div class="custom-toast-title">${title}</div>
-            <div class="custom-toast-message">${message}</div>
-        `;
-
-        container.appendChild(toast);
-
-        // 애니메이션을 위한 지연
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 100);
-
-        // 자동 제거
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
-        }, timer);
-
-        return toast;
-    }
-
-    // 미리 정의된 팝업 메서드들
-    fire(options) {
-        return this.show(options);
+    // 팝업 제거
+    removePopup() {
+        const existingOverlay = document.getElementById('custom-popup-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+        this.overlay = null;
+        this.popup = null;
     }
 
     // 성공 팝업
-    success(title, message) {
-        return this.show({
+    success(title, message, options = {}) {
+        return this.createPopup({
+            type: 'success',
             title,
             message,
-            icon: '✓',
-            type: 'success',
-            confirmButtonColor: 'success'
+            ...options
         });
     }
 
-    // 오류 팝업
-    error(title, message) {
-        return this.show({
+    // 에러 팝업
+    error(title, message, options = {}) {
+        return this.createPopup({
+            type: 'error',
             title,
             message,
-            icon: '✕',
-            type: 'error',
-            confirmButtonColor: 'danger'
+            ...options
         });
     }
 
     // 경고 팝업
-    warning(title, message) {
-        return this.show({
+    warning(title, message, options = {}) {
+        return this.createPopup({
+            type: 'warning',
             title,
             message,
-            icon: '⚠',
-            type: 'warning',
-            confirmButtonColor: 'danger'
+            ...options
         });
     }
 
     // 정보 팝업
-    info(title, message) {
-        return this.show({
+    info(title, message, options = {}) {
+        return this.createPopup({
+            type: 'info',
             title,
             message,
-            icon: 'ℹ',
-            type: 'info',
-            confirmButtonColor: 'primary'
+            ...options
         });
     }
 
     // 질문 팝업
-    question(title, message) {
-        return this.show({
+    question(title, message, options = {}) {
+        return this.createPopup({
+            type: 'question',
             title,
             message,
-            icon: '?',
+            buttons: [
+                {
+                    text: '확인',
+                    action: 'confirm',
+                    class: 'custom-popup-btn-success'
+                },
+                {
+                    text: '취소',
+                    action: 'cancel',
+                    class: 'custom-popup-btn-secondary'
+                }
+            ],
+            ...options
+        });
+    }
+
+    // 확인 팝업
+    confirm(title, message, options = {}) {
+        return this.createPopup({
             type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: 'danger'
+            title,
+            message,
+            buttons: [
+                {
+                    text: '확인',
+                    action: 'confirm',
+                    class: 'custom-popup-btn-danger'
+                },
+                {
+                    text: '취소',
+                    action: 'cancel',
+                    class: 'custom-popup-btn-secondary'
+                }
+            ],
+            ...options
+        });
+    }
+
+    // 알림 팝업 (자동 닫기)
+    alert(title, message, options = {}) {
+        return this.createPopup({
+            type: 'info',
+            title,
+            message,
+            autoClose: true,
+            autoCloseTime: 3000,
+            ...options
         });
     }
 }
 
-// 전역 팝업 인스턴스 생성
-window.CustomPopup = new CustomPopup();
-
-// SweetAlert 호환성을 위한 래퍼
-window.Swal = {
-    fire: (options) => {
-        if (typeof options === 'string') {
-            return window.CustomPopup.fire({ message: options });
-        }
-        return window.CustomPopup.fire(options);
-    },
-    
-    success: (title, message) => window.CustomPopup.success(title, message),
-    error: (title, message) => window.CustomPopup.error(title, message),
-    warning: (title, message) => window.CustomPopup.warning(title, message),
-    info: (title, message) => window.CustomPopup.info(title, message),
-    question: (title, message) => window.CustomPopup.question(title, message),
-    
-    showValidationMessage: (message) => {
-        console.warn('showValidationMessage is not implemented in custom popup');
+// 토스트 알림 시스템
+class CustomToast {
+    constructor() {
+        this.toasts = [];
     }
-}; 
+
+    // 토스트 생성
+    createToast(type, title, message, duration = 4000) {
+        const iconMap = {
+            success: 'fas fa-check',
+            error: 'fas fa-times',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle'
+        };
+
+        const toastHtml = `
+            <div class="custom-toast ${type}" id="toast-${Date.now()}">
+                <div class="custom-toast-icon">
+                    <i class="${iconMap[type] || iconMap.info}"></i>
+                </div>
+                <div class="custom-toast-content">
+                    <div class="custom-toast-title">${title}</div>
+                    <div class="custom-toast-message">${message}</div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        
+        const toast = document.querySelector(`#toast-${Date.now()}`);
+        this.toasts.push(toast);
+
+        // 애니메이션 시작
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        // 자동 제거
+        setTimeout(() => {
+            this.removeToast(toast);
+        }, duration);
+
+        return toast;
+    }
+
+    // 토스트 제거
+    removeToast(toast) {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+            const index = this.toasts.indexOf(toast);
+            if (index > -1) {
+                this.toasts.splice(index, 1);
+            }
+        }, 300);
+    }
+
+    // 성공 토스트
+    success(title, message, duration) {
+        return this.createToast('success', title, message, duration);
+    }
+
+    // 에러 토스트
+    error(title, message, duration) {
+        return this.createToast('error', title, message, duration);
+    }
+
+    // 경고 토스트
+    warning(title, message, duration) {
+        return this.createToast('warning', title, message, duration);
+    }
+
+    // 정보 토스트
+    info(title, message, duration) {
+        return this.createToast('info', title, message, duration);
+    }
+}
+
+// 전역 인스턴스 생성
+const customPopup = new CustomPopup();
+const customToast = new CustomToast();
+
+// 기존 alert 함수 오버라이드 (선택적)
+function overrideAlert() {
+    const originalAlert = window.alert;
+    window.alert = function(message) {
+        return customPopup.alert('알림', message);
+    };
+}
+
+// 기존 confirm 함수 오버라이드 (선택적)
+function overrideConfirm() {
+    const originalConfirm = window.confirm;
+    window.confirm = function(message) {
+        return customPopup.confirm('확인', message);
+    };
+}
+
+// 팝업 스타일 로드 확인
+function ensurePopupStyles() {
+    if (!document.querySelector('link[href*="custom-popup.css"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = './css/custom-popup.css';
+        document.head.appendChild(link);
+    }
+}
+
+// 페이지 로드 시 스타일 확인
+document.addEventListener('DOMContentLoaded', function() {
+    ensurePopupStyles();
+});
+
+// 전역 함수로 노출
+window.customPopup = customPopup;
+window.customToast = customToast;
+window.overrideAlert = overrideAlert;
+window.overrideConfirm = overrideConfirm; 

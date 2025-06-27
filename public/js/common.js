@@ -54,7 +54,7 @@ function openPopup(url, name, features) {
                     confirmButtonText: '확인'
                 });
             } else {
-                alert('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
+                customPopup.show('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
             }
             return null;
         }

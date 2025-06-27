@@ -122,7 +122,7 @@ loginForm.addEventListener('submit', async function(e) {
     const password = document.getElementById('login-password').value;
 
     if (!email || !password) {
-        alert('이메일과 비밀번호를 모두 입력해주세요.');
+        customPopup.warning('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
         return;
     }
 
@@ -137,15 +137,15 @@ loginForm.addEventListener('submit', async function(e) {
         if (error) {
             console.error('로그인 조회 오류:', error);
             if (error.code === 'PGRST116') {
-                alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+                customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             } else {
-                alert('로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+                customPopup.error('시스템 오류', '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
             }
             return;
         }
 
         if (!data) {
-            alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+            customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
@@ -184,7 +184,7 @@ loginForm.addEventListener('submit', async function(e) {
         }
         
         if (!isPasswordValid) {
-            alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+            customPopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
@@ -216,15 +216,15 @@ loginForm.addEventListener('submit', async function(e) {
                 loadUserReservations()
             ]);
             
-            alert('로그인 성공! 마이페이지로 이동합니다.');
+            customPopup.success('로그인 성공', '마이페이지로 이동합니다.');
         } catch (error) {
             console.error('마이페이지 로드 중 오류:', error);
             // 오류가 발생해도 로그인은 성공한 상태로 유지
-            alert('로그인 성공! 마이페이지로 이동합니다.');
+            customPopup.success('로그인 성공', '마이페이지로 이동합니다.');
         }
     } catch (error) {
         console.error('로그인 오류:', error);
-        alert('로그인 중 오류가 발생했습니다.');
+        customPopup.error('시스템 오류', '로그인 중 오류가 발생했습니다.');
     }
 });
 
@@ -319,7 +319,7 @@ async function registerUser(email, password, name, phone, addr) {
             }
         }
         
-        alert(errorMessage);
+        customPopup.error('회원가입 실패', errorMessage);
     }
 }
 
@@ -333,7 +333,7 @@ function setupRegisterForm() {
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
         if (!email || !password || !name) {
-            alert('이메일, 비밀번호, 이름은 필수 항목입니다.');
+            customPopup.warning('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
             return;
         }
         try {
@@ -354,11 +354,11 @@ function setupRegisterForm() {
                 localStorage.setItem('isLoggedIn', 'true');
                 showMypage();
                 loadUserReservations();
-                alert('회원가입 성공! 자동으로 로그인되었습니다.');
+                customPopup.success('회원가입 성공', '자동으로 로그인되었습니다.');
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
-            alert(error.message || '회원가입 중 오류가 발생했습니다.');
+            customPopup.error('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
         }
     });
 }
@@ -568,10 +568,10 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
-            alert('프로필 저장 완료: 프로필 정보가 성공적으로 저장되었습니다.');
+            customPopup.success('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
         } catch (error) {
             console.error('프로필 저장 오류:', error);
-            alert('프로필 저장 중 오류가 발생했습니다: ' + error.message);
+            customPopup.error('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
         }
     });
 }
@@ -587,7 +587,7 @@ logoutBtn.addEventListener('click', function() {
         localStorage.removeItem('isLoggedIn');
         currentUser = null;
         showLogin();
-        alert('안전하게 로그아웃되었습니다.');
+        customPopup.success('안전하게 로그아웃되었습니다.', '로그아웃되었습니다.');
     }
 });
 
@@ -710,7 +710,7 @@ async function loadUserReservations() {
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
-        alert('예약 내역을 불러오는 중 오류가 발생했습니다.');
+        customPopup.error('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -909,12 +909,12 @@ async function deleteReservation(reservationId) {
             
         if (error) throw error;
         
-        alert('예약이 성공적으로 삭제되었습니다.');
+        customPopup.success('예약 삭제 성공', '예약이 성공적으로 삭제되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 삭제 오류:', error);
-        alert('예약 삭제 중 오류가 발생했습니다.');
+        customPopup.error('예약 삭제 실패', '예약 삭제 중 오류가 발생했습니다.');
     }
 }
 
@@ -931,12 +931,12 @@ async function cancelReservation(reservationId) {
             
         if (error) throw error;
         
-        alert('예약이 성공적으로 취소되었습니다.');
+        customPopup.success('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 취소 오류:', error);
-        alert('예약 취소 중 오류가 발생했습니다.');
+        customPopup.error('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
     }
 }
 
@@ -997,7 +997,7 @@ function checkLoginAndRedirect(targetUrl) {
         // SweetAlert 사용 가능 여부 확인
         if (typeof Swal === 'undefined') {
             console.error('SweetAlert가 로드되지 않음');
-            alert('예약을 하려면 먼저 로그인해주세요.');
+            customPopup.warning('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
             showLoginForm();
             return;
         }
@@ -1020,7 +1020,7 @@ function checkLoginAndRedirect(targetUrl) {
         }).catch((error) => {
             console.error('SweetAlert 오류:', error);
             // 오류 발생 시 기본 alert 사용
-            alert('예약을 하려면 먼저 로그인해주세요.');
+            customPopup.warning('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
             showLoginForm();
         });
         return;
