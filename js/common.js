@@ -19,33 +19,11 @@ function checkLoginAndRedirect(targetUrl) {
         if (!isUserLoggedIn) {
             console.log('로그인되지 않은 상태 - 팝업 표시');
             
-            // SweetAlert 사용 가능 여부 확인
-            if (typeof Swal === 'undefined') {
-                console.error('SweetAlert가 로드되지 않음');
-                alert('예약을 하려면 먼저 로그인해주세요.');
-                window.location.href = './mypage.html';
-                return;
-            }
-            
             // 로그인되지 않은 경우
-            Swal.fire({
-                icon: 'warning',
-                title: '로그인 필요',
-                text: '예약을 하려면 먼저 로그인해주세요.',
-                confirmButtonText: '로그인하기',
-                cancelButtonText: '취소',
-                confirmButtonColor: '#0066cc',
-                showCancelButton: true
-            }).then((result) => {
-                console.log('팝업 결과:', result);
-                if (result.isConfirmed) {
-                    window.location.href = './mypage.html';
-                }
-            }).catch((error) => {
-                console.error('SweetAlert 오류:', error);
-                alert('예약을 하려면 먼저 로그인해주세요.');
+            const shouldLogin = confirm('예약을 하려면 먼저 로그인해주세요.\n\n로그인하시겠습니까?');
+            if (shouldLogin) {
                 window.location.href = './mypage.html';
-            });
+            }
             return;
         }
         
