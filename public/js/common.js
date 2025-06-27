@@ -1,7 +1,7 @@
 // === 공통 함수들 ===
 
 // 로그인 상태 확인 및 리다이렉트 함수
-function checkLoginAndRedirect(targetUrl) {
+async function checkLoginAndRedirect(targetUrl) {
     console.log('checkLoginAndRedirect 호출됨:', targetUrl);
     
     try {
@@ -20,7 +20,7 @@ function checkLoginAndRedirect(targetUrl) {
             console.log('로그인되지 않은 상태 - 팝업 표시');
             
             // 로그인되지 않은 경우
-            const shouldLogin = confirm('예약을 하려면 먼저 로그인해주세요.\n\n로그인하시겠습니까?');
+            const shouldLogin = await showPopup({ message: '예약을 하려면 먼저 로그인해주세요.\n\n로그인하시겠습니까?', type: 'confirm' });
             if (shouldLogin) {
                 window.location.href = './mypage.html';
             }
@@ -32,7 +32,7 @@ function checkLoginAndRedirect(targetUrl) {
         
     } catch (error) {
         console.error('checkLoginAndRedirect 오류:', error);
-        const shouldLogin = confirm('예약을 하려면 먼저 로그인해주세요.\n\n로그인하시겠습니까?');
+        const shouldLogin = await showPopup({ message: '예약을 하려면 먼저 로그인해주세요.\n\n로그인하시겠습니까?', type: 'confirm' });
         if (shouldLogin) {
             window.location.href = './mypage.html';
         }
@@ -40,13 +40,12 @@ function checkLoginAndRedirect(targetUrl) {
 }
 
 // 팝업 열기 함수 (팝업 차단 감지 포함)
-function openPopup(url, name, features) {
+async function openPopup(url, name, features) {
     try {
         const popup = window.open(url, name, features);
         
         if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-            // 팝업이 차단된 경우
-            simplePopup.show('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
+            await showPopup({ message: '팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.' });
             return null;
         }
         

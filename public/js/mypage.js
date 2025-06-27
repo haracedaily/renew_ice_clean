@@ -124,7 +124,7 @@ loginForm.addEventListener('submit', async function(e) {
 
     // 입력 검증
     if (!email || !password) {
-        simplePopup.warning('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
+        alert('이메일과 비밀번호를 모두 입력해주세요.');
         return;
     }
 
@@ -136,9 +136,9 @@ loginForm.addEventListener('submit', async function(e) {
 
         if (error) {
             if (error.message.includes('Invalid login credentials')) {
-                simplePopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+                alert('이메일 또는 비밀번호가 올바르지 않습니다.');
             } else {
-                simplePopup.error('시스템 오류', '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+                alert('로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
             }
             console.error('Login error:', error);
             return;
@@ -146,13 +146,13 @@ loginForm.addEventListener('submit', async function(e) {
 
         if (data.user) {
             // 로그인 성공 처리
-            simplePopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+            alert('이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
     } catch (error) {
         console.error('Login error:', error);
-        simplePopup.error('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+        alert('이메일 또는 비밀번호가 올바르지 않습니다.');
     }
 });
 
@@ -247,7 +247,7 @@ async function registerUser(email, password, name, phone, addr) {
             }
         }
         
-        simplePopup.error('회원가입 실패', errorMessage);
+        alert('회원가입 실패', errorMessage);
     }
 }
 
@@ -261,7 +261,7 @@ function setupRegisterForm() {
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
         if (!email || !password || !name) {
-            simplePopup.warning('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
+            alert('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
             return;
         }
         try {
@@ -282,11 +282,11 @@ function setupRegisterForm() {
                 localStorage.setItem('isLoggedIn', 'true');
                 showMypage();
                 loadUserReservations();
-                simplePopup.success('회원가입 성공', '자동으로 로그인되었습니다.');
+                alert('회원가입 성공', '자동으로 로그인되었습니다.');
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
-            simplePopup.error('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
+            alert('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
         }
     });
 }
@@ -496,10 +496,10 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
-            simplePopup.success('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
+            alert('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
         } catch (error) {
             console.error('프로필 저장 오류:', error);
-            simplePopup.error('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
+            alert('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
         }
     });
 }
@@ -508,14 +508,14 @@ function setupProfileForm() {
 logoutBtn.addEventListener('click', async function() {
     console.log('로그아웃 버튼 클릭됨');
     
-    const shouldLogout = await simplePopup.confirm('로그아웃 확인', '정말 로그아웃 하시겠습니까?');
+    const shouldLogout = await showPopup({ message: '정말 로그아웃 하시겠습니까?', type: 'confirm' });
     if (shouldLogout) {
         localStorage.removeItem('mypageUser');
         localStorage.removeItem('userInfo');
         localStorage.removeItem('isLoggedIn');
         currentUser = null;
         showLogin();
-        simplePopup.success('로그아웃 완료', '안전하게 로그아웃되었습니다.');
+        await showPopup({ message: '안전하게 로그아웃되었습니다.' });
     }
 });
 
@@ -603,7 +603,7 @@ async function loadUserReservations() {
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
-        simplePopup.error('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
+        alert('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -778,7 +778,7 @@ function formatDate(dateString) {
 
 // 예약 삭제
 async function deleteReservation(reservationId) {
-    const shouldDelete = await simplePopup.confirm('예약 삭제 확인', '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
+    const shouldDelete = await showPopup({ message: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.', type: 'confirm' });
     if (!shouldDelete) return;
     
     try {
@@ -789,18 +789,18 @@ async function deleteReservation(reservationId) {
             
         if (error) throw error;
         
-        simplePopup.success('예약 삭제 성공', '예약이 성공적으로 삭제되었습니다.');
+        await showPopup({ message: '예약이 성공적으로 삭제되었습니다.' });
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 삭제 오류:', error);
-        simplePopup.error('예약 삭제 실패', '예약 삭제 중 오류가 발생했습니다.');
+        await showPopup({ message: '예약 삭제 중 오류가 발생했습니다.' });
     }
 }
 
 // 예약 취소
 async function cancelReservation(reservationId) {
-    const shouldCancel = await simplePopup.confirm('예약 취소 확인', '정말로 이 예약을 취소하시겠습니까?');
+    const shouldCancel = await showPopup({ message: '정말로 이 예약을 취소하시겠습니까?', type: 'confirm' });
     if (!shouldCancel) return;
     
     try {
@@ -811,12 +811,13 @@ async function cancelReservation(reservationId) {
             
         if (error) throw error;
         
-        simplePopup.success('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
+        
+        alert('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 취소 오류:', error);
-        simplePopup.error('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
+        alert('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
     }
 }
 
@@ -873,7 +874,7 @@ function checkLoginAndRedirect(targetUrl) {
         console.log('로그인되지 않은 상태 - 팝업 표시');
         
         // 로그인되지 않은 경우
-        simplePopup.warning('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
+        alert('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
         showLoginForm();
         return;
     }
@@ -1000,7 +1001,7 @@ async function showEngineerInfo(engineerId) {
         const engineer = await getEngineerInfo(engineerId);
         
         if (!engineer) {
-            simplePopup.warning('엔지니어 정보 없음', '할당된 엔지니어 정보를 찾을 수 없습니다.');
+            alert('엔지니어 정보 없음', '할당된 엔지니어 정보를 찾을 수 없습니다.');
             return;
         }
 
@@ -1025,11 +1026,11 @@ async function showEngineerInfo(engineerId) {
             </div>
         `;
 
-        simplePopup.info('담당 엔지니어 정보', engineerInfoHtml);
+        alert('담당 엔지니어 정보', engineerInfoHtml);
 
     } catch (error) {
         console.error('엔지니어 정보 표시 중 오류:', error);
-        simplePopup.error('엔지니어 정보 표시 실패', '엔지니어 정보를 불러오는 중 오류가 발생했습니다.');
+        alert('엔지니어 정보 표시 실패', '엔지니어 정보를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1041,7 +1042,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         // 주소가 비어있는지 확인
         if (!address || address.trim() === '') {
             console.error('주소가 비어있습니다:', address);
-            simplePopup.warning('주소 없음', '표시할 주소가 없습니다.');
+            alert('주소 없음', '표시할 주소가 없습니다.');
             return;
         }
         
@@ -1060,7 +1061,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         
         const titleText = customerName ? `${customerName}님 서비스 주소` : `예약 #${reservationId} 서비스 주소`;
         
-        simplePopup.info(titleText, displayAddress);
+        alert(titleText, displayAddress);
         
         const geocoder = new kakao.maps.services.Geocoder();
         
@@ -1077,7 +1078,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
                         <div id="map-${reservationId}" style="width:400px;height:300px;border-radius:8px;margin:10px 0;"></div>
                     `;
                     
-                    simplePopup.info(titleText, mapHtml);
+                    alert(titleText, mapHtml);
                     
                     // 지도 초기화
                     setTimeout(() => {
@@ -1133,7 +1134,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
                 <p style="margin:10px 0;color:#666;font-size:12px;">주소: ${displayAddress}</p>
             `;
             
-            simplePopup.info(titleText, mapHtml);
+            alert(titleText, mapHtml);
             
             // 기본 지도 초기화 (서울 시청)
             setTimeout(() => {
@@ -1152,7 +1153,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         
     } catch (error) {
         console.error('지도 표시 오류:', error);
-        simplePopup.error('지도 표시 실패', '지도를 불러오는 중 오류가 발생했습니다.');
+        alert('지도 표시 실패', '지도를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1200,11 +1201,7 @@ async function toggleFavorite(reservationId) {
                 });
             if (error) {
                 if (error.code === '23505' || error.message?.includes('unique')) {
-                    simplePopup.show({
-                        type: 'info',
-                        title: '즐겨찾기 처리',
-                        message: '이미 즐겨찾기에 추가된 예약입니다.'
-                    });
+                    alert('이미 즐겨찾기에 추가된 예약입니다.');
                 } else {
                     throw error;
                 }
@@ -1219,33 +1216,13 @@ async function toggleFavorite(reservationId) {
         loadUserReservations();
     } catch (error) {
         console.error('즐겨찾기 토글 오류:', error);
-        simplePopup.show({
-            type: 'error',
-            title: '즐겨찾기 처리 중 오류',
-            message: '즐겨찾기 처리 중 오류가 발생했습니다.'
-        });
+        alert('즐겨찾기 처리 중 오류', '즐겨찾기 처리 중 오류가 발생했습니다.');
     }
 }
 
 // 취소된 예약 삭제
 async function deleteCancelledReservation(reservationId) {
-    const result = await simplePopup.show({
-        type: 'warning',
-        title: '취소된 예약 삭제 확인',
-        message: '정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
-        buttons: [
-            {
-                text: '삭제',
-                action: 'confirm',
-                class: 'simple-popup-btn-danger'
-            },
-            {
-                text: '취소',
-                action: 'cancel',
-                class: 'simple-popup-btn-secondary'
-            }
-        ]
-    });
+    const result = confirm('정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
 
     if (result) {
         try {
@@ -1256,20 +1233,12 @@ async function deleteCancelledReservation(reservationId) {
 
             if (error) throw error;
             
-            simplePopup.show({
-                type: 'success',
-                title: '취소된 예약 삭제 성공',
-                message: '취소된 예약이 성공적으로 삭제되었습니다.'
-            });
+            alert('취소된 예약이 성공적으로 삭제되었습니다.');
             loadUserReservations();
             
         } catch (error) {
             console.error('예약 삭제 오류:', error);
-            simplePopup.show({
-                type: 'error',
-                title: '예약 삭제 중 오류',
-                message: '예약 삭제 중 오류가 발생했습니다.'
-            });
+            alert('예약 삭제 중 오류가 발생했습니다.');
         }
     }
 }
