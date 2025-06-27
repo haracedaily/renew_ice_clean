@@ -1,3 +1,109 @@
+// === 통일된 커스텀 팝업 ===
+(function() {
+    if (window.showPopup) return; // 중복 방지
+    const style = document.createElement('style');
+    style.textContent = `
+    .unipopup-backdrop {
+        position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.35); z-index: 9999; display: flex; align-items: center; justify-content: center;
+    }
+    .unipopup-modal {
+        background: #fff; border-radius: 10px; min-width: 300px; max-width: 90vw; box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+        padding: 24px 20px 16px 20px; text-align: center; position: relative;
+        animation: unipopup-fadein 0.2s;
+    }
+    .unipopup-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 10px; color: #222; }
+    .unipopup-message { font-size: 1rem; color: #444; margin-bottom: 18px; white-space: pre-line; }
+    .unipopup-btns { display: flex; gap: 10px; justify-content: center; }
+    .unipopup-btn { min-width: 70px; padding: 7px 0; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; background: #eee; color: #222; transition: background 0.15s; }
+    .unipopup-btn-primary { background: #3b82f6; color: #fff; }
+    .unipopup-btn-danger { background: #ef4444; color: #fff; }
+    .unipopup-btn:hover { filter: brightness(0.95); }
+    @keyframes unipopup-fadein { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
+    `;
+    document.head.appendChild(style);
+
+    window.showPopup = function({ title = '', message = '', type = 'alert', buttons } = {}) {
+        return new Promise(resolve => {
+            // DOM이 준비되지 않은 경우 대기
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    createPopup();
+                });
+            } else {
+                createPopup();
+            }
+            
+            function createPopup() {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'unipopup-backdrop';
+                const modal = document.createElement('div');
+                modal.className = 'unipopup-modal';
+                if (title) {
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'unipopup-title';
+                    titleEl.textContent = title;
+                    modal.appendChild(titleEl);
+                }
+                if (message) {
+                    const msgEl = document.createElement('div');
+                    msgEl.className = 'unipopup-message';
+                    msgEl.innerHTML = message;
+                    modal.appendChild(msgEl);
+                }
+                const btnsDiv = document.createElement('div');
+                btnsDiv.className = 'unipopup-btns';
+                // 버튼 구성
+                let btnList = [];
+                if (buttons && Array.isArray(buttons)) {
+                    btnList = buttons;
+                } else if (type === 'confirm') {
+                    btnList = [
+                        { text: '확인', value: true, class: 'unipopup-btn unipopup-btn-primary' },
+                        { text: '취소', value: false, class: 'unipopup-btn' }
+                    ];
+                } else {
+                    btnList = [ { text: '확인', value: true, class: 'unipopup-btn unipopup-btn-primary' } ];
+                }
+                btnList.forEach(btn => {
+                    const b = document.createElement('button');
+                    b.textContent = btn.text;
+                    b.className = btn.class || 'unipopup-btn';
+                    b.onclick = () => {
+                        if (document.body.contains(backdrop)) {
+                            document.body.removeChild(backdrop);
+                        }
+                        resolve(btn.value);
+                    };
+                    btnsDiv.appendChild(b);
+                });
+                modal.appendChild(btnsDiv);
+                backdrop.appendChild(modal);
+                backdrop.onclick = e => { 
+                    if (e.target === backdrop && type !== 'alert') { 
+                        if (document.body.contains(backdrop)) {
+                            document.body.removeChild(backdrop);
+                        }
+                        resolve(false); 
+                    } 
+                };
+                
+                // body가 존재하는지 확인 후 추가
+                if (document.body) {
+                    document.body.appendChild(backdrop);
+                } else {
+                    // body가 없으면 window.onload 대기
+                    window.addEventListener('load', () => {
+                        if (document.body) {
+                            document.body.appendChild(backdrop);
+                        }
+                    });
+                }
+            }
+        });
+    };
+})();
+
 // === 공통 함수들 ===
 
 // 로그인 상태 확인 및 리다이렉트 함수
@@ -90,84 +196,4 @@ function getCurrentUser() {
         console.error('사용자 정보 가져오기 오류:', error);
         return null;
     }
-}
-
-window.showPopup = function({ title = '', message = '', type = 'alert', buttons } = {}) {
-    return new Promise(resolve => {
-        // DOM이 준비되지 않은 경우 대기
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                createPopup();
-            });
-        } else {
-            createPopup();
-        }
-        
-        function createPopup() {
-            const backdrop = document.createElement('div');
-            backdrop.className = 'unipopup-backdrop';
-            const modal = document.createElement('div');
-            modal.className = 'unipopup-modal';
-            if (title) {
-                const titleEl = document.createElement('div');
-                titleEl.className = 'unipopup-title';
-                titleEl.textContent = title;
-                modal.appendChild(titleEl);
-            }
-            if (message) {
-                const msgEl = document.createElement('div');
-                msgEl.className = 'unipopup-message';
-                msgEl.innerHTML = message;
-                modal.appendChild(msgEl);
-            }
-            const btnsDiv = document.createElement('div');
-            btnsDiv.className = 'unipopup-btns';
-            // 버튼 구성
-            let btnList = [];
-            if (buttons && Array.isArray(buttons)) {
-                btnList = buttons;
-            } else if (type === 'confirm') {
-                btnList = [
-                    { text: '확인', value: true, class: 'unipopup-btn unipopup-btn-primary' },
-                    { text: '취소', value: false, class: 'unipopup-btn' }
-                ];
-            } else {
-                btnList = [ { text: '확인', value: true, class: 'unipopup-btn unipopup-btn-primary' } ];
-            }
-            btnList.forEach(btn => {
-                const b = document.createElement('button');
-                b.textContent = btn.text;
-                b.className = btn.class || 'unipopup-btn';
-                b.onclick = () => {
-                    if (document.body.contains(backdrop)) {
-                        document.body.removeChild(backdrop);
-                    }
-                    resolve(btn.value);
-                };
-                btnsDiv.appendChild(b);
-            });
-            modal.appendChild(btnsDiv);
-            backdrop.appendChild(modal);
-            backdrop.onclick = e => { 
-                if (e.target === backdrop && type !== 'alert') { 
-                    if (document.body.contains(backdrop)) {
-                        document.body.removeChild(backdrop);
-                    }
-                    resolve(false); 
-                } 
-            };
-            
-            // body가 존재하는지 확인 후 추가
-            if (document.body) {
-                document.body.appendChild(backdrop);
-            } else {
-                // body가 없으면 window.onload 대기
-                window.addEventListener('load', () => {
-                    if (document.body) {
-                        document.body.appendChild(backdrop);
-                    }
-                });
-            }
-        }
-    });
-}; 
+} 
