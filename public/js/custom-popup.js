@@ -9,6 +9,15 @@ class CustomPopup {
 
     // 팝업 생성
     createPopup(options = {}) {
+        // DOM이 준비되지 않은 경우 대기
+        if (!document.body) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    this.createPopup(options).then(resolve).catch(reject);
+                }, 100);
+            });
+        }
+
         const {
             type = 'info',
             title = '',
@@ -247,6 +256,14 @@ class CustomToast {
 
     // 토스트 생성
     createToast(type, title, message, duration = 4000) {
+        // DOM이 준비되지 않은 경우 대기
+        if (!document.body) {
+            setTimeout(() => {
+                this.createToast(type, title, message, duration);
+            }, 100);
+            return null;
+        }
+
         const iconMap = {
             success: 'fas fa-check',
             error: 'fas fa-times',
