@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 팝업 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-btn { 
+            display: block; 
+            margin: 10px 0; 
+            padding: 10px 20px; 
+            background: #0066CC; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .test-btn:hover { background: #0052a3; }
+        .status { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>마이페이지 팝업 테스트</h1>
+    
+    <div class="status" id="status">
+        <strong>상태:</strong> <span id="status-text">로딩 중...</span>
+    </div>
+    
+    <h2>기본 SweetAlert 테스트</h2>
+    <button class="test-btn" onclick="testBasicSweetAlert()">기본 SweetAlert 테스트</button>
+    
+    <h2>팝업 헬퍼 테스트</h2>
+    <button class="test-btn" onclick="testPopupHelper()">팝업 헬퍼 로드 테스트</button>
+    <button class="test-btn" onclick="testLogoutConfirm()">로그아웃 확인 팝업 테스트</button>
+    <button class="test-btn" onclick="testSuccessMessage()">성공 메시지 팝업 테스트</button>
+    <button class="test-btn" onclick="testErrorMessage()">에러 메시지 팝업 테스트</button>
+    <button class="test-btn" onclick="testConfirmDialog()">확인 다이얼로그 팝업 테스트</button>
+    
+    <h2>마이페이지 스크립트 테스트</h2>
+    <button class="test-btn" onclick="loadMypageScripts()">마이페이지 스크립트 로드</button>
+    
+    <script>
+        // 상태 업데이트 함수
+        function updateStatus(message) {
+            document.getElementById('status-text').textContent = message;
+            console.log('상태:', message);
+        }
+        
+        // 기본 SweetAlert 테스트
+        function testBasicSweetAlert() {
+            updateStatus('기본 SweetAlert 테스트 중...');
+            try {
+                Swal.fire({
+                    title: '기본 SweetAlert 테스트',
+                    text: '이 팝업이 보이면 SweetAlert가 정상 작동합니다.',
+                    icon: 'success'
+                });
+                updateStatus('기본 SweetAlert 테스트 완료');
+            } catch (error) {
+                updateStatus('기본 SweetAlert 테스트 실패: ' + error.message);
+                console.error('SweetAlert 오류:', error);
+            }
+        }
+        
+        // 팝업 헬퍼 로드 테스트
+        function testPopupHelper() {
+            updateStatus('팝업 헬퍼 로드 테스트 중...');
+            
+            const functions = [
+                'showLogoutConfirm',
+                'showSafeAlert', 
+                'showSuccessMessage',
+                'showErrorMessage',
+                'showConfirmDialog'
+            ];
+            
+            let results = [];
+            functions.forEach(func => {
+                const exists = typeof window[func] === 'function';
+                results.push(`${func}: ${exists ? '✅' : '❌'}`);
+                console.log(`${func}:`, typeof window[func]);
+            });
+            
+            updateStatus('팝업 헬퍼 테스트 완료 - ' + results.join(', '));
+        }
+        
+        // 로그아웃 확인 팝업 테스트
+        function testLogoutConfirm() {
+            updateStatus('로그아웃 확인 팝업 테스트 중...');
+            if (typeof showLogoutConfirm === 'function') {
+                showLogoutConfirm().then(result => {
+                    updateStatus('로그아웃 확인 결과: ' + (result.isConfirmed ? '확인' : '취소'));
+                });
+            } else {
+                updateStatus('showLogoutConfirm 함수를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 성공 메시지 팝업 테스트
+        function testSuccessMessage() {
+            updateStatus('성공 메시지 팝업 테스트 중...');
+            if (typeof showSuccessMessage === 'function') {
+                showSuccessMessage('테스트 성공', '성공 메시지가 표시되었습니다.');
+                updateStatus('성공 메시지 팝업 테스트 완료');
+            } else {
+                updateStatus('showSuccessMessage 함수를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 에러 메시지 팝업 테스트
+        function testErrorMessage() {
+            updateStatus('에러 메시지 팝업 테스트 중...');
+            if (typeof showErrorMessage === 'function') {
+                showErrorMessage('테스트 에러', '에러 메시지가 표시되었습니다.');
+                updateStatus('에러 메시지 팝업 테스트 완료');
+            } else {
+                updateStatus('showErrorMessage 함수를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 확인 다이얼로그 팝업 테스트
+        function testConfirmDialog() {
+            updateStatus('확인 다이얼로그 팝업 테스트 중...');
+            if (typeof showConfirmDialog === 'function') {
+                showConfirmDialog('테스트 확인', '이것은 확인 다이얼로그 테스트입니다.', '확인', '취소')
+                    .then(result => {
+                        updateStatus('확인 다이얼로그 결과: ' + (result.isConfirmed ? '확인' : '취소'));
+                    });
+            } else {
+                updateStatus('showConfirmDialog 함수를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 마이페이지 스크립트 로드 테스트
+        function loadMypageScripts() {
+            updateStatus('마이페이지 스크립트 로드 테스트 중...');
+            
+            // 팝업 헬퍼 로드
+            const popupHelperScript = document.createElement('script');
+            popupHelperScript.src = 'js/popup-helper.js';
+            popupHelperScript.onload = function() {
+                updateStatus('팝업 헬퍼 로드 완료');
+                setTimeout(() => {
+                    testPopupHelper();
+                }, 500);
+            };
+            popupHelperScript.onerror = function() {
+                updateStatus('팝업 헬퍼 로드 실패');
+            };
+            document.head.appendChild(popupHelperScript);
+        }
+        
+        // 페이지 로드 시 초기 상태 확인
+        window.addEventListener('load', function() {
+            updateStatus('페이지 로드 완료');
+            
+            // SweetAlert 확인
+            if (typeof Swal !== 'undefined') {
+                updateStatus('SweetAlert 로드됨');
+            } else {
+                updateStatus('SweetAlert 로드되지 않음');
+            }
+            
+            // 팝업 헬퍼 확인
+            setTimeout(() => {
+                if (typeof showLogoutConfirm === 'function') {
+                    updateStatus('팝업 헬퍼 로드됨');
+                } else {
+                    updateStatus('팝업 헬퍼 로드되지 않음');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 
