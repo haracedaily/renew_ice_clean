@@ -378,6 +378,48 @@
 </div>
 <!--개인정보처리방침 팝업 끝-->
 
+<script>
+// 전역 함수들을 먼저 정의 (HTML onclick에서 사용하기 위해)
+function showLoginForm() {
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('register-section').classList.add('hidden');
+    document.getElementById('mypage-section').classList.add('hidden');
+}
+
+function showRegisterForm() {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('register-section').classList.remove('hidden');
+    document.getElementById('mypage-section').classList.add('hidden');
+}
+
+function showMypage() {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('register-section').classList.add('hidden');
+    document.getElementById('mypage-section').classList.remove('hidden');
+}
+
+function open_popup() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.classList.remove('hidden');
+    }
+}
+
+function close_popup() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.classList.add('hidden');
+    }
+}
+
+// 전역 함수로 등록
+window.showLoginForm = showLoginForm;
+window.showRegisterForm = showRegisterForm;
+window.showMypage = showMypage;
+window.open_popup = open_popup;
+window.close_popup = close_popup;
+</script>
+
 <script src="js/common.js"></script>
 <script src="js/password-security.js"></script>
 <script src="js/mypage.js"></script>
