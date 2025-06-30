@@ -11,9 +11,52 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'pageNum5';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KIMM_Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
 body{
     margin: 0;
     /*padding: 60px 0 0;*/
+}
+
+#side_btn_group{
+    background-color:rgba(217,217,217,0.7);
+    span{
+        &:hover {
+            &:first-child {
+                border: 1px solid #19499E;
+
+                p {
+                    color: #19499E;
+                }
+            }
+            &:nth-child(2) {
+                background-image:url("../image/seablueBalloon.png");
+                p{
+                    color:white;
+                }
+            }
+            &:nth-child(3) {
+                background-image:url("../image/yellowBalloon.png");
+                p{
+                    color:black;
+                }
+            }
+        }
+
+        &:nth-child(n+2){
+            p{
+                font-family:"pageNum5",sans-serif;
+                font-weight:500;
+            }
+        }
+
+    }
 }
 
 header {

@@ -3,6 +3,13 @@
 @tailwind utilities;*/
 /*@import "tailwindcss";*/
 
+@font-face {
+    font-family: 'pageNum5';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KIMM_Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
 *{
     box-sizing: border-box;
     word-break: keep-all;
