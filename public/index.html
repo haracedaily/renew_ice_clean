@@ -509,6 +509,11 @@ async function checkForcedPopup() {
       .limit(1);
 
     if (error) {
+      // 테이블이 없는 경우 조용히 무시
+      if (error.code === '42P01') {
+        console.log('forced_popups 테이블이 존재하지 않습니다. 팝업 기능을 건너뜁니다.');
+        return;
+      }
       console.error('강제 팝업 조회 에러:', error);
       return;
     }
