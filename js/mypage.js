@@ -197,7 +197,7 @@ async function handleLoginSubmit(e) {
 
     // 입력 검증
     if (!email || !password) {
-        await showPopup({ message: '이메일과 비밀번호를 모두 입력해주세요.' });
+        await customPopup.fire({ text: '이메일과 비밀번호를 모두 입력해주세요.', showCancelButton: true });
         return;
     }
 
@@ -214,35 +214,35 @@ async function handleLoginSubmit(e) {
             
             // 400 오류 처리
             if (customerError.code === '400' || customerError.status === 400) {
-                await showPopup({ message: '데이터베이스 연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' });
+                await customPopup.fire({ text: '데이터베이스 연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' });
                 return;
             }
             
             // 기타 오류
             if (customerError.code === 'PGRST116') {
-                await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+                await customPopup.fire({ text: '이메일 또는 비밀번호가 올바르지 않습니다.' });
             } else {
-                await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
+                await customPopup.fire({ text: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
             }
             return;
         }
 
         if (!customerData) {
-            await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            await customPopup.fire({ text: '이메일 또는 비밀번호가 올바르지 않습니다.' });
             return;
         }
 
         // 비밀번호 검증
         const storedPassword = customerData.password;
         if (!storedPassword) {
-            await showPopup({ message: '비밀번호 정보가 없습니다. 관리자에게 문의해주세요.' });
+            await customPopup.fire({ text: '비밀번호 정보가 없습니다. 관리자에게 문의해주세요.' });
             return;
         }
 
         // salt와 해시 분리
         const [salt, storedHash] = storedPassword.split(':');
         if (!salt || !storedHash) {
-            await showPopup({ message: '비밀번호 형식이 올바르지 않습니다. 관리자에게 문의해주세요.' });
+            await customPopup.fire({ text: '비밀번호 형식이 올바르지 않습니다. 관리자에게 문의해주세요.' });
             return;
         }
 
@@ -255,7 +255,7 @@ async function handleLoginSubmit(e) {
 
         // 해시 비교
         if (inputHash !== storedHash) {
-            await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            await customPopup.fire({ text: '이메일 또는 비밀번호가 올바르지 않습니다.' });
             return;
         }
 
@@ -278,11 +278,11 @@ async function handleLoginSubmit(e) {
         loadUserReservations();
         loadUserProfile();
         
-        await showPopup({ message: '로그인 성공!' });
+        await customPopup.fire({ text: '로그인 성공!' });
 
     } catch (error) {
         console.error('Login error:', error);
-        await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
+        await customPopup.fire({ text: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
     }
 }
 
@@ -290,14 +290,14 @@ async function handleLoginSubmit(e) {
 async function handleLogoutClick() {
     console.log('로그아웃 버튼 클릭됨');
     
-    const shouldLogout = await showPopup({ message: '정말 로그아웃 하시겠습니까?', type: 'confirm' });
-    if (shouldLogout) {
+    const result = await customPopup.fire({ text: '정말 로그아웃 하시겠습니까?', showCancelButton: true });
+    if (result.isConfirmed) {
         localStorage.removeItem('mypageUser');
         localStorage.removeItem('userInfo');
         localStorage.removeItem('isLoggedIn');
         currentUser = null;
         showLogin();
-        await showPopup({ message: '안전하게 로그아웃되었습니다.' });
+        await customPopup.fire({ text: '안전하게 로그아웃되었습니다.' });
     }
 }
 
@@ -497,7 +497,7 @@ async function registerUser(email, password, name, phone, addr) {
             }
         }
         
-        await showPopup({ message: '회원가입 실패: ' + errorMessage });
+        await customPopup.fire({ text: '회원가입 실패: ' + errorMessage });
     }
 }
 
@@ -511,7 +511,7 @@ function setupRegisterForm() {
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
         if (!email || !password || !name) {
-            await showPopup({ message: '이메일, 비밀번호, 이름은 필수 항목입니다.' });
+            await customPopup.fire({ text: '이메일, 비밀번호, 이름은 필수 항목입니다.' });
             return;
         }
         try {
@@ -532,11 +532,11 @@ function setupRegisterForm() {
                 localStorage.setItem('isLoggedIn', 'true');
                 window.showMypage();
                 loadUserReservations();
-                await showPopup({ message: '회원가입 성공! 로그인되었습니다.' });
+                await customPopup.fire({ text: '회원가입 성공! 로그인되었습니다.' });
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
-            await showPopup({ message: '회원가입 실패: ' + (error.message || '회원가입 중 오류가 발생했습니다.') });
+            await customPopup.fire({ text: '회원가입 실패: ' + (error.message || '회원가입 중 오류가 발생했습니다.') });
         }
     });
 }
@@ -746,10 +746,10 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
-            await showPopup({ message: '프로필 정보가 성공적으로 저장되었습니다.' });
+            await customPopup.fire({ text: '프로필 정보가 성공적으로 저장되었습니다.' });
         } catch (error) {
             console.error('프로필 저장 오류:', error);
-            await showPopup({ message: '프로필 저장 실패: ' + (error.message || '프로필 저장 중 오류가 발생했습니다.') });
+            await customPopup.fire({ text: '프로필 저장 실패: ' + (error.message || '프로필 저장 중 오류가 발생했습니다.') });
         }
     });
 }
@@ -863,7 +863,7 @@ async function loadUserReservations() {
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
-        await showPopup({ message: '예약 내역 로드 실패: 예약 내역을 불러오는 중 오류가 발생했습니다.' });
+        await customPopup.fire({ text: '예약 내역 로드 실패: 예약 내역을 불러오는 중 오류가 발생했습니다.' });
     }
 }
 
@@ -1051,7 +1051,7 @@ function formatDate(dateString) {
 
 // 예약 삭제
 async function deleteReservation(reservationId) {
-    const shouldDelete = await showPopup({ message: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.', type: 'confirm' });
+    const shouldDelete = await customPopup.fire({ text: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.', showCancelButton: true });
     if (!shouldDelete) return;
     
     try {
@@ -1062,18 +1062,18 @@ async function deleteReservation(reservationId) {
             
         if (error) throw error;
         
-        await showPopup({ message: '예약 삭제 성공! 예약이 성공적으로 삭제되었습니다.' });
+        await customPopup.fire({ text: '예약 삭제 성공! 예약이 성공적으로 삭제되었습니다.' });
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 삭제 오류:', error);
-        await showPopup({ message: '예약 삭제 실패: 예약 삭제 중 오류가 발생했습니다.' });
+        await customPopup.fire({ text: '예약 삭제 실패: 예약 삭제 중 오류가 발생했습니다.' });
     }
 }
 
 // 예약 취소
 async function cancelReservation(reservationId) {
-    const shouldCancel = await showPopup({ message: '정말로 이 예약을 취소하시겠습니까?', type: 'confirm' });
+    const shouldCancel = await customPopup.fire({ text: '정말로 이 예약을 취소하시겠습니까?', showCancelButton: true });
     if (!shouldCancel) return;
     
     try {
@@ -1084,12 +1084,12 @@ async function cancelReservation(reservationId) {
             
         if (error) throw error;
         
-        await showPopup({ message: '예약 취소 성공! 예약이 성공적으로 취소되었습니다.' });
+        await customPopup.fire({ text: '예약 취소 성공! 예약이 성공적으로 취소되었습니다.' });
         loadUserReservations();
         
     } catch (error) {
         console.error('예약 취소 오류:', error);
-        await showPopup({ message: '예약 취소 실패: 예약 취소 중 오류가 발생했습니다.' });
+        await customPopup.fire({ text: '예약 취소 실패: 예약 취소 중 오류가 발생했습니다.' });
     }
 }
 
@@ -1229,7 +1229,7 @@ async function showEngineerInfo(engineerId) {
         const engineer = await getEngineerInfo(engineerId);
         
         if (!engineer) {
-            await showPopup({ message: '엔지니어 정보 없음: 할당된 엔지니어 정보를 찾을 수 없습니다.' });
+            await customPopup.fire({ text: '엔지니어 정보 없음: 할당된 엔지니어 정보를 찾을 수 없습니다.' });
             return;
         }
 
@@ -1254,11 +1254,11 @@ async function showEngineerInfo(engineerId) {
             </div>
         `;
 
-        await showPopup({ title: '담당 엔지니어 정보', message: engineerInfoHtml });
+        await customPopup.fire({ text: '담당 엔지니어 정보', html: engineerInfoHtml });
 
     } catch (error) {
         console.error('엔지니어 정보 표시 중 오류:', error);
-        await showPopup({ message: '엔지니어 정보 표시 실패: 엔지니어 정보를 불러오는 중 오류가 발생했습니다.' });
+        await customPopup.fire({ text: '엔지니어 정보 표시 실패: 엔지니어 정보를 불러오는 중 오류가 발생했습니다.' });
     }
 }
 
@@ -1270,7 +1270,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         // 주소가 비어있는지 확인
         if (!address || address.trim() === '') {
             console.error('주소가 비어있습니다:', address);
-            await showPopup({ message: '주소 없음: 표시할 주소가 없습니다.' });
+            await customPopup.fire({ text: '주소 없음: 표시할 주소가 없습니다.' });
             return;
         }
         
@@ -1452,7 +1452,7 @@ async function showReservationMap(address, reservationId, customerName = '') {
         });
     } catch (error) {
         console.error('지도 표시 오류:', error);
-        await showPopup({ message: '지도 표시 실패: 지도를 불러오는 중 오류가 발생했습니다.' });
+        await customPopup.fire({ text: '지도 표시 실패: 지도를 불러오는 중 오류가 발생했습니다.' });
     }
 }
 
