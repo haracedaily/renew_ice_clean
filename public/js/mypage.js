@@ -1,3 +1,21 @@
+// === 전역 변수 ===
+let currentUser = null;
+let allReservations = [];
+let currentFilter = 'all';
+
+// === 유틸리티 함수 ===
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 // === DOM 요소 ===
 const loginSection = document.getElementById('login-section');
 const registerSection = document.getElementById('register-section');
@@ -10,16 +28,14 @@ const tabContents = document.querySelectorAll('.tab-content');
 const refreshBtn = document.getElementById('refresh-reservations');
 const reservationsList = document.getElementById('reservations-list');
 const profileForm = document.getElementById('profile-form');
+const passwordChangeForm = document.getElementById('password-change-form');
 const filterBtns = document.querySelectorAll('.filter-btn');
-
-let currentUser = null;
-let allReservations = []; // 모든 예약 데이터 저장
-let currentFilter = 'all'; // 현재 필터 상태
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
     checkLoginStatus();
     setupProfileForm();
+    setupPasswordChangeForm();
     setupRegisterForm();
     setupMobileOptimization();
     setupPhoneFormatting();
@@ -1276,4 +1292,222 @@ function togglePasswordVisibility(inputId) {
         icon.className = 'fas fa-eye';
         button.setAttribute('title', '비밀번호 보기');
     }
+}
+
+// === 비밀번호 변경 폼 설정 ===
+function setupPasswordChangeForm() {
+    if (!passwordChangeForm) return;
+    
+    // 실시간 검증을 위한 변수들
+    let isCurrentPasswordValid = false;
+    let isNewPasswordValid = false;
+    let isConfirmPasswordValid = false;
+    
+    // 현재 비밀번호 실시간 검증
+    const currentPasswordInput = document.getElementById('current-password');
+    const newPasswordInput = document.getElementById('new-password');
+    const confirmPasswordInput = document.getElementById('new-password-confirm');
+    
+    // 현재 비밀번호 검증
+    currentPasswordInput.addEventListener('input', debounce(async function() {
+        const currentPassword = this.value;
+        const statusElement = getOrCreateStatusElement(this, 'current-password-status');
+        
+        if (!currentPassword) {
+            updateStatus(statusElement, '', '');
+            isCurrentPasswordValid = false;
+            updateChangeButton();
+            return;
+        }
+        
+        if (!currentUser) {
+            updateStatus(statusElement, 'error', '사용자 정보를 찾을 수 없습니다.');
+            isCurrentPasswordValid = false;
+            updateChangeButton();
+            return;
+        }
+        
+        try {
+            updateStatus(statusElement, 'loading', '확인 중...');
+            const isValid = await verifyPassword(currentPassword, currentUser.password);
+            
+            if (isValid) {
+                updateStatus(statusElement, 'success', '✓ 현재 비밀번호가 확인되었습니다.');
+                isCurrentPasswordValid = true;
+            } else {
+                updateStatus(statusElement, 'error', '✗ 현재 비밀번호가 올바르지 않습니다.');
+                isCurrentPasswordValid = false;
+            }
+        } catch (error) {
+            updateStatus(statusElement, 'error', '확인 중 오류가 발생했습니다.');
+            isCurrentPasswordValid = false;
+        }
+        
+        updateChangeButton();
+    }, 500));
+    
+    // 새 비밀번호 유효성 검사
+    newPasswordInput.addEventListener('input', function() {
+        const newPassword = this.value;
+        const statusElement = getOrCreateStatusElement(this, 'new-password-status');
+        
+        if (!newPassword) {
+            updateStatus(statusElement, '', '');
+            isNewPasswordValid = false;
+            updateChangeButton();
+            return;
+        }
+        
+        if (newPassword.length < 8) {
+            updateStatus(statusElement, 'error', '✗ 비밀번호는 8자 이상이어야 합니다.');
+            isNewPasswordValid = false;
+        } else {
+            updateStatus(statusElement, 'success', '✓ 비밀번호 형식이 올바릅니다.');
+            isNewPasswordValid = true;
+        }
+        
+        // 확인 비밀번호도 다시 검증
+        if (confirmPasswordInput.value) {
+            validateConfirmPassword();
+        }
+        
+        updateChangeButton();
+    });
+    
+    // 확인 비밀번호 검증
+    confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+    
+    function validateConfirmPassword() {
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        const statusElement = getOrCreateStatusElement(confirmPasswordInput, 'confirm-password-status');
+        
+        if (!confirmPassword) {
+            updateStatus(statusElement, '', '');
+            isConfirmPasswordValid = false;
+            updateChangeButton();
+            return;
+        }
+        
+        if (newPassword === confirmPassword) {
+            updateStatus(statusElement, 'success', '✓ 비밀번호가 일치합니다.');
+            isConfirmPasswordValid = true;
+        } else {
+            updateStatus(statusElement, 'error', '✗ 비밀번호가 일치하지 않습니다.');
+            isConfirmPasswordValid = false;
+        }
+        
+        updateChangeButton();
+    }
+    
+    // 변경 버튼 상태 업데이트
+    function updateChangeButton() {
+        const changeButton = document.querySelector('.change-password-btn');
+        if (changeButton) {
+            if (isCurrentPasswordValid && isNewPasswordValid && isConfirmPasswordValid) {
+                changeButton.disabled = false;
+                changeButton.style.opacity = '1';
+                changeButton.style.cursor = 'pointer';
+            } else {
+                changeButton.disabled = true;
+                changeButton.style.opacity = '0.6';
+                changeButton.style.cursor = 'not-allowed';
+            }
+        }
+    }
+    
+    // 상태 요소 생성 또는 가져오기
+    function getOrCreateStatusElement(inputElement, id) {
+        let statusElement = document.getElementById(id);
+        if (!statusElement) {
+            statusElement = document.createElement('div');
+            statusElement.id = id;
+            statusElement.className = 'password-status';
+            inputElement.parentNode.appendChild(statusElement);
+        }
+        return statusElement;
+    }
+    
+    // 상태 업데이트
+    function updateStatus(element, type, message) {
+        element.className = `password-status ${type}`;
+        element.textContent = message;
+    }
+    
+    // 폼 제출 이벤트
+    passwordChangeForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const currentPassword = currentPasswordInput.value;
+        const newPassword = newPasswordInput.value;
+        const newPasswordConfirm = confirmPasswordInput.value;
+        
+        // 최종 검증
+        if (!isCurrentPasswordValid || !isNewPasswordValid || !isConfirmPasswordValid) {
+            Swal.fire({
+                icon: 'error',
+                title: '입력 오류',
+                text: '모든 필드를 올바르게 입력해주세요.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
+            });
+            return;
+        }
+        
+        try {
+            // 새 비밀번호 해시
+            const newPasswordHash = await hashPassword(newPassword);
+            
+            // 데이터베이스에서 비밀번호 업데이트
+            const { error } = await supabase
+                .from('customer')
+                .update({ password: newPasswordHash })
+                .eq('email', currentUser.email);
+                
+            if (error) {
+                console.error('비밀번호 업데이트 오류:', error);
+                throw new Error('비밀번호 변경 중 오류가 발생했습니다.');
+            }
+            
+            // 로컬 사용자 정보 업데이트
+            currentUser.password = newPasswordHash;
+            localStorage.setItem('mypageUser', JSON.stringify(currentUser));
+            localStorage.setItem('userInfo', JSON.stringify(currentUser));
+            
+            // 폼 초기화
+            passwordChangeForm.reset();
+            
+            // 상태 초기화
+            isCurrentPasswordValid = false;
+            isNewPasswordValid = false;
+            isConfirmPasswordValid = false;
+            updateChangeButton();
+            
+            // 상태 메시지 제거
+            document.querySelectorAll('.password-status').forEach(el => {
+                el.remove();
+            });
+            
+            Swal.fire({
+                icon: 'success',
+                title: '비밀번호 변경 완료',
+                text: '비밀번호가 성공적으로 변경되었습니다.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
+            });
+            
+        } catch (error) {
+            console.error('비밀번호 변경 오류:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '비밀번호 변경 실패',
+                text: error.message || '비밀번호 변경 중 오류가 발생했습니다.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
+            });
+        }
+    });
 }
