@@ -746,26 +746,123 @@ function showNotification(message, type = 'info') {
 // === 프로필 수정 ===
 function setupProfileForm() {
     if (!profileForm) return;
+    
+    // 실시간 전화번호 중복 체크
+    const phoneInput = document.getElementById('profile-phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', debounce(async function() {
+            const phone = this.value.trim();
+            const email = document.getElementById('profile-email').value;
+            
+            // 현재 사용자의 전화번호와 같으면 중복 체크 안함
+            if (phone === currentUser.phone) {
+                removePhoneStatus();
+                return;
+            }
+            
+            if (phone && isValidPhone(phone)) {
+                try {
+                    const { data: existingUser, error } = await supabase
+                        .from('customer')
+                        .select('email')
+                        .eq('phone', phone)
+                        .neq('email', email)
+                        .single();
+                    
+                    if (existingUser) {
+                        showPhoneDuplicate();
+                    } else {
+                        showPhoneAvailable();
+                    }
+                } catch (error) {
+                    if (error.code === 'PGRST116') {
+                        // 데이터가 없으면 사용 가능
+                        showPhoneAvailable();
+                    } else {
+                        console.error('전화번호 중복 체크 오류:', error);
+                    }
+                }
+            } else {
+                removePhoneStatus();
+            }
+        }, 500));
+    }
+    
     profileForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const name = document.getElementById('profile-name').value;
         const phone = document.getElementById('profile-phone').value;
         const email = document.getElementById('profile-email').value;
         const addr = document.getElementById('profile-address').value;
+        
+        // 전화번호 중복 상태 확인
+        if (phoneInput && phoneInput.classList.contains('phone-duplicate')) {
+            Swal.fire({
+                icon: 'error',
+                title: '전화번호 중복',
+                text: '이미 사용 중인 전화번호입니다. 다른 전화번호를 입력해주세요.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
+            });
+            return;
+        }
+        
         try {
+            // 전화번호가 변경되었는지 확인
+            if (phone !== currentUser.phone) {
+                // 전화번호 중복 체크
+                const { data: existingUser, error: checkError } = await supabase
+                    .from('customer')
+                    .select('email')
+                    .eq('phone', phone)
+                    .neq('email', email) // 현재 사용자 제외
+                    .single();
+                
+                if (existingUser) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '전화번호 중복',
+                        text: '이미 사용 중인 전화번호입니다. 다른 전화번호를 입력해주세요.',
+                        customClass: {
+                            icon: 'swal2-icon-custom'
+                        }
+                    });
+                    return;
+                }
+            }
+            
             const customerData = {
                 name: name,
                 phone: phone,
                 addr: addr
             };
+            
             const { data: result, error: updateError } = await supabase
                 .from('customer')
                 .update(customerData)
                 .eq('email', email)
                 .select();
+                
             if (updateError) {
+                console.error('프로필 업데이트 오류:', updateError);
+                
+                // 전화번호 중복 오류 처리
+                if (updateError.code === '23505' && updateError.message.includes('customer_phone_key')) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '전화번호 중복',
+                        text: '이미 사용 중인 전화번호입니다. 다른 전화번호를 입력해주세요.',
+                        customClass: {
+                            icon: 'swal2-icon-custom'
+                        }
+                    });
+                    return;
+                }
+                
                 throw updateError;
             }
+            
             currentUser = {
                 ...currentUser,
                 name: name,
@@ -774,10 +871,17 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
+            
+            // 상태 메시지 제거
+            removePhoneStatus();
+            
             Swal.fire({
                 icon: 'success',
                 title: '프로필 저장 완료',
                 text: '프로필 정보가 성공적으로 저장되었습니다.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
             });
         } catch (error) {
             console.error('프로필 저장 오류:', error);
@@ -785,6 +889,9 @@ function setupProfileForm() {
                 icon: 'error',
                 title: '저장 실패',
                 text: '프로필 저장 중 오류가 발생했습니다: ' + error.message,
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
             });
         }
     });
@@ -1445,13 +1552,25 @@ function setupPasswordChangeForm() {
             statusElement = document.createElement('div');
             statusElement.id = id;
             statusElement.className = 'password-status';
-            inputElement.parentNode.appendChild(statusElement);
+            
+            // password-input-group의 부모 요소(form-group)에 추가
+            const passwordGroup = inputElement.closest('.password-input-group');
+            if (passwordGroup && passwordGroup.parentNode) {
+                passwordGroup.parentNode.appendChild(statusElement);
+            } else if (inputElement.parentNode) {
+                // fallback: 직접 부모에 추가
+                inputElement.parentNode.appendChild(statusElement);
+            } else {
+                console.error('상태 메시지를 추가할 부모 요소를 찾을 수 없습니다:', inputElement);
+                return null;
+            }
         }
         return statusElement;
     }
     
     // 상태 업데이트
     function updateStatus(element, type, message) {
+        if (!element) return;
         element.className = `password-status ${type}`;
         element.textContent = message;
     }
