@@ -18,6 +18,22 @@ let favoriteReservations = new Set(); // 즐겨찾기된 예약 ID들을 저장
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
+    // Supabase 클라이언트가 준비될 때까지 대기
+    const waitForSupabase = () => {
+        if (window.supabase) {
+            console.log('Supabase 클라이언트 준비됨');
+            initializeMypage();
+        } else {
+            console.log('Supabase 클라이언트 대기 중...');
+            setTimeout(waitForSupabase, 100);
+        }
+    };
+    
+    waitForSupabase();
+});
+
+// 마이페이지 초기화 함수
+function initializeMypage() {
     checkLoginStatus();
     setupProfileForm();
     setupRegisterForm();
@@ -31,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof initializePasswordSecurity === 'function') {
         initializePasswordSecurity();
     }
-});
+}
 
 // === 전화번호 자동 하이픈 설정 ===
 function setupPhoneFormatting() {
@@ -128,29 +144,87 @@ loginForm.addEventListener('submit', async function(e) {
     }
 
     try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
+        // 먼저 customer 테이블에서 사용자 정보 확인
+        const { data: customerData, error: customerError } = await window.supabase
+            .from('customer')
+            .select('*')
+            .eq('email', email)
+            .single();
 
-        if (error) {
-            if (error.message.includes('Invalid login credentials')) {
+        if (customerError) {
+            console.error('Customer lookup error:', customerError);
+            
+            // 400 오류 처리
+            if (customerError.code === '400' || customerError.status === 400) {
+                await showPopup({ message: '데이터베이스 연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' });
+                return;
+            }
+            
+            // 기타 오류
+            if (customerError.code === 'PGRST116') {
                 await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
             } else {
-                await showPopup({ message: '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.' });
+                await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
             }
-            console.error('Login error:', error);
             return;
         }
 
-        if (data.user) {
+        if (!customerData) {
             await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
             return;
         }
 
+        // 비밀번호 검증
+        const storedPassword = customerData.password;
+        if (!storedPassword) {
+            await showPopup({ message: '비밀번호 정보가 없습니다. 관리자에게 문의해주세요.' });
+            return;
+        }
+
+        // salt와 해시 분리
+        const [salt, storedHash] = storedPassword.split(':');
+        if (!salt || !storedHash) {
+            await showPopup({ message: '비밀번호 형식이 올바르지 않습니다. 관리자에게 문의해주세요.' });
+            return;
+        }
+
+        // 입력된 비밀번호 해시
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password + salt);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // 해시 비교
+        if (inputHash !== storedHash) {
+            await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            return;
+        }
+
+        // 로그인 성공
+        currentUser = {
+            res_no: customerData.res_no,
+            email: customerData.email,
+            name: customerData.name,
+            phone: customerData.phone,
+            addr: customerData.addr,
+            img_url: customerData.img_url || '',
+            state: customerData.state || ''
+        };
+
+        localStorage.setItem('mypageUser', JSON.stringify(currentUser));
+        localStorage.setItem('userInfo', JSON.stringify(currentUser));
+        localStorage.setItem('isLoggedIn', 'true');
+
+        showMypage();
+        loadUserReservations();
+        loadUserProfile();
+        
+        await showPopup({ message: '로그인 성공!' });
+
     } catch (error) {
         console.error('Login error:', error);
-        await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+        await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
     }
 });
 
@@ -159,7 +233,7 @@ async function registerUser(email, password, name, phone, addr) {
     try {
         // 1단계: 이메일 중복 체크
         console.log('이메일 중복 체크 시작:', email);
-        const { data: existingUser, error: checkError } = await supabase
+        const { data: existingUser, error: checkError } = await window.supabase
             .from('customer')
             .select('email')
             .eq('email', email)
@@ -198,7 +272,7 @@ async function registerUser(email, password, name, phone, addr) {
 
         console.log('customer 테이블에 데이터 삽입 시도:', customerData);
         
-        const { data: result, error: insertError } = await supabase
+        const { data: result, error: insertError } = await window.supabase
             .from('customer')
             .insert([customerData])
             .select();
@@ -329,7 +403,7 @@ async function loadUserProfile() {
         }
         
         // 방법 1: 기본 쿼리 시도
-        let { data, error } = await supabase
+        let { data, error } = await window.supabase
             .from('customer')
             .select('*')
             .eq('email', currentUser.email)
@@ -347,7 +421,7 @@ async function loadUserProfile() {
             }
             
             // RLS 문제일 수 있으므로 다른 접근 방법 시도
-            const { data: data2, error: error2 } = await supabase
+            const { data: data2, error: error2 } = await window.supabase
                 .from('customer')
                 .select('*')
                 .eq('email', currentUser.email)
@@ -426,7 +500,7 @@ async function createUserInDatabase(user) {
     try {
         console.log('데이터베이스에 사용자 생성 시도:', user.email);
         
-        const { data, error } = await supabase
+        const { data, error } = await window.supabase
             .from('customer')
             .insert([
                 {
@@ -478,7 +552,7 @@ function setupProfileForm() {
                 phone: phone,
                 addr: addr
             };
-            const { data: result, error: updateError } = await supabase
+            const { data: result, error: updateError } = await window.supabase
                 .from('customer')
                 .update(customerData)
                 .eq('email', email)
@@ -976,7 +1050,7 @@ async function migratePlainPassword(userEmail, plainPassword) {
         const passwordHash = salt + ':' + hashHex;
         
         // 데이터베이스에서 비밀번호 업데이트
-        const { error } = await supabase
+        const { error } = await window.supabase
             .from('customer')
             .update({ password: passwordHash })
             .eq('email', userEmail);
@@ -1002,7 +1076,7 @@ function formatPrice(price) {
 // === 엔지니어 정보 조회 함수 ===
 async function getEngineerInfo(engineerId) {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await window.supabase
             .from('member')
             .select('nm, tel, file_url')
             .eq('idx', engineerId)
@@ -1421,3 +1495,43 @@ function setupPasswordToggles() {
         });
     });
 }
+
+// === 전역 함수 선언 (HTML onclick에서 사용하기 위해) ===
+window.showLoginForm = showLoginForm;
+window.showRegisterForm = showRegisterForm;
+window.showMypage = showMypage;
+window.checkLoginAndRedirect = checkLoginAndRedirect;
+window.goToReservation = goToReservation;
+window.showEngineerInfo = showEngineerInfo;
+window.showReservationMap = showReservationMap;
+window.toggleFavorite = toggleFavorite;
+window.deleteReservation = deleteReservation;
+window.cancelReservation = cancelReservation;
+
+// === 팝업 관련 함수들 ===
+function open_popup() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.classList.remove('hidden');
+    }
+}
+
+function close_popup() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.classList.add('hidden');
+    }
+}
+
+// 모바일 메뉴 토글 함수
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.classList.toggle('hidden');
+    }
+}
+
+// 전역 함수로 등록
+window.open_popup = open_popup;
+window.close_popup = close_popup;
+window.toggleMobileMenu = toggleMobileMenu;
