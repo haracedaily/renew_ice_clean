@@ -767,23 +767,23 @@ input[type = "radio"]{
 .time-options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-top: 0;
-  min-height: 120px;
+  min-height: 140px;
   justify-content: space-between;
 }
 
 .time-option {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 16px 20px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   background: white;
-  min-height: 45px;
-  font-size: 15px;
+  min-height: 55px;
+  font-size: 16px;
   line-height: 1;
 }
 
@@ -796,17 +796,17 @@ input[type = "radio"]{
 
 .time-option input[type="radio"] {
   margin-right: 10px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
-  margin: 0 10px 0 0;
+  margin: 0 12px 0 0;
   flex-shrink: 0;
   vertical-align: middle;
 }
 
 .time-option span {
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
   color: #333;
   cursor: pointer;
   line-height: 1;
@@ -1001,17 +1001,22 @@ input[type = "radio"]{
   }
   
   .time-options {
-    gap: 8px;
+    gap: 10px;
     min-height: auto;
   }
   
   .time-option {
-    padding: 10px 14px;
-    min-height: 40px;
+    padding: 14px 18px;
+    min-height: 50px;
   }
   
   .time-option span {
-    font-size: 14px;
+    font-size: 15px;
+  }
+  
+  .time-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
   }
   
   .service-options {
