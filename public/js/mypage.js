@@ -997,7 +997,7 @@ function applyFilter() {
 }
 
 // === 즐겨찾기 토글 기능 ===
-async function toggleFavorite(reservationId) {
+function toggleFavorite(reservationId) {
     try {
         // 로컬 스토리지에서 즐겨찾기 정보 가져오기
         const favorites = JSON.parse(localStorage.getItem('reservation_favorites') || '[]');

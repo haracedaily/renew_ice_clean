@@ -736,8 +736,8 @@ function showForcedPopup(popup) {
 }
 
 // CSS 애니메이션 추가
-const style = document.createElement('style');
-style.textContent = `
+const popupStyle = document.createElement('style');
+popupStyle.textContent = `
   @keyframes modalFadeIn {
     from {
       opacity: 0;
@@ -749,7 +749,7 @@ style.textContent = `
     }
   }
 `;
-document.head.appendChild(style);
+document.head.appendChild(popupStyle);
 
 // 페이지 로드 시 강제 팝업 확인
 document.addEventListener('DOMContentLoaded', function() {
