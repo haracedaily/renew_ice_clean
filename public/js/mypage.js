@@ -627,7 +627,16 @@ async function loadUserReservations() {
         }
         
         console.log('조회된 예약 내역:', data);
-        allReservations = data || []; // 모든 예약 데이터 저장
+        
+        // 로컬 스토리지에서 즐겨찾기 정보 가져오기
+        const favorites = JSON.parse(localStorage.getItem('reservation_favorites') || '[]');
+        
+        // 예약 데이터에 즐겨찾기 정보 추가
+        allReservations = (data || []).map(reservation => ({
+            ...reservation,
+            is_favorite: favorites.includes(reservation.res_no)
+        }));
+        
         updateReservationStats(allReservations);
         applyFilter(); // 현재 필터 적용
         
@@ -990,18 +999,28 @@ function applyFilter() {
 // === 즐겨찾기 토글 기능 ===
 async function toggleFavorite(reservationId) {
     try {
-        // 현재 예약의 즐겨찾기 상태 확인
-        const currentReservation = allReservations.find(r => r.res_no === reservationId);
-        const currentFavorite = currentReservation ? currentReservation.is_favorite : false;
-        const newFavorite = !currentFavorite;
+        // 로컬 스토리지에서 즐겨찾기 정보 가져오기
+        const favorites = JSON.parse(localStorage.getItem('reservation_favorites') || '[]');
         
-        // Supabase에서 즐겨찾기 상태 업데이트
-        const { error } = await window.supabase
-            .from('reservation')
-            .update({ is_favorite: newFavorite })
-            .eq('res_no', reservationId);
-            
-        if (error) throw error;
+        // 현재 예약의 즐겨찾기 상태 확인
+        const isCurrentlyFavorite = favorites.includes(reservationId);
+        const newFavorite = !isCurrentlyFavorite;
+        
+        if (newFavorite) {
+            // 즐겨찾기 추가
+            if (!favorites.includes(reservationId)) {
+                favorites.push(reservationId);
+            }
+        } else {
+            // 즐겨찾기 제거
+            const index = favorites.indexOf(reservationId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            }
+        }
+        
+        // 로컬 스토리지에 저장
+        localStorage.setItem('reservation_favorites', JSON.stringify(favorites));
         
         // 로컬 데이터 업데이트
         const reservationIndex = allReservations.findIndex(r => r.res_no === reservationId);
