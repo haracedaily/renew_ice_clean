@@ -16,45 +16,87 @@
   
   <!-- 전역 함수들을 먼저 정의 (HTML onclick에서 사용하기 위해) -->
   <script>
-  // 전역 함수들을 먼저 정의
-  function showLoginForm() {
-    document.getElementById('login-section').classList.remove('hidden');
-    document.getElementById('register-section').classList.add('hidden');
-    document.getElementById('mypage-section').classList.add('hidden');
-  }
+  // 전역 함수들을 즉시 정의
+  window.showLoginForm = function() {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const mypageSection = document.getElementById('mypage-section');
+    
+    if (loginSection) loginSection.classList.remove('hidden');
+    if (registerSection) registerSection.classList.add('hidden');
+    if (mypageSection) mypageSection.classList.add('hidden');
+  };
 
-  function showRegisterForm() {
-    document.getElementById('login-section').classList.add('hidden');
-    document.getElementById('register-section').classList.remove('hidden');
-    document.getElementById('mypage-section').classList.add('hidden');
-  }
+  window.showRegisterForm = function() {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const mypageSection = document.getElementById('mypage-section');
+    
+    if (loginSection) loginSection.classList.add('hidden');
+    if (registerSection) registerSection.classList.remove('hidden');
+    if (mypageSection) mypageSection.classList.add('hidden');
+  };
 
-  function showMypage() {
-    document.getElementById('login-section').classList.add('hidden');
-    document.getElementById('register-section').classList.add('hidden');
-    document.getElementById('mypage-section').classList.remove('hidden');
-  }
+  window.showMypage = function() {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const mypageSection = document.getElementById('mypage-section');
+    
+    if (loginSection) loginSection.classList.add('hidden');
+    if (registerSection) registerSection.classList.add('hidden');
+    if (mypageSection) mypageSection.classList.remove('hidden');
+    
+    // 사용자 정보 표시 (로그인된 경우)
+    const savedUser = localStorage.getItem('mypageUser');
+    if (savedUser) {
+      try {
+        const currentUser = JSON.parse(savedUser);
+        const userNameEl = document.getElementById('user-name');
+        const userEmailEl = document.getElementById('user-email');
+        const profileNameEl = document.getElementById('profile-name');
+        const profilePhoneEl = document.getElementById('profile-phone');
+        const profileEmailEl = document.getElementById('profile-email');
+        const profileAddressEl = document.getElementById('profile-address');
+        
+        if (userNameEl) userNameEl.textContent = currentUser.name + '님 반갑습니다.';
+        if (userEmailEl) userEmailEl.textContent = currentUser.email;
+        if (profileNameEl) profileNameEl.value = currentUser.name || '';
+        if (profilePhoneEl) profilePhoneEl.value = currentUser.phone || '';
+        if (profileEmailEl) profileEmailEl.value = currentUser.email || '';
+        if (profileAddressEl) profileAddressEl.value = currentUser.addr || '';
+      } catch (error) {
+        console.error('사용자 정보 표시 오류:', error);
+      }
+    }
+  };
 
-  function open_popup() {
+  window.open_popup = function() {
     const popup = document.getElementById('personal_popup');
     if (popup) {
       popup.classList.remove('hidden');
     }
-  }
+  };
 
-  function close_popup() {
+  window.close_popup = function() {
     const popup = document.getElementById('personal_popup');
     if (popup) {
       popup.classList.add('hidden');
     }
-  }
+  };
 
-  // 전역 함수로 등록
-  window.showLoginForm = showLoginForm;
-  window.showRegisterForm = showRegisterForm;
-  window.showMypage = showMypage;
-  window.open_popup = open_popup;
-  window.close_popup = close_popup;
+  // DOM이 준비되면 함수들을 다시 등록 (안전장치)
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('전역 함수 재등록');
+    
+    // 함수들이 제대로 등록되었는지 확인
+    console.log('전역 함수 확인:', {
+      showLoginForm: typeof window.showLoginForm,
+      showRegisterForm: typeof window.showRegisterForm,
+      showMypage: typeof window.showMypage,
+      open_popup: typeof window.open_popup,
+      close_popup: typeof window.close_popup
+    });
+  });
   </script>
   
   <script src="./js/common.js"></script>

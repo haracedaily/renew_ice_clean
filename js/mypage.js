@@ -204,7 +204,7 @@ function setupEventListeners() {
                 localStorage.setItem('userInfo', JSON.stringify(currentUser));
                 localStorage.setItem('isLoggedIn', 'true');
 
-                showMypage();
+                window.showMypage();
                 loadUserReservations();
                 loadUserProfile();
                 
@@ -323,14 +323,14 @@ function checkLoginStatus() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        showMypage();
+        window.showMypage();
         loadUserReservations();
         loadUserProfile();
         localStorage.setItem('userInfo', JSON.stringify(currentUser));
         localStorage.setItem('isLoggedIn', 'true');
     } else if (userInfo && isLoggedIn) {
         currentUser = JSON.parse(userInfo);
-        showMypage();
+        window.showMypage();
         loadUserReservations();
         loadUserProfile();
         localStorage.setItem('mypageUser', JSON.stringify(currentUser));
@@ -463,9 +463,9 @@ function setupRegisterForm() {
                 localStorage.setItem('mypageUser', JSON.stringify(currentUser));
                 localStorage.setItem('userInfo', JSON.stringify(currentUser));
                 localStorage.setItem('isLoggedIn', 'true');
-                showMypage();
+                window.showMypage();
                 loadUserReservations();
-                await showPopup({ message: '회원가입 성공! 자동으로 로그인되었습니다.' });
+                await showPopup({ message: '회원가입 성공! 로그인되었습니다.' });
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
@@ -1066,33 +1066,8 @@ function setupMobileOptimization() {
 }
 
 function showLogin() {
-    showLoginForm();
     document.getElementById('user-name').textContent = '사용자님 반갑습니다.';
     document.getElementById('user-email').textContent = 'user@example.com';
-}
-function showLoginForm() {
-    loginSection.classList.remove('hidden');
-    registerSection.classList.add('hidden');
-    mypageSection.classList.add('hidden');
-}
-function showRegisterForm() {
-    loginSection.classList.add('hidden');
-    registerSection.classList.remove('hidden');
-    mypageSection.classList.add('hidden');
-}
-function showMypage() {
-    loginSection.classList.add('hidden');
-    registerSection.classList.add('hidden');
-    mypageSection.classList.remove('hidden');
-    if (currentUser) {
-        document.getElementById('user-name').textContent = currentUser.name + '님 반갑습니다.';
-        document.getElementById('user-email').textContent = currentUser.email;
-        document.getElementById('profile-name').value = currentUser.name;
-        document.getElementById('profile-phone').value = currentUser.phone;
-        document.getElementById('profile-email').value = currentUser.email;
-        document.getElementById('profile-address').value = currentUser.addr;
-        // img_url, state 등 필요시 추가
-    }
 }
 
 // === 로그인 상태 확인 및 리다이렉트 ===
@@ -1109,7 +1084,7 @@ function checkLoginAndRedirect(targetUrl) {
         if (typeof Swal === 'undefined') {
             console.error('SweetAlert가 로드되지 않음');
             alert('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
-            showLoginForm();
+            window.showLoginForm();
             return;
         }
         
@@ -1126,13 +1101,13 @@ function checkLoginAndRedirect(targetUrl) {
             console.log('팝업 결과:', result);
             if (result.isConfirmed) {
                 // 로그인 폼 표시
-                showLoginForm();
+                window.showLoginForm();
             }
         }).catch((error) => {
             console.error('SweetAlert 오류:', error);
             // 오류 발생 시 기본 alert 사용
             alert('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
-            showLoginForm();
+            window.showLoginForm();
         });
         return;
     }
