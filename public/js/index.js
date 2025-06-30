@@ -1054,12 +1054,30 @@ function searchPlaces(keyword) {
             
             // 인포윈도우 생성
             const infowindow = new kakao.maps.InfoWindow({
-                content: `<div class="franchise-infowindow" style="padding:8px;font-size:13px;position:relative;min-width:200px;">
+                content: `<div style="padding:8px;font-size:13px;position:relative;min-width:200px;">
+                    <style>
+                        /* 카카오맵에서 자동으로 생성되는 불필요한 링크들 숨기기 */
+                        div a[href*="kakao.com"],
+                        div a[href*="daum.net"],
+                        div a[href*="map.kakao.com"],
+                        div a[href*="place.map.kakao.com"],
+                        div a[href*="roadview.kakao.com"],
+                        div a[href*="search.kakao.com"],
+                        div a[href*="web.kakao.com"],
+                        div a[href*="m.kakao.com"],
+                        div a[href*="kakao.com"] {
+                            display: none !important;
+                        }
+                        /* 카카오맵 인포윈도우 내부의 모든 외부 링크 숨기기 */
+                        div a:not([onclick*="showKakaoMapRoute"]) {
+                            display: none !important;
+                        }
+                    </style>
                     <button onclick="window.closeCafeRoute(this)" style="position:absolute;top:2px;right:2px;background:transparent;border:none;font-size:14px;cursor:pointer;color:#888;z-index:10;">✖</button>
-                    <div class="franchise-name">${place.place_name}</div>
-                    <div class="franchise-address">${place.road_address_name || place.address_name}</div>
-                    <div class="franchise-phone">${place.phone || '전화번호 없음'}</div>
-                    <button class="route-btn" onclick="showKakaoMapRoute(${place.y}, ${place.x}, '${place.place_name}')">길찾기</button>
+                    <strong style="color:#333;font-size:14px;">${place.place_name}</strong><br>
+                    <span style="color:#666;font-size:12px;">${place.road_address_name || place.address_name}</span><br>
+                    <span style="color:#888;font-size:11px;">${place.phone || '전화번호 없음'}</span><br>
+                    <button onclick="showKakaoMapRoute(${place.y}, ${place.x}, '${place.place_name}')" style="margin-top:5px;padding:3px 8px;background:#007bff;color:white;border:none;border-radius:3px;font-size:11px;cursor:pointer;">길찾기</button>
                 </div>`,
                 removable: true
             });
@@ -1306,6 +1324,24 @@ function searchNearbyCafes() {
             // 인포윈도우 생성
             const infowindow = new kakao.maps.InfoWindow({
                 content: `<div style="padding:8px;font-size:13px;position:relative;min-width:200px;">
+                    <style>
+                        /* 카카오맵에서 자동으로 생성되는 불필요한 링크들 숨기기 */
+                        div a[href*="kakao.com"],
+                        div a[href*="daum.net"],
+                        div a[href*="map.kakao.com"],
+                        div a[href*="place.map.kakao.com"],
+                        div a[href*="roadview.kakao.com"],
+                        div a[href*="search.kakao.com"],
+                        div a[href*="web.kakao.com"],
+                        div a[href*="m.kakao.com"],
+                        div a[href*="kakao.com"] {
+                            display: none !important;
+                        }
+                        /* 카카오맵 인포윈도우 내부의 모든 외부 링크 숨기기 */
+                        div a:not([onclick*="showKakaoMapRoute"]) {
+                            display: none !important;
+                        }
+                    </style>
                     <button onclick="window.closeCafeRoute(this)" style="position:absolute;top:2px;right:2px;background:transparent;border:none;font-size:14px;cursor:pointer;color:#888;z-index:10;">✖</button>
                     <strong style="color:#333;font-size:14px;">${place.place_name}</strong><br>
                     <span style="color:#666;font-size:12px;">${place.road_address_name || place.address_name}</span><br>
