@@ -704,8 +704,18 @@ function displayReservations(reservations) {
         return;
     }
     
-    reservationsList.innerHTML = reservations.map(reservation => {
+    // 즐겨찾기 예약을 상단으로 정렬
+    const sortedReservations = reservations.sort((a, b) => {
+        const aIsFavorite = a.is_favorite || false;
+        const bIsFavorite = b.is_favorite || false;
+        if (aIsFavorite && !bIsFavorite) return -1;
+        if (!aIsFavorite && bIsFavorite) return 1;
+        return 0;
+    });
+    
+    reservationsList.innerHTML = sortedReservations.map(reservation => {
         const statusInfo = getStatusInfo(reservation.state);
+        const isFavorite = reservation.is_favorite || false;
         
         // 결제금액 표시 로직
         let paymentDisplay = '';
@@ -726,10 +736,13 @@ function displayReservations(reservations) {
         }
         
         return `
-            <div class="reservation-card">
+            <div class="reservation-card ${isFavorite ? 'favorite' : ''}">
                 <div class="reservation-card-header">
                     <div class="reservation-id">
                         <span class="reservation-number">예약 #${reservation.res_no}</span>
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${reservation.res_no})" title="${isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}">
+                            <i class="fas fa-star"></i>
+                        </button>
                     </div>
                     <span class="reservation-status status-${reservation.state}">${statusInfo.text}</span>
                 </div>
@@ -887,6 +900,33 @@ function showMypage() {
     }
 }
 function goToReservation() {
+    // 로그인 상태 확인
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (!isLoggedIn || !userInfo) {
+        // 로그인되지 않은 경우 경고 메시지 표시
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인이 필요합니다',
+            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
+            confirmButtonText: '로그인하기',
+            showCancelButton: true,
+            cancelButtonText: '취소',
+            confirmButtonColor: '#0066CC',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 현재 페이지에서 로그인 폼 표시
+                showLoginForm();
+            }
+        });
+        return;
+    }
+    
+    // 로그인된 경우 예약 페이지로 이동
     window.location.href = './reservation.html';
 }
 
@@ -945,4 +985,72 @@ function applyFilter() {
     }
     
     displayReservations(filteredReservations);
+}
+
+// === 즐겨찾기 토글 기능 ===
+async function toggleFavorite(reservationId) {
+    try {
+        // 현재 예약의 즐겨찾기 상태 확인
+        const currentReservation = allReservations.find(r => r.res_no === reservationId);
+        const currentFavorite = currentReservation ? currentReservation.is_favorite : false;
+        const newFavorite = !currentFavorite;
+        
+        // Supabase에서 즐겨찾기 상태 업데이트
+        const { error } = await window.supabase
+            .from('reservation')
+            .update({ is_favorite: newFavorite })
+            .eq('res_no', reservationId);
+            
+        if (error) throw error;
+        
+        // 로컬 데이터 업데이트
+        const reservationIndex = allReservations.findIndex(r => r.res_no === reservationId);
+        if (reservationIndex !== -1) {
+            allReservations[reservationIndex].is_favorite = newFavorite;
+        }
+        
+        // UI 새로고침
+        applyFilter();
+        
+        // 성공 메시지
+        const message = newFavorite ? '즐겨찾기에 추가되었습니다.' : '즐겨찾기에서 제거되었습니다.';
+        Swal.fire({
+            icon: 'success',
+            title: '즐겨찾기',
+            text: message,
+            timer: 1500,
+            showConfirmButton: false,
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        });
+        
+    } catch (error) {
+        console.error('즐겨찾기 토글 오류:', error);
+        Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: '즐겨찾기 설정 중 오류가 발생했습니다.',
+            customClass: {
+                icon: 'swal2-icon-custom'
+            }
+        });
+    }
+}
+
+// === 비밀번호 토글 기능 ===
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const button = input.parentElement.querySelector('.password-toggle-btn');
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+        button.setAttribute('title', '비밀번호 숨기기');
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+        button.setAttribute('title', '비밀번호 보기');
+    }
 }

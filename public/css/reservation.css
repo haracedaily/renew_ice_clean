@@ -735,11 +735,6 @@ input[type = "radio"]{
   margin-right: 8px;
 }
 
-.time-option input[type="radio"]:checked + span {
-  background-color: #0066CC;
-  color: white;
-}
-
 /* 비활성화된 시간 옵션 스타일 */
 .time-option input[type="radio"]:disabled + span {
     background-color: #f5f5f5;

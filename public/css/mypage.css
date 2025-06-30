@@ -1112,4 +1112,92 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
 
 .swal2-confirm:focus {
     box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5) !important;
+}
+
+/* 비밀번호 입력 그룹 */
+.password-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-group input {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.password-toggle-btn:hover {
+  color: #0066CC;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  color: #0066CC;
+}
+
+/* 비밀번호 힌트 */
+
+/* 즐겨찾기 버튼 */
+.favorite-btn {
+  background: none;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.3s ease;
+  color: #ddd;
+}
+
+.favorite-btn:hover {
+  border-color: #ffd700;
+  color: #ffd700;
+  transform: scale(1.1);
+}
+
+.favorite-btn.active {
+  border-color: #0066CC;
+  background-color: #0066CC;
+  color: white;
+}
+
+.favorite-btn.active:hover {
+  border-color: #0052a3;
+  background-color: #0052a3;
+}
+
+/* 즐겨찾기된 예약 카드 */
+.reservation-card.favorite {
+  border: 2px solid #0066CC;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+.reservation-card.favorite .reservation-card-header {
+  background: linear-gradient(135deg, #0066CC, #0052a3);
+  color: white;
+}
+
+/* 예약 ID 영역 */
+.reservation-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 } 
