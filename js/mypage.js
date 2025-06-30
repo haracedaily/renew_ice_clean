@@ -6,13 +6,31 @@ let currentUser = null;
 let allReservations = []; // 모든 예약 데이터 저장
 let currentFilter = 'all'; // 현재 필터 상태
 let favoriteReservations = new Set(); // 즐겨찾기된 예약 ID들을 저장
+let isInitialized = false; // 초기화 상태 체크
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log('=== mypage.js DOMContentLoaded 이벤트 발생 ===');
     
+    // 중복 초기화 방지
+    if (isInitialized) {
+        console.log('이미 초기화됨 - 중복 실행 방지');
+        return;
+    }
+    
     // DOM 요소들 초기화
     initializeDOMElements();
+    
+    // showPopup 함수가 준비될 때까지 대기
+    const waitForShowPopup = () => {
+        if (typeof window.showPopup === 'function') {
+            console.log('showPopup 함수 준비됨 - mypage.js');
+            waitForSupabase();
+        } else {
+            console.log('showPopup 함수 대기 중... - mypage.js');
+            setTimeout(waitForShowPopup, 100);
+        }
+    };
     
     // Supabase 클라이언트가 준비될 때까지 대기
     const waitForSupabase = () => {
@@ -25,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    waitForSupabase();
+    waitForShowPopup();
 });
 
 // DOM 요소 초기화 함수
@@ -62,6 +80,11 @@ function initializeDOMElements() {
 // 마이페이지 초기화 함수
 function initializeMypage() {
     console.log('=== 마이페이지 초기화 시작 ===');
+    
+    if (isInitialized) {
+        console.log('이미 초기화됨 - 중복 실행 방지');
+        return;
+    }
     
     try {
         // 이벤트 리스너 설정
@@ -110,6 +133,7 @@ function initializeMypage() {
             console.log('비밀번호 보안 기능이 정의되지 않음');
         }
         
+        isInitialized = true;
         console.log('=== 마이페이지 초기화 완료 ===');
     } catch (error) {
         console.error('마이페이지 초기화 오류:', error);
@@ -118,143 +142,186 @@ function initializeMypage() {
 
 // 이벤트 리스너 설정 함수
 function setupEventListeners() {
+    // 기존 이벤트 리스너 제거 (중복 방지)
+    removeExistingEventListeners();
+    
     // 로그인 폼 이벤트 리스너
     if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            // 입력 검증
-            if (!email || !password) {
-                await showPopup({ message: '이메일과 비밀번호를 모두 입력해주세요.' });
-                return;
-            }
-
-            try {
-                // 먼저 customer 테이블에서 사용자 정보 확인
-                const { data: customerData, error: customerError } = await window.supabase
-                    .from('customer')
-                    .select('*')
-                    .eq('email', email)
-                    .single();
-
-                if (customerError) {
-                    console.error('Customer lookup error:', customerError);
-                    
-                    // 400 오류 처리
-                    if (customerError.code === '400' || customerError.status === 400) {
-                        await showPopup({ message: '데이터베이스 연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' });
-                        return;
-                    }
-                    
-                    // 기타 오류
-                    if (customerError.code === 'PGRST116') {
-                        await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
-                    } else {
-                        await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
-                    }
-                    return;
-                }
-
-                if (!customerData) {
-                    await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
-                    return;
-                }
-
-                // 비밀번호 검증
-                const storedPassword = customerData.password;
-                if (!storedPassword) {
-                    await showPopup({ message: '비밀번호 정보가 없습니다. 관리자에게 문의해주세요.' });
-                    return;
-                }
-
-                // salt와 해시 분리
-                const [salt, storedHash] = storedPassword.split(':');
-                if (!salt || !storedHash) {
-                    await showPopup({ message: '비밀번호 형식이 올바르지 않습니다. 관리자에게 문의해주세요.' });
-                    return;
-                }
-
-                // 입력된 비밀번호 해시
-                const encoder = new TextEncoder();
-                const data = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-                // 해시 비교
-                if (inputHash !== storedHash) {
-                    await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
-                    return;
-                }
-
-                // 로그인 성공
-                currentUser = {
-                    res_no: customerData.res_no,
-                    email: customerData.email,
-                    name: customerData.name,
-                    phone: customerData.phone,
-                    addr: customerData.addr,
-                    img_url: customerData.img_url || '',
-                    state: customerData.state || ''
-                };
-
-                localStorage.setItem('mypageUser', JSON.stringify(currentUser));
-                localStorage.setItem('userInfo', JSON.stringify(currentUser));
-                localStorage.setItem('isLoggedIn', 'true');
-
-                window.showMypage();
-                loadUserReservations();
-                loadUserProfile();
-                
-                await showPopup({ message: '로그인 성공!' });
-
-            } catch (error) {
-                console.error('Login error:', error);
-                await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
-            }
-        });
+        loginForm.addEventListener('submit', handleLoginSubmit);
     }
 
     // 로그아웃 버튼 이벤트 리스너
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('mypageUser');
-            localStorage.removeItem('userInfo');
-            localStorage.removeItem('isLoggedIn');
-            currentUser = null;
-            showLogin();
-        });
+        logoutBtn.addEventListener('click', handleLogoutClick);
     }
 
     // 탭 버튼 이벤트 리스너
     if (tabBtns) {
         tabBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const targetTab = this.getAttribute('data-tab');
-                
-                // 활성 탭 버튼 변경
-                tabBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                // 탭 콘텐츠 변경
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                    if (content.id === targetTab + '-tab') {
-                        content.classList.add('active');
-                    }
-                });
-            });
+            btn.addEventListener('click', handleTabClick);
         });
     }
 
     // 새로고침 버튼 이벤트 리스너
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', function() {
-            loadUserReservations();
-        });
+        refreshBtn.addEventListener('click', handleRefreshClick);
     }
+}
+
+// 기존 이벤트 리스너 제거
+function removeExistingEventListeners() {
+    if (loginForm) {
+        const newLoginForm = loginForm.cloneNode(true);
+        loginForm.parentNode.replaceChild(newLoginForm, loginForm);
+        loginForm = newLoginForm;
+    }
+    
+    if (logoutBtn) {
+        const newLogoutBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+        logoutBtn = newLogoutBtn;
+    }
+    
+    if (refreshBtn) {
+        const newRefreshBtn = refreshBtn.cloneNode(true);
+        refreshBtn.parentNode.replaceChild(newRefreshBtn, refreshBtn);
+        refreshBtn = newRefreshBtn;
+    }
+}
+
+// 로그인 제출 핸들러
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    // 입력 검증
+    if (!email || !password) {
+        await showPopup({ message: '이메일과 비밀번호를 모두 입력해주세요.' });
+        return;
+    }
+
+    try {
+        // 먼저 customer 테이블에서 사용자 정보 확인
+        const { data: customerData, error: customerError } = await window.supabase
+            .from('customer')
+            .select('*')
+            .eq('email', email)
+            .single();
+
+        if (customerError) {
+            console.error('Customer lookup error:', customerError);
+            
+            // 400 오류 처리
+            if (customerError.code === '400' || customerError.status === 400) {
+                await showPopup({ message: '데이터베이스 연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' });
+                return;
+            }
+            
+            // 기타 오류
+            if (customerError.code === 'PGRST116') {
+                await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            } else {
+                await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
+            }
+            return;
+        }
+
+        if (!customerData) {
+            await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            return;
+        }
+
+        // 비밀번호 검증
+        const storedPassword = customerData.password;
+        if (!storedPassword) {
+            await showPopup({ message: '비밀번호 정보가 없습니다. 관리자에게 문의해주세요.' });
+            return;
+        }
+
+        // salt와 해시 분리
+        const [salt, storedHash] = storedPassword.split(':');
+        if (!salt || !storedHash) {
+            await showPopup({ message: '비밀번호 형식이 올바르지 않습니다. 관리자에게 문의해주세요.' });
+            return;
+        }
+
+        // 입력된 비밀번호 해시
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password + salt);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // 해시 비교
+        if (inputHash !== storedHash) {
+            await showPopup({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            return;
+        }
+
+        // 로그인 성공
+        currentUser = {
+            res_no: customerData.res_no,
+            email: customerData.email,
+            name: customerData.name,
+            phone: customerData.phone,
+            addr: customerData.addr,
+            img_url: customerData.img_url || '',
+            state: customerData.state || ''
+        };
+
+        localStorage.setItem('mypageUser', JSON.stringify(currentUser));
+        localStorage.setItem('userInfo', JSON.stringify(currentUser));
+        localStorage.setItem('isLoggedIn', 'true');
+
+        window.showMypage();
+        loadUserReservations();
+        loadUserProfile();
+        
+        await showPopup({ message: '로그인 성공!' });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        await showPopup({ message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.' });
+    }
+}
+
+// 로그아웃 클릭 핸들러
+async function handleLogoutClick() {
+    console.log('로그아웃 버튼 클릭됨');
+    
+    const shouldLogout = await showPopup({ message: '정말 로그아웃 하시겠습니까?', type: 'confirm' });
+    if (shouldLogout) {
+        localStorage.removeItem('mypageUser');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('isLoggedIn');
+        currentUser = null;
+        showLogin();
+        await showPopup({ message: '안전하게 로그아웃되었습니다.' });
+    }
+}
+
+// 탭 클릭 핸들러
+function handleTabClick() {
+    const targetTab = this.getAttribute('data-tab');
+    
+    // 활성 탭 버튼 변경
+    tabBtns.forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    
+    // 탭 콘텐츠 변경
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+        if (content.id === targetTab + '-tab') {
+            content.classList.add('active');
+        }
+    });
+}
+
+// 새로고침 클릭 핸들러
+function handleRefreshClick() {
+    loadUserReservations();
+    console.log('새로고침 완료');
 }
 
 // === 전화번호 자동 하이픈 설정 ===
@@ -688,33 +755,10 @@ function setupProfileForm() {
 }
 
 // === 로그아웃 ===
-logoutBtn.addEventListener('click', async function() {
-    console.log('로그아웃 버튼 클릭됨');
-    
-    const shouldLogout = await showPopup({ message: '정말 로그아웃 하시겠습니까?', type: 'confirm' });
-    if (shouldLogout) {
-        localStorage.removeItem('mypageUser');
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('isLoggedIn');
-        currentUser = null;
-        showLogin();
-        await showPopup({ message: '안전하게 로그아웃되었습니다.' });
-    }
-});
+// 중복 코드 제거 - handleLogoutClick 함수로 대체됨
 
 // === 탭/예약 관련 ===
-tabBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-        const targetTab = this.getAttribute('data-tab');
-        tabBtns.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        tabContents.forEach(content => content.classList.remove('active'));
-        document.getElementById(`${targetTab}-tab`).classList.add('active');
-        if (targetTab === 'reservations') {
-            loadUserReservations();
-        }
-    });
-});
+// 중복 코드 제거 - handleTabClick 함수로 대체됨
 
 // 필터 적용 함수
 function applyFilter() {
@@ -763,10 +807,8 @@ function setupFilterButtons() {
     });
 }
 
-refreshBtn.addEventListener('click', function() {
-    loadUserReservations();
-    console.log('새로고침 완료');
-});
+// === 새로고침 ===
+// 중복 코드 제거 - handleRefreshClick 함수로 대체됨
 
 // 예약 내역 불러오기(reservation 테이블에 user_email 기준)
 async function loadUserReservations() {
