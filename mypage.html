@@ -10,16 +10,122 @@
   <link rel="stylesheet" href="./css/common.css">
   <link rel="stylesheet" href="./css/index.css">
   <link rel="stylesheet" href="./css/mypage.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
+  
+  <!-- 전역 함수들을 먼저 정의 (HTML onclick에서 사용하기 위해) -->
+  <script>
+  // 전역 함수들을 즉시 정의
+  window.showLoginForm = function() {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const mypageSection = document.getElementById('mypage-section');
+    
+    if (loginSection) loginSection.classList.remove('hidden');
+    if (registerSection) registerSection.classList.add('hidden');
+    if (mypageSection) mypageSection.classList.add('hidden');
+  };
+
+  window.showRegisterForm = function() {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const mypageSection = document.getElementById('mypage-section');
+    
+    if (loginSection) loginSection.classList.add('hidden');
+    if (registerSection) registerSection.classList.remove('hidden');
+    if (mypageSection) mypageSection.classList.add('hidden');
+  };
+
+  window.showMypage = function() {
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const mypageSection = document.getElementById('mypage-section');
+    
+    if (loginSection) loginSection.classList.add('hidden');
+    if (registerSection) registerSection.classList.add('hidden');
+    if (mypageSection) mypageSection.classList.remove('hidden');
+    
+    // 사용자 정보 표시 (로그인된 경우)
+    const savedUser = localStorage.getItem('mypageUser');
+    if (savedUser) {
+      try {
+        const currentUser = JSON.parse(savedUser);
+        const userNameEl = document.getElementById('user-name');
+        const userEmailEl = document.getElementById('user-email');
+        const profileNameEl = document.getElementById('profile-name');
+        const profilePhoneEl = document.getElementById('profile-phone');
+        const profileEmailEl = document.getElementById('profile-email');
+        const profileAddressEl = document.getElementById('profile-address');
+        
+        if (userNameEl) userNameEl.textContent = currentUser.name + '님 반갑습니다.';
+        if (userEmailEl) userEmailEl.textContent = currentUser.email;
+        if (profileNameEl) profileNameEl.value = currentUser.name || '';
+        if (profilePhoneEl) profilePhoneEl.value = currentUser.phone || '';
+        if (profileEmailEl) profileEmailEl.value = currentUser.email || '';
+        if (profileAddressEl) profileAddressEl.value = currentUser.addr || '';
+      } catch (error) {
+        console.error('사용자 정보 표시 오류:', error);
+      }
+    }
+  };
+
+  window.open_popup = function() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+      popup.classList.remove('hidden');
+    }
+  };
+
+  window.close_popup = function() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+      popup.classList.add('hidden');
+    }
+  };
+
+  // DOM이 준비되면 함수들을 다시 등록 (안전장치)
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('전역 함수 재등록');
+    
+    // 함수들이 제대로 등록되었는지 확인
+    console.log('전역 함수 확인:', {
+      showLoginForm: typeof window.showLoginForm,
+      showRegisterForm: typeof window.showRegisterForm,
+      showMypage: typeof window.showMypage,
+      open_popup: typeof window.open_popup,
+      close_popup: typeof window.close_popup
+    });
+  });
+  </script>
+  
+  <script src="./js/common.js"></script>
   <script>
     // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('=== 마이페이지 디버깅 시작 ===');
+      console.log('DOMContentLoaded 이벤트 발생');
+      
       const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
       window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+      console.log('Supabase 클라이언트 초기화 완료');
+      
+      // 전역 함수들이 제대로 등록되었는지 확인
+      console.log('전역 함수 확인:', {
+        showLoginForm: typeof window.showLoginForm,
+        showRegisterForm: typeof window.showRegisterForm,
+        showMypage: typeof window.showMypage,
+        showPopup: typeof window.showPopup
+      });
+      
+      // DOM 요소들이 존재하는지 확인
+      console.log('DOM 요소 확인:', {
+        loginSection: !!document.getElementById('login-section'),
+        registerSection: !!document.getElementById('register-section'),
+        mypageSection: !!document.getElementById('mypage-section'),
+        loginForm: !!document.getElementById('login-form')
+      });
     });
   </script>
 </head>
@@ -30,7 +136,7 @@
     <ul class="flex gap-8 mobile-nav">
       <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
-      <li><a href="#" class="nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
       <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
     </ul>
     <!-- 모바일 메뉴 버튼 -->
@@ -43,7 +149,7 @@
     <ul class="mobile-menu-list">
       <li><a href="./contact_us.html" class="mobile-nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="mobile-nav-link">FAQ</a></li>
-      <li><a href="#" class="mobile-nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="#" class="mobile-nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
       <li><a href="./mypage.html" class="mobile-nav-link">마이페이지</a></li>
     </ul>
   </div>
@@ -220,6 +326,34 @@
           </div>
         </div>
         
+        <!-- 예약 필터 섹션 추가 -->
+        <div class="reservation-filters">
+          <h4>예약 상태별 필터</h4>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">
+              <i class="fas fa-list"></i> 전체예약
+            </button>
+            <button class="filter-btn" data-filter="신규예약">
+              <i class="fas fa-clock"></i> 신규예약
+            </button>
+            <button class="filter-btn" data-filter="결제대기">
+              <i class="fas fa-credit-card"></i> 결제대기
+            </button>
+            <button class="filter-btn" data-filter="결제완료">
+              <i class="fas fa-check-circle"></i> 결제완료
+            </button>
+            <button class="filter-btn" data-filter="기사배정">
+              <i class="fas fa-user-tie"></i> 기사배정
+            </button>
+            <button class="filter-btn" data-filter="청소완료">
+              <i class="fas fa-broom"></i> 청소완료
+            </button>
+            <button class="filter-btn" data-filter="예약취소">
+              <i class="fas fa-times-circle"></i> 예약취소
+            </button>
+          </div>
+        </div>
+        
         <div id="reservations-list" class="reservations-list">
           <!-- 예약 내역이 여기에 동적으로 로드됩니다 -->
         </div>
@@ -350,6 +484,7 @@
 </div>
 <!--개인정보처리방침 팝업 끝-->
 
+<script src="js/common.js"></script>
 <script src="js/password-security.js"></script>
 <script src="js/mypage.js"></script>
 <script src="js/notification-system.js"></script>

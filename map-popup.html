@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>서비스 위치 지도</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .container {
+      flex: 1;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .map-header { 
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .map-header h2 { 
+      margin: 0 0 10px 0; 
+      font-size: 1.8rem; 
+      font-weight: 700;
+      color: #2c3e50;
+    }
+    
+    .map-header p { 
+      margin: 0; 
+      font-size: 1rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+    
+    .map-container {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    #popup-map { 
+      width: 100%; 
+      height: 500px; 
+      border-radius: 10px;
+      border: 2px solid #e0e6ed;
+      overflow: hidden;
+    }
+    
+    .close-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 500px;
+      color: #7f8c8d;
+      font-size: 1.1rem;
+    }
+    
+    .loading::before {
+      content: '';
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e6ed;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: #ff6b6b;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .success-message {
+      background: #51cf66;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 10px 0;
+    }
+  </style>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
+</head>
+<body>
+  <button class="close-btn" onclick="window.close()" title="닫기">&times;</button>
+  
+  <div class="container">
+    <div class="map-header">
+      <h2>📍 서비스 위치</h2>
+      <p id="address-display">주소를 불러오는 중...</p>
+    </div>
+    
+    <div class="map-container">
+      <div id="popup-map">
+        <div class="loading">지도를 불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // URL 파라미터에서 주소 가져오기
+    function getAddressFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('address') || '';
+    }
+
+    // 팝업 지도 초기화
+    function initPopupMap() {
+      const address = getAddressFromUrl();
+      
+      if (!address) {
+        document.getElementById('address-display').textContent = '주소 정보가 없습니다.';
+        document.getElementById('popup-map').innerHTML = '<div class="error-message">주소 정보가 없습니다.</div>';
+        return;
+      }
+      
+      // 주소 표시 업데이트
+      document.getElementById('address-display').textContent = address;
+      
+      // 카카오맵 API 로드 확인
+      if (typeof kakao === 'undefined' || !kakao.maps) {
+        document.getElementById('popup-map').innerHTML = '<div class="error-message">지도 API를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.</div>';
+        return;
+      }
+      
+      const container = document.getElementById('popup-map');
+      const options = {
+        center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
+        level: 3
+      };
+      
+      try {
+        const map = new kakao.maps.Map(container, options);
+        const geocoder = new kakao.maps.services.Geocoder();
+        
+        // 주소로 좌표 검색
+        geocoder.addressSearch(address, function(result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            
+            // 마커 생성
+            const marker = new kakao.maps.Marker({
+              map: map,
+              position: coords
+            });
+            
+            // 지도 중심 이동
+            map.setCenter(coords);
+            
+            // 인포윈도우 생성
+            const infowindow = new kakao.maps.InfoWindow({
+              content: '<div style="padding:15px;min-width:250px;border-radius:8px;"><h4 style="margin:0 0 8px 0;color:#2c3e50;font-size:16px;font-weight:600;">📍 서비스 주소</h4><p style="margin:0;color:#7f8c8d;font-size:14px;line-height:1.5;">' + address + '</p></div>'
+            });
+            
+            // 마커 클릭 시 인포윈도우 표시
+            kakao.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map, marker);
+            });
+            
+            // 자동으로 인포윈도우 표시
+            infowindow.open(map, marker);
+            
+            // 성공 메시지 표시
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = '지도가 성공적으로 로드되었습니다!';
+            container.parentNode.insertBefore(successDiv, container.nextSibling);
+            
+            // 3초 후 성공 메시지 제거
+            setTimeout(() => {
+              if (successDiv.parentNode) {
+                successDiv.parentNode.removeChild(successDiv);
+              }
+            }, 3000);
+            
+          } else {
+            document.getElementById('popup-map').innerHTML = '<div class="error-message">주소를 찾을 수 없습니다. 주소를 다시 확인해주세요.</div>';
+          }
+        });
+      } catch (error) {
+        console.error('지도 초기화 오류:', error);
+        document.getElementById('popup-map').innerHTML = '<div class="error-message">지도를 불러오는 중 오류가 발생했습니다.</div>';
+      }
+    }
+    
+    // 페이지 로드 시 지도 초기화
+    window.onload = function() {
+      // 약간의 지연 후 지도 초기화 (API 로드 대기)
+      setTimeout(initPopupMap, 500);
+    };
+  </script>
+</body>
+</html> 

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./css/reservation.css">
   <link rel="stylesheet" href="./css/reservationmedia.css">
   <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/index.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
@@ -17,6 +18,7 @@
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/common.js" type="module"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
   <script>
     const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
@@ -24,39 +26,6 @@
 
     // 전역 변수로 설정
     window.supabase = window.supabase.createClient(supabaseUrl, supabasePassword);
-    
-    // 로그인 체크 및 리다이렉트 함수
-    function checkLoginAndRedirect(targetUrl) {
-        // 로컬 스토리지에서 로그인 정보 확인
-        const userInfo = localStorage.getItem('userInfo');
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        
-        if (!isLoggedIn || !userInfo) {
-            // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-            Swal.fire({
-                icon: 'warning',
-                title: '로그인이 필요합니다',
-                text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
-                confirmButtonText: '로그인하기',
-                showCancelButton: true,
-                cancelButtonText: '취소',
-                confirmButtonColor: '#0066CC',
-                customClass: {
-                    icon: 'swal2-icon-custom'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // 로그인 페이지로 이동
-                    window.location.href = './mypage.html';
-                }
-            });
-            return false;
-        }
-        
-        // 로그인된 경우 목표 페이지로 이동
-        window.location.href = targetUrl;
-        return true;
-    }
     
     // SweetAlert 아이콘 커스텀 스타일
     const style = document.createElement('style');
@@ -237,7 +206,7 @@
       }
     }
   </script>
-  <script src="js/notification-system.js"></script>
+  <script src="js/notification-system.js" type="module"></script>
 </head>
 <body class="relative flex items-center flex-col justify-center w-full h-full">
 <!--<nav>-->
@@ -368,6 +337,14 @@
           <input type="text" id="detailAddress" name="detailAddress" class="form-input">
         </div>
       </div>
+      <!-- 지도보기 버튼 추가 -->
+      <div class="form-row">
+        <div class="form-group">
+          <button type="button" id="show-map-btn" class="btn-postcode" onclick="showServiceLocationMap()">
+            <i class="fas fa-map-marker-alt"></i> 지도보기
+          </button>
+        </div>
+      </div>
       <!-- 지도 컨테이너 추가 -->
       <div class="form-row">
         <div class="form-group">
@@ -487,10 +464,30 @@
 
       input.value = value;
     }
+
+    // 서비스 위치 지도보기 함수
+    function showServiceLocationMap() {
+      const address = document.getElementById('address').value;
+      const detailAddress = document.getElementById('detailAddress').value;
+      
+      if (!address) {
+        alert('먼저 주소를 검색해주세요.');
+        return;
+      }
+      
+      const fullAddress = detailAddress ? address + ' ' + detailAddress : address;
+      
+      // 팝업 창 열기
+      const popup = window.open('./map-popup.html?address=' + encodeURIComponent(fullAddress), 'mapPopup', 'width=800,height=600,scrollbars=yes,resizable=yes');
+      
+      if (!popup) {
+        alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+      }
+    }
   </script>
-  <script src="js/notification-system.js"></script>
+  <script src="js/notification-system.js" type="module"></script>
 </main>
 </body>
-<script src="js/reservation.js"></script>
-<script src="js/notification-system.js"></script>
+<script src="js/reservation.js" type="module"></script>
+<script src="js/notification-system.js" type="module"></script>
 </html>

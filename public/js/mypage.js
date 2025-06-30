@@ -25,15 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileOptimization();
     setupPhoneFormatting();
     setupAddressSearch();
-    setupFilterButtons();
     setupPasswordToggles();
-    const refreshFavoritesBtn = document.getElementById('refresh-favorites');
-    if (refreshFavoritesBtn) {
-        refreshFavoritesBtn.addEventListener('click', function() {
-            loadFavorites();
-            Swal.fire({ icon: 'success', title: '즐겨찾기 새로고침 완료', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
-        });
-    }
+    setupFilterButtons();
     
     // 비밀번호 보안 기능 초기화
     if (typeof initializePasswordSecurity === 'function') {
@@ -129,106 +122,37 @@ loginForm.addEventListener('submit', async function(e) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
+    // 입력 검증
     if (!email || !password) {
-        Swal.fire({ icon: 'error', title: '입력 오류', text: '이메일과 비밀번호를 모두 입력해주세요.' });
+        alert('이메일과 비밀번호를 모두 입력해주세요.');
         return;
     }
 
     try {
-        // customer 테이블에서 직접 로그인
-        const { data, error } = await supabase
-            .from('customer')
-            .select('*')
-            .eq('email', email)
-            .single();
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
         if (error) {
-            console.error('로그인 조회 오류:', error);
-            if (error.code === 'PGRST116') {
-                Swal.fire({ icon: 'error', title: '로그인 실패', text: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+            if (error.message.includes('Invalid login credentials')) {
+                alert('이메일 또는 비밀번호가 올바르지 않습니다.');
             } else {
-                Swal.fire({ icon: 'error', title: '로그인 실패', text: '로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.' });
+                alert('로그인 중 오류가 발생했습니다. 관리자에게 문의하세요.');
             }
+            console.error('Login error:', error);
             return;
         }
 
-        if (!data) {
-            Swal.fire({ icon: 'error', title: '로그인 실패', text: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+        if (data.user) {
+            // 로그인 성공 처리
+            alert('이메일 또는 비밀번호가 올바르지 않습니다.');
             return;
         }
 
-        // 비밀번호 검증 (SHA-256 해시 사용)
-        let isPasswordValid = false;
-        
-        try {
-            if (data.password && data.password.includes(':')) {
-                // SHA-256 해시로 저장된 경우
-                const [salt, storedHash] = data.password.split(':');
-                const encoder = new TextEncoder();
-                const dataToHash = encoder.encode(password + salt);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', dataToHash);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                isPasswordValid = (hashHex === storedHash);
-            } else {
-                // 평문 또는 다른 형태로 저장된 경우 (기존 사용자 호환성)
-                isPasswordValid = (data.password === password);
-                
-                // 평문 비밀번호인 경우 자동 마이그레이션
-                if (isPasswordValid && !data.password.includes(':')) {
-                    console.log('평문 비밀번호 감지, 자동 마이그레이션 시작');
-                    const migrationSuccess = await migratePlainPassword(data.email, password);
-                    if (migrationSuccess) {
-                        console.log('비밀번호 마이그레이션 완료');
-                    } else {
-                        console.warn('비밀번호 마이그레이션 실패');
-                    }
-                }
-            }
-        } catch (hashError) {
-            console.warn('비밀번호 검증 중 오류:', hashError);
-            // 오류 발생 시 평문 비교로 폴백
-            isPasswordValid = (data.password === password);
-        }
-        
-        if (!isPasswordValid) {
-            Swal.fire({ icon: 'error', title: '로그인 실패', text: '이메일 또는 비밀번호가 올바르지 않습니다.' });
-            return;
-        }
-
-        currentUser = {
-            res_no: data.res_no,
-            email: data.email,
-            name: data.name,
-            phone: data.phone || '',
-            addr: data.addr || '',
-            password: data.password || '',
-            img_url: data.img_url || '',
-            state: data.state || ''
-        };
-
-        // 전역 변수로 설정 (알림 시스템에서 접근)
-        window.currentUser = currentUser;
-
-        localStorage.setItem('mypageUser', JSON.stringify(currentUser));
-        localStorage.setItem('userInfo', JSON.stringify(currentUser));
-        localStorage.setItem('isLoggedIn', 'true');
-
-        showMypage();
-        loadUserReservations();
-        loadUserProfile();
-
-        Swal.fire({ 
-            icon: 'success', 
-            title: '로그인 성공!', 
-            text: '마이페이지로 이동합니다.',
-            customClass: {
-                icon: 'swal2-icon-custom'
-            }
-        });
     } catch (error) {
-        console.error('로그인 오류:', error);
-        Swal.fire({ icon: 'error', title: '로그인 실패', text: '로그인 중 오류가 발생했습니다.' });
+        console.error('Login error:', error);
+        alert('이메일 또는 비밀번호가 올바르지 않습니다.');
     }
 });
 
@@ -323,16 +247,11 @@ async function registerUser(email, password, name, phone, addr) {
             }
         }
         
-        Swal.fire({
-            icon: 'error',
-            title: '회원가입 실패',
-            text: errorMessage,
-            confirmButtonText: '확인'
-        });
+        alert('회원가입 실패', errorMessage);
     }
 }
 
-// 회원가입 폼 이벤트
+// === 회원가입 폼 이벤트 ===
 function setupRegisterForm() {
     registerForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -342,11 +261,7 @@ function setupRegisterForm() {
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
         if (!email || !password || !name) {
-            Swal.fire({
-                icon: 'error',
-                title: '입력 오류',
-                text: '이메일, 비밀번호, 이름은 필수 항목입니다.',
-            });
+            alert('입력 오류', '이메일, 비밀번호, 이름은 필수 항목입니다.');
             return;
         }
         try {
@@ -367,19 +282,11 @@ function setupRegisterForm() {
                 localStorage.setItem('isLoggedIn', 'true');
                 showMypage();
                 loadUserReservations();
-                Swal.fire({
-                    icon: 'success',
-                    title: '회원가입 성공!',
-                    text: '자동으로 로그인되었습니다.',
-                });
+                alert('회원가입 성공', '자동으로 로그인되었습니다.');
             }
         } catch (error) {
             console.error('회원가입 오류:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '회원가입 실패',
-                text: error.message || '회원가입 중 오류가 발생했습니다.',
-            });
+            alert('회원가입 실패', error.message || '회원가입 중 오류가 발생했습니다.');
         }
     });
 }
@@ -589,45 +496,27 @@ function setupProfileForm() {
             };
             localStorage.setItem('mypageUser', JSON.stringify(currentUser));
             localStorage.setItem('userInfo', JSON.stringify(currentUser));
-            Swal.fire({
-                icon: 'success',
-                title: '프로필 저장 완료',
-                text: '프로필 정보가 성공적으로 저장되었습니다.',
-            });
+            alert('프로필 저장 완료', '프로필 정보가 성공적으로 저장되었습니다.');
         } catch (error) {
             console.error('프로필 저장 오류:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '저장 실패',
-                text: '프로필 저장 중 오류가 발생했습니다: ' + error.message,
-            });
+            alert('프로필 저장 실패', error.message || '프로필 저장 중 오류가 발생했습니다.');
         }
     });
 }
 
 // === 로그아웃 ===
-logoutBtn.addEventListener('click', function() {
-    Swal.fire({
-        icon: 'question',
-        title: '로그아웃',
-        text: '정말 로그아웃 하시겠습니까?',
-        showCancelButton: true,
-        confirmButtonText: '로그아웃',
-        cancelButtonText: '취소',
-        confirmButtonColor: '#dc3545',
-        customClass: {
-            icon: 'swal2-icon-question-custom'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            localStorage.removeItem('mypageUser');
-            localStorage.removeItem('userInfo');
-            localStorage.removeItem('isLoggedIn');
-            currentUser = null;
-            showLogin();
-            Swal.fire({ icon: 'success', title: '로그아웃 완료', text: '안전하게 로그아웃되었습니다.' });
-        }
-    });
+logoutBtn.addEventListener('click', async function() {
+    console.log('로그아웃 버튼 클릭됨');
+    
+    const shouldLogout = await showPopup({ message: '정말 로그아웃 하시겠습니까?', type: 'confirm' });
+    if (shouldLogout) {
+        localStorage.removeItem('mypageUser');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('isLoggedIn');
+        currentUser = null;
+        showLogin();
+        await showPopup({ message: '안전하게 로그아웃되었습니다.' });
+    }
 });
 
 // === 탭/예약 관련 ===
@@ -645,7 +534,7 @@ tabBtns.forEach(btn => {
 });
 refreshBtn.addEventListener('click', function() {
     loadUserReservations();
-    Swal.fire({ icon: 'success', title: '새로고침 완료', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+    console.log('새로고침 완료');
 });
 
 // 예약 내역 불러오기(reservation 테이블에 user_email 기준)
@@ -714,11 +603,7 @@ async function loadUserReservations() {
         
     } catch (error) {
         console.error('예약 내역 로드 오류:', error);
-        Swal.fire({ 
-            icon: 'error', 
-            title: '오류', 
-            text: '예약 내역을 불러오는 중 오류가 발생했습니다.' 
-        });
+        alert('예약 내역 로드 실패', '예약 내역을 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -893,84 +778,46 @@ function formatDate(dateString) {
 
 // 예약 삭제
 async function deleteReservation(reservationId) {
-    const result = await Swal.fire({
-        title: '예약 삭제',
-        text: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: '삭제하기',
-        cancelButtonText: '돌아가기',
-        confirmButtonColor: '#dc3545',
-        dangerMode: true
-    });
+    const shouldDelete = await showPopup({ message: '정말로 이 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.', type: 'confirm' });
+    if (!shouldDelete) return;
     
-    if (result.isConfirmed) {
-        try {
-            const { error } = await window.supabase
-                .from('reservation')
-                .delete()
-                .eq('res_no', reservationId);
-                
-            if (error) throw error;
+    try {
+        const { error } = await supabase
+            .from('reservation')
+            .delete()
+            .eq('res_no', reservationId);
             
-            Swal.fire({
-                icon: 'success',
-                title: '예약 삭제 완료',
-                text: '예약이 성공적으로 삭제되었습니다.'
-            });
-            
-            // 예약 내역 새로고침
-            loadUserReservations();
-            
-        } catch (error) {
-            console.error('예약 삭제 오류:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '예약 삭제 실패',
-                text: '예약 삭제 중 오류가 발생했습니다.'
-            });
-        }
+        if (error) throw error;
+        
+        await showPopup({ message: '예약이 성공적으로 삭제되었습니다.' });
+        loadUserReservations();
+        
+    } catch (error) {
+        console.error('예약 삭제 오류:', error);
+        await showPopup({ message: '예약 삭제 중 오류가 발생했습니다.' });
     }
 }
 
 // 예약 취소
 async function cancelReservation(reservationId) {
-    const result = await Swal.fire({
-        title: '예약 취소',
-        text: '정말로 이 예약을 취소하시겠습니까?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: '취소하기',
-        cancelButtonText: '돌아가기',
-        confirmButtonColor: '#dc3545'
-    });
+    const shouldCancel = await showPopup({ message: '정말로 이 예약을 취소하시겠습니까?', type: 'confirm' });
+    if (!shouldCancel) return;
     
-    if (result.isConfirmed) {
-        try {
-            const { error } = await window.supabase
-                .from('reservation')
-                .update({ state: 6 }) // 6 = 예약취소
-                .eq('res_no', reservationId);
-                
-            if (error) throw error;
+    try {
+        const { error } = await supabase
+            .from('reservation')
+            .update({ state: 6 }) // 6: 취소
+            .eq('res_no', reservationId);
             
-            Swal.fire({
-                icon: 'success',
-                title: '예약 취소 완료',
-                text: '예약이 성공적으로 취소되었습니다.'
-            });
-            
-            // 예약 내역 새로고침
-            loadUserReservations();
-            
-        } catch (error) {
-            console.error('예약 취소 오류:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '예약 취소 실패',
-                text: '예약 취소 중 오류가 발생했습니다.'
-            });
-        }
+        if (error) throw error;
+        
+        
+        alert('예약 취소 성공', '예약이 성공적으로 취소되었습니다.');
+        loadUserReservations();
+        
+    } catch (error) {
+        console.error('예약 취소 오류:', error);
+        alert('예약 취소 실패', '예약 취소 중 오류가 발생했습니다.');
     }
 }
 
@@ -1017,6 +864,26 @@ function showMypage() {
         // img_url, state 등 필요시 추가
     }
 }
+
+// === 로그인 상태 확인 및 리다이렉트 ===
+function checkLoginAndRedirect(targetUrl) {
+    const userInfo = localStorage.getItem('userInfo');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (!isLoggedIn || !userInfo) {
+        console.log('로그인되지 않은 상태 - 팝업 표시');
+        
+        // 로그인되지 않은 경우
+        alert('로그인 필요', '예약을 하려면 먼저 로그인해주세요.');
+        showLoginForm();
+        return;
+    }
+    
+    console.log('로그인된 상태 - 예약 페이지로 이동');
+    // 로그인된 경우 예약 페이지로 이동
+    window.location.href = targetUrl;
+}
+
 function goToReservation() {
     checkLoginAndRedirect('./reservation.html');
 }
@@ -1056,10 +923,13 @@ async function migratePlainPassword(userEmail, plainPassword) {
 
 // === 필터 버튼 설정 ===
 function setupFilterButtons() {
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // 모든 필터 버튼에서 active 클래스 제거
-            filterBtns.forEach(b => b.classList.remove('active'));
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // 모든 버튼에서 active 클래스 제거
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
             // 클릭된 버튼에 active 클래스 추가
             this.classList.add('active');
             
@@ -1077,8 +947,22 @@ function applyFilter() {
     if (currentFilter === 'all') {
         filteredReservations = allReservations;
     } else {
-        const filterState = parseInt(currentFilter);
-        filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
+        // 텍스트 기반 필터링
+        const filterMap = {
+            '신규예약': 1,
+            '결제대기': 2,
+            '결제완료': 3,
+            '기사배정': 4,
+            '청소완료': 5,
+            '예약취소': 6
+        };
+        
+        const filterState = filterMap[currentFilter];
+        if (filterState !== undefined) {
+            filteredReservations = allReservations.filter(reservation => reservation.state === filterState);
+        } else {
+            filteredReservations = allReservations;
+        }
     }
     
     displayReservations(filteredReservations);
@@ -1117,11 +1001,7 @@ async function showEngineerInfo(engineerId) {
         const engineer = await getEngineerInfo(engineerId);
         
         if (!engineer) {
-            Swal.fire({
-                icon: 'error',
-                title: '엔지니어 정보 없음',
-                text: '할당된 엔지니어 정보를 찾을 수 없습니다.'
-            });
+            alert('엔지니어 정보 없음', '할당된 엔지니어 정보를 찾을 수 없습니다.');
             return;
         }
 
@@ -1146,22 +1026,11 @@ async function showEngineerInfo(engineerId) {
             </div>
         `;
 
-        Swal.fire({
-            title: '담당 엔지니어 정보',
-            html: engineerInfoHtml,
-            icon: 'info',
-            confirmButtonText: '확인',
-            confirmButtonColor: '#0066cc',
-            width: '400px'
-        });
+        alert('담당 엔지니어 정보', engineerInfoHtml);
 
     } catch (error) {
         console.error('엔지니어 정보 표시 중 오류:', error);
-        Swal.fire({
-            icon: 'error',
-            title: '오류',
-            text: '엔지니어 정보를 불러오는 중 오류가 발생했습니다.'
-        });
+        alert('엔지니어 정보 표시 실패', '엔지니어 정보를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1173,126 +1042,118 @@ async function showReservationMap(address, reservationId, customerName = '') {
         // 주소가 비어있는지 확인
         if (!address || address.trim() === '') {
             console.error('주소가 비어있습니다:', address);
-            Swal.fire({
-                icon: 'error',
-                title: '주소 없음',
-                text: '표시할 주소가 없습니다.',
-                confirmButtonColor: '#0066cc'
-            });
+            alert('주소 없음', '표시할 주소가 없습니다.');
             return;
         }
         
-        // 주소 파싱: 우편번호, 기본주소, 상세주소 분리
-        const addressParts = address.split(' ');
-        let searchAddress = '';
-        let displayAddress = '';
+        // 주소 파싱: 우편번호 제거 및 정리
+        let searchAddress = address.trim();
+        let displayAddress = address.trim();
         
-        // 우편번호는 제외하고 나머지 주소 부분만 사용
-        if (addressParts.length >= 2) {
-            // 우편번호(첫 번째)를 제외한 나머지 주소 부분
-            searchAddress = addressParts.slice(1).join(' ');
-            displayAddress = addressParts.slice(1).join(' ');
-        } else {
-            searchAddress = address;
-            displayAddress = address;
-        }
+        // 우편번호 패턴 제거 (5자리 또는 6자리 숫자)
+        searchAddress = searchAddress.replace(/^\d{5,6}\s*/, '');
         
-        console.log('파싱된 주소:', { searchAddress, displayAddress });
+        // 주소 정리 (연속된 공백 제거)
+        searchAddress = searchAddress.replace(/\s+/g, ' ').trim();
+        displayAddress = displayAddress.replace(/\s+/g, ' ').trim();
         
-        const mapId = `swal-map-${reservationId}`;
+        console.log('정리된 주소:', { searchAddress, displayAddress });
+        
         const titleText = customerName ? `${customerName}님 서비스 주소` : `예약 #${reservationId} 서비스 주소`;
         
-        Swal.fire({
-            title: titleText,
-            html: `<div id="${mapId}" style="width:400px;height:300px;border-radius:8px;"></div>`,
-            width: '420px',
-            showConfirmButton: true,
-            confirmButtonText: '닫기',
-            confirmButtonColor: '#0066cc',
-            didOpen: () => {
-                console.log('SweetAlert 열림, 지도 초기화 시작');
-                const geocoder = new kakao.maps.services.Geocoder();
-                
-                // 단계별 주소 검색 함수
-                const searchAddressStep = (searchText, step = 1) => {
-                    console.log(`주소 검색 시도 ${step}:`, searchText);
+        alert(titleText, displayAddress);
+        
+        const geocoder = new kakao.maps.services.Geocoder();
+        
+        // 주소 검색 함수 (재시도 로직 포함)
+        const searchAddressStep = (searchText, step = 1) => {
+            geocoder.addressSearch(searchText, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    console.log('주소 검색 성공:', result[0]);
                     
-                    geocoder.addressSearch(searchText, function(result, status) {
-                        console.log(`주소 검색 결과 ${step}:`, { result, status });
-                        
-                        if (status === kakao.maps.services.Status.OK) {
-                            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-                            const map = new kakao.maps.Map(document.getElementById(mapId), {
+                    // 팝업으로 지도 표시
+                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    
+                    const mapHtml = `
+                        <div id="map-${reservationId}" style="width:400px;height:300px;border-radius:8px;margin:10px 0;"></div>
+                    `;
+                    
+                    alert(titleText, mapHtml);
+                    
+                    // 지도 초기화
+                    setTimeout(() => {
+                        const mapContainer = document.getElementById(`map-${reservationId}`);
+                        if (mapContainer) {
+                            const map = new kakao.maps.Map(mapContainer, {
                                 center: coords,
                                 level: 3
                             });
-                            const marker = new kakao.maps.Marker({ position: coords });
+                            
+                            // 마커 생성
+                            const marker = new kakao.maps.Marker({
+                                position: coords
+                            });
                             marker.setMap(map);
+                            
+                            // 인포윈도우 생성
                             const infowindow = new kakao.maps.InfoWindow({
-                                content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">${displayAddress}</p></div>`
+                                content: `<div style="padding:10px;min-width:200px;">
+                                    <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">서비스 주소</h4>
+                                    <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">${displayAddress}</p>
+                                </div>`
                             });
-                            kakao.maps.event.addListener(marker, 'mouseover', function() {
-                                infowindow.open(map, marker);
-                            });
-                            kakao.maps.event.addListener(marker, 'mouseout', function() {
-                                infowindow.close();
-                            });
-                            console.log('지도 표시 완료');
-                        } else {
-                            // 다음 단계로 진행
-                            if (step === 1) {
-                                // 1단계 실패: 원본 주소로 재시도
-                                searchAddressStep(address, 2);
-                            } else if (step === 2) {
-                                // 2단계 실패: 주소의 첫 번째 부분만 사용
-                                const firstPart = searchAddress.split(' ')[0];
-                                if (firstPart && firstPart !== searchAddress) {
-                                    searchAddressStep(firstPart, 3);
-                                } else {
-                                    // 3단계 실패: 서울 시청으로 기본 표시
-                                    showDefaultMap();
-                                }
-                            } else {
-                                // 모든 단계 실패: 서울 시청으로 기본 표시
-                                showDefaultMap();
-                            }
+                            infowindow.open(map, marker);
                         }
-                    });
-                };
-                
-                // 기본 지도 표시 함수 (서울 시청)
-                const showDefaultMap = () => {
-                    console.log('기본 지도 표시 (서울 시청)');
-                    const coords = new kakao.maps.LatLng(37.5665, 126.9780);
-                    const map = new kakao.maps.Map(document.getElementById(mapId), {
-                        center: coords,
+                    }, 100);
+                    
+                } else {
+                    console.error('주소 검색 실패:', status);
+                    
+                    // 단계별 재시도
+                    if (step === 1 && searchText.includes(' ')) {
+                        // 첫 번째 시도 실패 시, 주소의 일부만 사용하여 재시도
+                        const addressParts = searchText.split(' ');
+                        if (addressParts.length > 2) {
+                            const shorterAddress = addressParts.slice(0, -1).join(' ');
+                            console.log('주소 단축하여 재시도:', shorterAddress);
+                            searchAddressStep(shorterAddress, 2);
+                            return;
+                        }
+                    }
+                    
+                    // 모든 시도 실패 시 기본 지도 표시
+                    showDefaultMap();
+                }
+            });
+        };
+        
+        const showDefaultMap = () => {
+            console.log('기본 지도 표시');
+            const mapHtml = `
+                <div id="map-${reservationId}" style="width:400px;height:300px;border-radius:8px;margin:10px 0;"></div>
+                <p style="margin:10px 0;color:#666;font-size:12px;">주소: ${displayAddress}</p>
+            `;
+            
+            alert(titleText, mapHtml);
+            
+            // 기본 지도 초기화 (서울 시청)
+            setTimeout(() => {
+                const mapContainer = document.getElementById(`map-${reservationId}`);
+                if (mapContainer) {
+                    const map = new kakao.maps.Map(mapContainer, {
+                        center: new kakao.maps.LatLng(37.5665, 126.9780),
                         level: 3
                     });
-                    const marker = new kakao.maps.Marker({ position: coords });
-                    marker.setMap(map);
-                    const infowindow = new kakao.maps.InfoWindow({
-                        content: `<div style=\"padding:10px;min-width:200px;\"><h4 style=\"margin:0 0 5px 0;color:#333;font-size:14px;\">${customerName ? customerName + '님' : '예약 #' + reservationId}</h4><p style=\"margin:0;color:#666;font-size:12px;line-height:1.4;\">주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>원본 주소: ${address}</p></div>`
-                    });
-                    kakao.maps.event.addListener(marker, 'mouseover', function() {
-                        infowindow.open(map, marker);
-                    });
-                    kakao.maps.event.addListener(marker, 'mouseout', function() {
-                        infowindow.close();
-                    });
-                };
-                
-                // 1단계: 파싱된 주소로 검색 시작
-                searchAddressStep(searchAddress, 1);
-            }
-        });
+                }
+            }, 100);
+        };
+        
+        // 주소 검색 시작
+        searchAddressStep(searchAddress);
+        
     } catch (error) {
         console.error('지도 표시 오류:', error);
-        Swal.fire({
-            icon: 'error',
-            title: '지도 표시 실패',
-            text: '지도를 불러오는 중 오류가 발생했습니다.',
-            confirmButtonColor: '#0066cc'
-        });
+        alert('지도 표시 실패', '지도를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
@@ -1340,78 +1201,44 @@ async function toggleFavorite(reservationId) {
                 });
             if (error) {
                 if (error.code === '23505' || error.message?.includes('unique')) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: '이미 즐겨찾기됨',
-                        text: '이미 즐겨찾기된 예약입니다.',
-                        confirmButtonColor: '#0066cc'
-                    });
-                    return;
+                    alert('이미 즐겨찾기에 추가된 예약입니다.');
+                } else {
+                    throw error;
                 }
-                throw error;
+            } else {
+                // 즐겨찾기 추가 성공
+                const button = event.target;
+                button.innerHTML = '<i class="fas fa-heart" style="color: #ff4757;"></i>';
+                button.title = '즐겨찾기에서 제거';
+                button.onclick = () => removeFromFavorites(reservationId, button);
             }
-            favoriteReservations.add(numericReservationId);
         }
         loadUserReservations();
     } catch (error) {
         console.error('즐겨찾기 토글 오류:', error);
-        Swal.fire({
-            icon: 'error',
-            title: '즐겨찾기 오류',
-            text: '즐겨찾기 처리 중 오류가 발생했습니다.'
-        });
+        alert('즐겨찾기 처리 중 오류', '즐겨찾기 처리 중 오류가 발생했습니다.');
     }
 }
 
 // 취소된 예약 삭제
 async function deleteCancelledReservation(reservationId) {
-    const result = await Swal.fire({
-        title: '예약 삭제',
-        text: '정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: '삭제하기',
-        cancelButtonText: '취소',
-        confirmButtonColor: '#dc3545',
-        customClass: {
-            icon: 'swal2-icon-custom'
-        }
-    });
-    
-    if (result.isConfirmed) {
+    const result = confirm('정말로 이 취소된 예약을 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.');
+
+    if (result) {
         try {
-            // 먼저 즐겨찾기에서 제거
-            await window.supabase
-                .from('favorite_reservations')
-                .delete()
-                .eq('user_email', currentUser.email)
-                .eq('reservation_id', reservationId);
-            
-            // 예약 삭제
-            const { error } = await window.supabase
+            const { error } = await supabase
                 .from('reservation')
                 .delete()
                 .eq('res_no', reservationId);
-                
+
             if (error) throw error;
             
-            Swal.fire({
-                icon: 'success',
-                title: '예약 삭제 완료',
-                text: '취소된 예약이 성공적으로 삭제되었습니다.',
-                confirmButtonColor: '#0066CC'
-            });
-            
-            // 예약 내역 새로고침
+            alert('취소된 예약이 성공적으로 삭제되었습니다.');
             loadUserReservations();
             
         } catch (error) {
             console.error('예약 삭제 오류:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '예약 삭제 실패',
-                text: '예약 삭제 중 오류가 발생했습니다.'
-            });
+            alert('예약 삭제 중 오류가 발생했습니다.');
         }
     }
 }

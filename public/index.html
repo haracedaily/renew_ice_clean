@@ -6,13 +6,15 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>IceCare</title>
-    <link rel="icon" type="image/png" href="./image/FAB.png">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="shortcut icon" type="image/png" href="./favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/slick.css">
     <link rel="stylesheet" href="./css/swiper.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -20,10 +22,13 @@
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="/js/swiper.min.js"></script>
     <script src="/js/slick.min.js"></script>
+    <script src="/js/common.js" type="module"></script>
+    <!-- 공통 함수 스크립트 추가 -->
+    <script src="/js/common.js" type="module"></script>
     <!-- 카카오맵 API 스크립트를 먼저 로드 -->
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
     <!-- 카카오맵 API 로드 후에 index.js 로드 -->
-    <script src="/js/index.js" defer></script>
+    <script src="/js/index.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script>
         // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
@@ -254,8 +259,6 @@
     </section>
     <!-- section4 끝 -->
 
-    <!--처리현황-->
-
     <!--footer 시작-->
     <footer id="footer">
         <div class="inner">
@@ -292,7 +295,7 @@
         </div>
     </footer>
     <!--footer 종료-->
-   <!-- <section class="receipt" id="receipt">
+    <!-- <section class="receipt" id="receipt">
         &lt;!&ndash;       <button type="button" class="only_mo_flex member_btn gmarket_font">
                    멤버십 모집  <i></i>
                </button>&ndash;&gt;
@@ -387,7 +390,7 @@
     </div>
     <!--개인정보처리방침 팝업 끝-->
     <!-- 글쓰기 editor 팝업 -->
-    <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+    <!-- <div id="re_popup" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
         <div class="relative w-[50%] top-[min(10vh,10%)] left-[min(25vw,25%)] bg-white rounded-2xl p-10">
             <div class="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4 m-2">
                 <label>예약번호</label>
@@ -409,10 +412,10 @@
                 <button id="can_re" class="cursor-pointer p-3 rounded-lg bg-red-600 text-white m-2">취소</button>
             </div>
         </div>
-    </div>
+    </div> -->
     <!--글쓰기 에디터 팝업 끝-->
     <!--단일 갤러리 팝업-->
-    <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
+    <!-- <div id="select_gallery" class="hidden fixed top-0 w-[100vw] h-[100vh] bg-[rgba(255,255,255,0.5)] p-10 z-50">
         <div class="relative w-[50%] top-[min(9vh,9%)] left-[min(25vw,25%)] bg-white rounded-2xl p-10 flex flex-col gap-4">
             <div class="flex flex-row justify-between items-center">
                 <div id="gallery_title" class="text-2xl font-bold">타이틀</div>
@@ -420,7 +423,7 @@
                      style="background-image:url('./image/pop_close.png')"></div>
             </div>
             <div class=" w-full h-full"><!-- flex flex-row justify-evenly items-center-->
-                <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
+                <!-- <ul id="gallery_slider" class="list-none flex relative pl-[80px] pr-[80px]"></ul>
                 <ul id="gallery_nav_slider" class="list-none flex pt-3 ml-[80px] mr-[80px]"></ul>
             </div>
             <div id="gallery_date" class="border-t-gray-300 border-t-[2px] pt-5 text-lg">
@@ -431,7 +434,7 @@
             </div>
 
         </div>
-    </div>
+    </div> --> -->
     <!--단일 갤러리 팝업 끝-->
 </main>
 

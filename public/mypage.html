@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="./css/common.css">
   <link rel="stylesheet" href="./css/index.css">
   <link rel="stylesheet" href="./css/mypage.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/common.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=57ef5dbbdf2397fe0d3340f24d6ef3aa&libraries=services"></script>
   <script>
@@ -30,7 +30,7 @@
     <ul class="flex gap-8 mobile-nav">
       <li><a href="./contact_us.html" class="nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="nav-link">FAQ</a></li>
-      <li><a href="#" class="nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="#" class="nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
       <li><a href="./mypage.html" class="nav-link" style="display: inline-flex; align-items: center; white-space: nowrap;"><img src="./image/mypage.png" alt="마이페이지" style="margin-right: 5px;"> MY</a></li>
     </ul>
     <!-- 모바일 메뉴 버튼 -->
@@ -43,7 +43,7 @@
     <ul class="mobile-menu-list">
       <li><a href="./contact_us.html" class="mobile-nav-link">공지사항</a></li>
       <li><a href="./contact_us.html?pageNum=1&category_id=2" class="mobile-nav-link">FAQ</a></li>
-      <li><a href="#" class="mobile-nav-link" onclick="goToReservation()">예약하기</a></li>
+      <li><a href="#" class="mobile-nav-link" onclick="checkLoginAndRedirect('./reservation.html')">예약하기</a></li>
       <li><a href="./mypage.html" class="mobile-nav-link">MY</a></li>
     </ul>
   </div>
@@ -220,6 +220,34 @@
           </div>
         </div>
         
+        <!-- 예약 필터 섹션 추가 -->
+        <div class="reservation-filters">
+          <h4>예약 상태별 필터</h4>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">
+              <i class="fas fa-list"></i> 전체예약
+            </button>
+            <button class="filter-btn" data-filter="신규예약">
+              <i class="fas fa-clock"></i> 신규예약
+            </button>
+            <button class="filter-btn" data-filter="결제대기">
+              <i class="fas fa-credit-card"></i> 결제대기
+            </button>
+            <button class="filter-btn" data-filter="결제완료">
+              <i class="fas fa-check-circle"></i> 결제완료
+            </button>
+            <button class="filter-btn" data-filter="기사배정">
+              <i class="fas fa-user-tie"></i> 기사배정
+            </button>
+            <button class="filter-btn" data-filter="청소완료">
+              <i class="fas fa-broom"></i> 청소완료
+            </button>
+            <button class="filter-btn" data-filter="예약취소">
+              <i class="fas fa-times-circle"></i> 예약취소
+            </button>
+          </div>
+        </div>
+        
         <div id="reservations-list" class="reservations-list">
           <!-- 예약 내역이 여기에 동적으로 로드됩니다 -->
         </div>
@@ -350,44 +378,11 @@
 </div>
 <!--개인정보처리방침 팝업 끝-->
 
-<script src="js/password-security.js"></script>
-<script src="js/mypage.js"></script>
-<script src="js/notification-system.js"></script>
+<script src="js/password-security.js" type="module"></script>
+<script src="js/mypage.js" type="module"></script>
+<script src="js/notification-system.js" type="module"></script>
 
 <script>
-// 로그인 체크 및 리다이렉트 함수
-function checkLoginAndRedirect(targetUrl) {
-    // 로컬 스토리지에서 로그인 정보 확인
-    const userInfo = localStorage.getItem('userInfo');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    
-    if (!isLoggedIn || !userInfo) {
-        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-        Swal.fire({
-            icon: 'warning',
-            title: '로그인이 필요합니다',
-            text: '예약 서비스를 이용하려면 로그인이 필요합니다.',
-            confirmButtonText: '로그인하기',
-            showCancelButton: true,
-            cancelButtonText: '취소',
-            confirmButtonColor: '#0066CC',
-            customClass: {
-                icon: 'swal2-icon-custom'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // 로그인 페이지로 이동 (mypage.html이 로그인 페이지인 것으로 가정)
-                window.location.href = './mypage.html';
-            }
-        });
-        return false;
-    }
-    
-    // 로그인된 경우 목표 페이지로 이동
-    window.location.href = targetUrl;
-    return true;
-}
-
 // SweetAlert 아이콘 커스텀 스타일
 const swalStyle = document.createElement('style');
 swalStyle.textContent = `

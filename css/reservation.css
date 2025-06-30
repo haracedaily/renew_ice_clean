@@ -966,7 +966,7 @@ button#confirm-reserve.btn-reserve:focus {
 .login-info {
     background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
-    height: 130px;
+    height: 120px;
     padding: 20px 25px;
     border-radius: 12px;
     margin-bottom: 25px;

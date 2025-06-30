@@ -38,7 +38,11 @@ function initReservationMap() {
 function searchReservationAddress() {
     const addressInput = document.getElementById('address');
     if (!addressInput || !addressInput.value) {
-        alert('주소를 먼저 검색해주세요.');
+        customPopup.fire({
+            title: '알림',
+            text: '주소를 먼저 검색해주세요.',
+            icon: 'warning'
+        });
         return;
     }
 
@@ -82,7 +86,11 @@ function searchReservationAddress() {
             
             console.log('주소 검색 완료:', address);
         } else {
-            alert('주소를 찾을 수 없습니다.');
+            customPopup.fire({
+                title: '알림',
+                text: '주소를 찾을 수 없습니다.',
+                icon: 'error'
+            });
             console.error('주소 검색 실패:', status);
         }
     });
@@ -226,10 +234,10 @@ function setupFormSubmission() {
             try {
                 // 데이터 유효성 검사
                 if (!formData.date || !formData.time || !formData.email) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: '입력 오류',
+                    customPopup.fire({
+                        title: '알림',
                         text: '날짜, 시간, 이메일은 필수 입력 항목입니다.',
+                        icon: 'warning'
                     });
                     return;
                 }
@@ -262,22 +270,22 @@ function setupFormSubmission() {
                     
                     // RLS 정책 오류인 경우 특별 처리
                     if (error.code === '42501' || error.message.includes('permission')) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '권한 오류',
+                        customPopup.fire({
+                            title: '알림',
                             text: '예약 저장 권한이 없습니다. 관리자에게 문의하세요.',
+                            icon: 'error'
                         });
                     } else if (error.code === '42P01') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '테이블 오류',
+                        customPopup.fire({
+                            title: '알림',
                             text: 'reservation 테이블이 존재하지 않습니다. 관리자에게 문의하세요.',
+                            icon: 'error'
                         });
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '예약 실패',
+                        customPopup.fire({
+                            title: '알림',
                             text: `예약 저장 중 오류가 발생했습니다: ${error.message}`,
+                            icon: 'error'
                         });
                     }
                 } else {
@@ -288,10 +296,10 @@ function setupFormSubmission() {
                         window.showNotification('신규예약 완료', '신규예약이 완료되었습니다.', 'success');
                     }
                     
-                    Swal.fire({
-                        title: '예약이 완료되었습니다!',
-                        icon: 'success',
+                    customPopup.fire({
+                        title: '알림',
                         text: '예약이 성공적으로 저장되었습니다. 마이페이지로 이동합니다.',
+                        icon: 'success',
                         confirmButtonText: '마이페이지로 이동',
                         confirmButtonColor: '#0066cc'
                     }).then(() => {
@@ -301,10 +309,10 @@ function setupFormSubmission() {
                 }
             } catch (err) {
                 console.error('예약 처리 중 오류:', err);
-                Swal.fire({
-                    icon: 'error',
-                    title: '예약 실패',
+                customPopup.fire({
+                    title: '알림',
                     text: `예약 처리 중 오류가 발생했습니다: ${err.message}`,
+                    icon: 'error'
                 });
             }
         });
@@ -377,6 +385,34 @@ function updateTimeOptions(selectedDate) {
             timeLabel.style.color = '#333';
         }
     });
+}
+
+// 서비스 위치 지도보기 함수
+function showServiceLocationMap() {
+    const address = document.getElementById('address').value;
+    const detailAddress = document.getElementById('detailAddress').value;
+    
+    if (!address) {
+        customPopup.fire({
+            title: '알림',
+            text: '먼저 주소를 검색해주세요.',
+            icon: 'warning'
+        });
+        return;
+    }
+    
+    const fullAddress = detailAddress ? address + ' ' + detailAddress : address;
+    
+    // 팝업 창 열기
+    const popup = window.open('./map-popup.html?address=' + encodeURIComponent(fullAddress), 'mapPopup', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    
+    if (!popup) {
+        customPopup.fire({
+            title: '알림',
+            text: '팝업이 차단되었습니다. 팝업 차단을 해제해주세요.',
+            icon: 'warning'
+        });
+    }
 }
 
 // 페이지 로드 시 초기화
