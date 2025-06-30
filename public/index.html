@@ -478,6 +478,12 @@ document.head.appendChild(style);
 
 // 강제 모달 팝업 기능
 async function checkForcedPopup() {
+  // 팝업 기능을 임시로 비활성화
+  console.log('강제 팝업 기능이 비활성화되어 있습니다.');
+  return;
+  
+  // 아래 코드는 테이블 생성 후 활성화
+  /*
   const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
   
@@ -525,6 +531,7 @@ async function checkForcedPopup() {
   } catch (error) {
     console.error('강제 팝업 확인 중 오류:', error);
   }
+  */
 }
 
 function showForcedPopup(popup) {

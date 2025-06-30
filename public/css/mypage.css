@@ -368,6 +368,7 @@
 
 .form-group input.email-available {
   border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 .form-group input.email-available:focus {
@@ -377,6 +378,7 @@
 
 .form-group input.email-duplicate {
   border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
 .form-group input.email-duplicate:focus {
@@ -1200,4 +1202,46 @@ div:where(.swal2-icon).swal2-success .swal2-success-line-long {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* 중복 체크 상태 스타일 */
+.form-group input.phone-available {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.form-group input.phone-available:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.form-group input.phone-duplicate {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-group input.phone-duplicate:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* 상태 메시지 스타일 */
+.status-message {
+    font-size: 12px;
+    margin-top: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.status-message.available {
+    color: #28a745;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.status-message.duplicate {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
 } 

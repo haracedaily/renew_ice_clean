@@ -299,6 +299,42 @@ async function registerUser(email, password, name, phone, addr) {
 
 // 회원가입 폼 이벤트
 function setupRegisterForm() {
+    // 실시간 이메일 중복 체크
+    const emailInput = document.getElementById('register-email');
+    let emailCheckTimeout;
+    
+    emailInput.addEventListener('input', function() {
+        clearTimeout(emailCheckTimeout);
+        const email = this.value.trim();
+        
+        // 이메일 상태 표시 초기화
+        removeEmailStatus();
+        
+        if (email && isValidEmail(email)) {
+            emailCheckTimeout = setTimeout(() => {
+                checkEmailDuplicate(email);
+            }, 500); // 0.5초 후 체크
+        }
+    });
+    
+    // 실시간 연락처 중복 체크
+    const phoneInput = document.getElementById('register-phone');
+    let phoneCheckTimeout;
+    
+    phoneInput.addEventListener('input', function() {
+        clearTimeout(phoneCheckTimeout);
+        const phone = this.value.trim();
+        
+        // 연락처 상태 표시 초기화
+        removePhoneStatus();
+        
+        if (phone && isValidPhone(phone)) {
+            phoneCheckTimeout = setTimeout(() => {
+                checkPhoneDuplicate(phone);
+            }, 500); // 0.5초 후 체크
+        }
+    });
+    
     registerForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const email = document.getElementById('register-email').value;
@@ -306,6 +342,7 @@ function setupRegisterForm() {
         const name = document.getElementById('register-name').value;
         const phone = document.getElementById('register-phone').value;
         const addr = document.getElementById('register-address').value;
+        
         if (!email || !password || !name) {
             Swal.fire({
                 icon: 'error',
@@ -314,6 +351,29 @@ function setupRegisterForm() {
             });
             return;
         }
+        
+        // 중복 체크 상태 확인
+        const emailStatus = emailInput.classList.contains('email-duplicate');
+        const phoneStatus = phoneInput.classList.contains('phone-duplicate');
+        
+        if (emailStatus) {
+            Swal.fire({
+                icon: 'error',
+                title: '중복 오류',
+                text: '이미 등록된 이메일입니다.',
+            });
+            return;
+        }
+        
+        if (phoneStatus) {
+            Swal.fire({
+                icon: 'error',
+                title: '중복 오류',
+                text: '이미 등록된 연락처입니다.',
+            });
+            return;
+        }
+        
         try {
             const result = await registerUser(email, password, name, phone, addr);
             if (result.success) {
@@ -347,6 +407,150 @@ function setupRegisterForm() {
             });
         }
     });
+}
+
+// 이메일 중복 체크 함수
+async function checkEmailDuplicate(email) {
+    try {
+        const { data, error } = await supabase
+            .from('customer')
+            .select('email')
+            .eq('email', email)
+            .single();
+            
+        if (error && error.code === 'PGRST116') {
+            // 사용자를 찾을 수 없음 = 중복 아님
+            showEmailAvailable();
+        } else if (data) {
+            // 사용자 존재 = 중복
+            showEmailDuplicate();
+        }
+    } catch (error) {
+        console.error('이메일 중복 체크 오류:', error);
+    }
+}
+
+// 연락처 중복 체크 함수
+async function checkPhoneDuplicate(phone) {
+    try {
+        const { data, error } = await supabase
+            .from('customer')
+            .select('phone')
+            .eq('phone', phone)
+            .single();
+            
+        if (error && error.code === 'PGRST116') {
+            // 사용자를 찾을 수 없음 = 중복 아님
+            showPhoneAvailable();
+        } else if (data) {
+            // 사용자 존재 = 중복
+            showPhoneDuplicate();
+        }
+    } catch (error) {
+        console.error('연락처 중복 체크 오류:', error);
+    }
+}
+
+// 이메일 사용 가능 표시
+function showEmailAvailable() {
+    const emailInput = document.getElementById('register-email');
+    emailInput.classList.remove('email-duplicate');
+    emailInput.classList.add('email-available');
+    
+    // 상태 메시지 표시
+    showStatusMessage('register-email', '사용 가능한 이메일입니다.', 'available');
+}
+
+// 이메일 중복 표시
+function showEmailDuplicate() {
+    const emailInput = document.getElementById('register-email');
+    emailInput.classList.remove('email-available');
+    emailInput.classList.add('email-duplicate');
+    
+    // 상태 메시지 표시
+    showStatusMessage('register-email', '이미 등록된 이메일입니다.', 'duplicate');
+}
+
+// 연락처 사용 가능 표시
+function showPhoneAvailable() {
+    const phoneInput = document.getElementById('register-phone');
+    phoneInput.classList.remove('phone-duplicate');
+    phoneInput.classList.add('phone-available');
+    
+    // 상태 메시지 표시
+    showStatusMessage('register-phone', '사용 가능한 연락처입니다.', 'available');
+}
+
+// 연락처 중복 표시
+function showPhoneDuplicate() {
+    const phoneInput = document.getElementById('register-phone');
+    phoneInput.classList.remove('phone-available');
+    phoneInput.classList.add('phone-duplicate');
+    
+    // 상태 메시지 표시
+    showStatusMessage('register-phone', '이미 등록된 연락처입니다.', 'duplicate');
+}
+
+// 상태 메시지 표시
+function showStatusMessage(inputId, message, type) {
+    const input = document.getElementById(inputId);
+    const formGroup = input.closest('.form-group');
+    
+    // 기존 상태 메시지 제거
+    const existingStatus = formGroup.querySelector('.status-message');
+    if (existingStatus) {
+        existingStatus.remove();
+    }
+    
+    // 새 상태 메시지 생성
+    const statusDiv = document.createElement('div');
+    statusDiv.className = `status-message ${type}`;
+    statusDiv.textContent = message;
+    statusDiv.style.cssText = `
+        font-size: 12px;
+        margin-top: 4px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        ${type === 'available' ? 'color: #28a745; background: #d4edda;' : 'color: #dc3545; background: #f8d7da;'}
+    `;
+    
+    formGroup.appendChild(statusDiv);
+}
+
+// 이메일 상태 제거
+function removeEmailStatus() {
+    const emailInput = document.getElementById('register-email');
+    emailInput.classList.remove('email-available', 'email-duplicate');
+    
+    const formGroup = emailInput.closest('.form-group');
+    const statusMessage = formGroup.querySelector('.status-message');
+    if (statusMessage) {
+        statusMessage.remove();
+    }
+}
+
+// 연락처 상태 제거
+function removePhoneStatus() {
+    const phoneInput = document.getElementById('register-phone');
+    phoneInput.classList.remove('phone-available', 'phone-duplicate');
+    
+    const formGroup = phoneInput.closest('.form-group');
+    const statusMessage = formGroup.querySelector('.status-message');
+    if (statusMessage) {
+        statusMessage.remove();
+    }
+}
+
+// 이메일 유효성 검사
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// 연락처 유효성 검사
+function isValidPhone(phone) {
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    return phoneRegex.test(phone);
 }
 
 // 사용자 프로필 표시 함수
