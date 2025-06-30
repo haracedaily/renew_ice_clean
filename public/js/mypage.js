@@ -1415,10 +1415,21 @@ function setupPasswordChangeForm() {
     const newPasswordInput = document.getElementById('new-password');
     const confirmPasswordInput = document.getElementById('new-password-confirm');
     
+    // input 요소들이 존재하는지 확인
+    if (!currentPasswordInput || !newPasswordInput || !confirmPasswordInput) {
+        console.error('비밀번호 입력 필드를 찾을 수 없습니다');
+        return;
+    }
+    
     // 현재 비밀번호 검증
-    currentPasswordInput.addEventListener('input', debounce(async function() {
-        const currentPassword = this.value;
-        const statusElement = getOrCreateStatusElement(this, 'current-password-status');
+    currentPasswordInput.addEventListener('input', debounce(async function(event) {
+        const currentPassword = event.target.value;
+        const statusElement = getOrCreateStatusElement(event.target, 'current-password-status');
+        
+        if (!statusElement) {
+            console.error('상태 요소를 생성할 수 없습니다');
+            return;
+        }
         
         if (!currentPassword) {
             updateStatus(statusElement, '', '');
@@ -1454,9 +1465,14 @@ function setupPasswordChangeForm() {
     }, 500));
     
     // 새 비밀번호 유효성 검사
-    newPasswordInput.addEventListener('input', function() {
-        const newPassword = this.value;
-        const statusElement = getOrCreateStatusElement(this, 'new-password-status');
+    newPasswordInput.addEventListener('input', function(event) {
+        const newPassword = event.target.value;
+        const statusElement = getOrCreateStatusElement(event.target, 'new-password-status');
+        
+        if (!statusElement) {
+            console.error('상태 요소를 생성할 수 없습니다');
+            return;
+        }
         
         if (!newPassword) {
             updateStatus(statusElement, '', '');
@@ -1504,12 +1520,20 @@ function setupPasswordChangeForm() {
     });
     
     // 확인 비밀번호 검증
-    confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+    confirmPasswordInput.addEventListener('input', function(event) {
+        validateConfirmPassword(event.target);
+    });
     
-    function validateConfirmPassword() {
+    function validateConfirmPassword(inputElement) {
         const newPassword = newPasswordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
-        const statusElement = getOrCreateStatusElement(confirmPasswordInput, 'confirm-password-status');
+        const confirmPassword = inputElement ? inputElement.value : confirmPasswordInput.value;
+        const targetElement = inputElement || confirmPasswordInput;
+        const statusElement = getOrCreateStatusElement(targetElement, 'confirm-password-status');
+        
+        if (!statusElement) {
+            console.error('상태 요소를 생성할 수 없습니다');
+            return;
+        }
         
         if (!confirmPassword) {
             updateStatus(statusElement, '', '');
@@ -1552,6 +1576,12 @@ function setupPasswordChangeForm() {
             statusElement = document.createElement('div');
             statusElement.id = id;
             statusElement.className = 'password-status';
+            
+            // inputElement가 유효한 DOM 요소인지 확인
+            if (!inputElement || typeof inputElement.closest !== 'function') {
+                console.error('유효하지 않은 inputElement:', inputElement);
+                return null;
+            }
             
             // password-input-group의 부모 요소(form-group)에 추가
             const passwordGroup = inputElement.closest('.password-input-group');
