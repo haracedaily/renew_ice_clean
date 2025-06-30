@@ -61,10 +61,29 @@
   <script>
     // Supabase 클라이언트 초기화를 DOMContentLoaded 이벤트에서 실행
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('=== 마이페이지 디버깅 시작 ===');
+      console.log('DOMContentLoaded 이벤트 발생');
+      
       const supabaseUrl = 'https://wqetnltlnsvjidubewia.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZXRubHRsbnN2amlkdWJld2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI5NDksImV4cCI6MjA1ODM0ODk0OX0.-Jw0jqyq93rA7t194Kq4_umPoTci8Eqx9j-oCwoZc6k';
       window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
       console.log('Supabase 클라이언트 초기화 완료');
+      
+      // 전역 함수들이 제대로 등록되었는지 확인
+      console.log('전역 함수 확인:', {
+        showLoginForm: typeof window.showLoginForm,
+        showRegisterForm: typeof window.showRegisterForm,
+        showMypage: typeof window.showMypage,
+        showPopup: typeof window.showPopup
+      });
+      
+      // DOM 요소들이 존재하는지 확인
+      console.log('DOM 요소 확인:', {
+        loginSection: !!document.getElementById('login-section'),
+        registerSection: !!document.getElementById('register-section'),
+        mypageSection: !!document.getElementById('mypage-section'),
+        loginForm: !!document.getElementById('login-form')
+      });
     });
   </script>
 </head>

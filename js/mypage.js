@@ -9,7 +9,7 @@ let favoriteReservations = new Set(); // 즐겨찾기된 예약 ID들을 저장
 
 // ===== 페이지 로드시 처리 =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded 이벤트 발생');
+    console.log('=== mypage.js DOMContentLoaded 이벤트 발생 ===');
     
     // DOM 요소들 초기화
     initializeDOMElements();
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Supabase 클라이언트가 준비될 때까지 대기
     const waitForSupabase = () => {
         if (window.supabase) {
-            console.log('Supabase 클라이언트 준비됨');
+            console.log('Supabase 클라이언트 준비됨 - mypage.js');
             initializeMypage();
         } else {
-            console.log('Supabase 클라이언트 대기 중...');
+            console.log('Supabase 클라이언트 대기 중... - mypage.js');
             setTimeout(waitForSupabase, 100);
         }
     };
@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // DOM 요소 초기화 함수
 function initializeDOMElements() {
+    console.log('DOM 요소 초기화 시작');
+    
     loginSection = document.getElementById('login-section');
     registerSection = document.getElementById('register-section');
     mypageSection = document.getElementById('mypage-section');
@@ -42,32 +44,73 @@ function initializeDOMElements() {
     reservationsList = document.getElementById('reservations-list');
     profileForm = document.getElementById('profile-form');
     
-    console.log('DOM 요소 초기화 완료');
+    console.log('DOM 요소 초기화 결과:', {
+        loginSection: !!loginSection,
+        registerSection: !!registerSection,
+        mypageSection: !!mypageSection,
+        loginForm: !!loginForm,
+        registerForm: !!registerForm,
+        logoutBtn: !!logoutBtn,
+        tabBtns: tabBtns.length,
+        tabContents: tabContents.length,
+        refreshBtn: !!refreshBtn,
+        reservationsList: !!reservationsList,
+        profileForm: !!profileForm
+    });
 }
 
 // 마이페이지 초기화 함수
 function initializeMypage() {
-    console.log('마이페이지 초기화 시작');
+    console.log('=== 마이페이지 초기화 시작 ===');
     
     try {
         // 이벤트 리스너 설정
+        console.log('이벤트 리스너 설정 시작');
         setupEventListeners();
+        console.log('이벤트 리스너 설정 완료');
         
+        console.log('로그인 상태 체크 시작');
         checkLoginStatus();
+        console.log('로그인 상태 체크 완료');
+        
+        console.log('프로필 폼 설정 시작');
         setupProfileForm();
+        console.log('프로필 폼 설정 완료');
+        
+        console.log('회원가입 폼 설정 시작');
         setupRegisterForm();
+        console.log('회원가입 폼 설정 완료');
+        
+        console.log('모바일 최적화 설정 시작');
         setupMobileOptimization();
+        console.log('모바일 최적화 설정 완료');
+        
+        console.log('전화번호 포맷팅 설정 시작');
         setupPhoneFormatting();
+        console.log('전화번호 포맷팅 설정 완료');
+        
+        console.log('주소 검색 설정 시작');
         setupAddressSearch();
+        console.log('주소 검색 설정 완료');
+        
+        console.log('비밀번호 토글 설정 시작');
         setupPasswordToggles();
+        console.log('비밀번호 토글 설정 완료');
+        
+        console.log('필터 버튼 설정 시작');
         setupFilterButtons();
+        console.log('필터 버튼 설정 완료');
         
         // 비밀번호 보안 기능 초기화
         if (typeof initializePasswordSecurity === 'function') {
+            console.log('비밀번호 보안 기능 초기화 시작');
             initializePasswordSecurity();
+            console.log('비밀번호 보안 기능 초기화 완료');
+        } else {
+            console.log('비밀번호 보안 기능이 정의되지 않음');
         }
         
-        console.log('마이페이지 초기화 완료');
+        console.log('=== 마이페이지 초기화 완료 ===');
     } catch (error) {
         console.error('마이페이지 초기화 오류:', error);
     }
