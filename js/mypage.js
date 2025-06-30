@@ -1197,42 +1197,108 @@ async function showReservationMap(address, reservationId, customerName = '') {
             didOpen: () => {
                 console.log('SweetAlert 열림, 지도 초기화 시작');
                 
-                // swal2-icon 요소 완전 제거
-                setTimeout(() => {
-                    const swalIcons = document.querySelectorAll('.swal2-icon');
+                // swal2-icon 요소 완전 제거 (개선된 방식)
+                const removeIcons = () => {
+                    // 모든 swal2-icon 관련 요소 제거
+                    const swalIcons = document.querySelectorAll('.swal2-icon, [class*="swal2-icon"]');
                     swalIcons.forEach(icon => {
-                        icon.remove();
+                        if (icon && icon.parentNode) {
+                            icon.parentNode.removeChild(icon);
+                        }
                     });
                     
                     // aria-labelledby 안의 swal2-icon도 제거
                     const ariaLabelledByElements = document.querySelectorAll('[aria-labelledby]');
                     ariaLabelledByElements.forEach(element => {
-                        const iconInside = element.querySelector('.swal2-icon');
-                        if (iconInside) {
-                            iconInside.remove();
+                        const iconInside = element.querySelector('.swal2-icon, [class*="swal2-icon"]');
+                        if (iconInside && iconInside.parentNode) {
+                            iconInside.parentNode.removeChild(iconInside);
                         }
                     });
                     
-                    // 모든 swal2-icon 관련 요소 제거
-                    const allSwalIcons = document.querySelectorAll('[class*="swal2-icon"]');
-                    allSwalIcons.forEach(icon => {
-                        icon.remove();
-                    });
-                }, 100);
+                    // 팝업 내부의 모든 아이콘 요소 제거
+                    const popup = document.querySelector('.swal2-popup');
+                    if (popup) {
+                        const popupIcons = popup.querySelectorAll('.swal2-icon, [class*="swal2-icon"]');
+                        popupIcons.forEach(icon => {
+                            if (icon && icon.parentNode) {
+                                icon.parentNode.removeChild(icon);
+                            }
+                        });
+                    }
+                };
                 
-                const geocoder = new kakao.maps.services.Geocoder();
+                // 즉시 실행하고 약간의 지연 후 다시 실행
+                removeIcons();
+                setTimeout(removeIcons, 50);
+                setTimeout(removeIcons, 200);
                 
-                // 개선된 주소 검색 함수
-                const searchAddressStep = (searchText, step = 1) => {
-                    console.log(`주소 검색 시도 ${step}:`, searchText);
-                    
-                    geocoder.addressSearch(searchText, function(result, status) {
-                        console.log(`주소 검색 결과 ${step}:`, { result, status });
+                // 지도 초기화 전에 약간의 지연
+                setTimeout(() => {
+                    try {
+                        const geocoder = new kakao.maps.services.Geocoder();
                         
-                        if (status === kakao.maps.services.Status.OK && result && result.length > 0) {
-                            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-                            console.log('찾은 좌표:', coords);
+                        // 개선된 주소 검색 함수
+                        const searchAddressStep = (searchText, step = 1) => {
+                            console.log(`주소 검색 시도 ${step}:`, searchText);
                             
+                            geocoder.addressSearch(searchText, function(result, status) {
+                                console.log(`주소 검색 결과 ${step}:`, { result, status });
+                                
+                                if (status === kakao.maps.services.Status.OK && result && result.length > 0) {
+                                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                                    console.log('찾은 좌표:', coords);
+                                    
+                                    const map = new kakao.maps.Map(document.getElementById(mapId), {
+                                        center: coords,
+                                        level: 3
+                                    });
+                                    
+                                    // 마커 없이 인포윈도우만 표시
+                                    const infowindow = new kakao.maps.InfoWindow({
+                                        position: coords,
+                                        content: `<div style="padding:10px;min-width:200px;">
+                                            <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">
+                                                ${customerName ? customerName + '님' : '예약 #' + reservationId}
+                                            </h4>
+                                            <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">
+                                                ${displayAddress}
+                                            </p>
+                                        </div>`
+                                    });
+                                    
+                                    // 인포윈도우를 지도에 표시
+                                    infowindow.open(map);
+                                    
+                                    console.log('지도 표시 완료 - 정확한 위치:', searchText);
+                                } else {
+                                    console.log(`주소 검색 실패 ${step}:`, searchText);
+                                    
+                                    // 다음 단계로 진행
+                                    if (step === 1) {
+                                        // 1단계 실패: 원본 주소로 재시도
+                                        searchAddressStep(address, 2);
+                                    } else if (step === 2) {
+                                        // 2단계 실패: 주소의 첫 번째 부분만 사용
+                                        const firstPart = searchAddress.split(' ')[0];
+                                        if (firstPart && firstPart !== searchAddress) {
+                                            searchAddressStep(firstPart, 3);
+                                        } else {
+                                            // 3단계 실패: 서울 시청으로 기본 표시
+                                            showDefaultMap();
+                                        }
+                                    } else {
+                                        // 모든 단계 실패: 서울 시청으로 기본 표시
+                                        showDefaultMap();
+                                    }
+                                }
+                            });
+                        };
+                        
+                        // 기본 지도 표시 함수 (서울 시청)
+                        const showDefaultMap = () => {
+                            console.log('기본 지도 표시 (서울 시청)');
+                            const coords = new kakao.maps.LatLng(37.5665, 126.9780);
                             const map = new kakao.maps.Map(document.getElementById(mapId), {
                                 center: coords,
                                 level: 3
@@ -1246,68 +1312,36 @@ async function showReservationMap(address, reservationId, customerName = '') {
                                         ${customerName ? customerName + '님' : '예약 #' + reservationId}
                                     </h4>
                                     <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">
-                                        ${displayAddress}
+                                        주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>
+                                        원본 주소: ${address}
                                     </p>
                                 </div>`
                             });
                             
                             // 인포윈도우를 지도에 표시
                             infowindow.open(map);
-                            
-                            console.log('지도 표시 완료 - 정확한 위치:', searchText);
-                        } else {
-                            console.log(`주소 검색 실패 ${step}:`, searchText);
-                            
-                            // 다음 단계로 진행
-                            if (step === 1) {
-                                // 1단계 실패: 원본 주소로 재시도
-                                searchAddressStep(address, 2);
-                            } else if (step === 2) {
-                                // 2단계 실패: 주소의 첫 번째 부분만 사용
-                                const firstPart = searchAddress.split(' ')[0];
-                                if (firstPart && firstPart !== searchAddress) {
-                                    searchAddressStep(firstPart, 3);
-                                } else {
-                                    // 3단계 실패: 서울 시청으로 기본 표시
-                                    showDefaultMap();
-                                }
-                            } else {
-                                // 모든 단계 실패: 서울 시청으로 기본 표시
-                                showDefaultMap();
-                            }
+                        };
+                        
+                        // 1단계: 정리된 주소로 검색 시작
+                        searchAddressStep(searchAddress, 1);
+                        
+                    } catch (mapError) {
+                        console.error('지도 초기화 오류:', mapError);
+                        // 지도 초기화 실패 시 간단한 메시지 표시
+                        const mapElement = document.getElementById(mapId);
+                        if (mapElement) {
+                            mapElement.innerHTML = `
+                                <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f8f9fa;border-radius:8px;">
+                                    <div style="text-align:center;color:#666;">
+                                        <i class="fas fa-map-marker-alt" style="font-size:2rem;color:#0066cc;margin-bottom:10px;"></i>
+                                        <p style="margin:0;">지도를 불러올 수 없습니다.</p>
+                                        <p style="margin:5px 0 0 0;font-size:0.9rem;">주소: ${displayAddress}</p>
+                                    </div>
+                                </div>
+                            `;
                         }
-                    });
-                };
-                
-                // 기본 지도 표시 함수 (서울 시청)
-                const showDefaultMap = () => {
-                    console.log('기본 지도 표시 (서울 시청)');
-                    const coords = new kakao.maps.LatLng(37.5665, 126.9780);
-                    const map = new kakao.maps.Map(document.getElementById(mapId), {
-                        center: coords,
-                        level: 3
-                    });
-                    
-                    // 마커 없이 인포윈도우만 표시
-                    const infowindow = new kakao.maps.InfoWindow({
-                        position: coords,
-                        content: `<div style="padding:10px;min-width:200px;">
-                            <h4 style="margin:0 0 5px 0;color:#333;font-size:14px;">
-                                ${customerName ? customerName + '님' : '예약 #' + reservationId}
-                            </h4>
-                            <p style="margin:0;color:#666;font-size:12px;line-height:1.4;">
-                                주소를 찾을 수 없어 서울 시청으로 표시합니다.<br>
-                                원본 주소: ${address}
-                            </p>
-                        </div>`
-                    });
-                    
-                    // 인포윈도우를 지도에 표시
-                    infowindow.open(map);
-                };
-                
-                // 1단계: 정리된 주소로 검색 시작
-                searchAddressStep(searchAddress, 1);
+                    }
+                }, 300);
             }
         });
     } catch (error) {

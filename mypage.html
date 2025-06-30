@@ -388,6 +388,34 @@ function checkLoginAndRedirect(targetUrl) {
     return true;
 }
 
+// 개인정보처리방침 팝업 열기
+function open_popup() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.classList.remove('hidden');
+        // 스크롤 방지
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// 개인정보처리방침 팝업 닫기
+function close_popup() {
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.classList.add('hidden');
+        // 스크롤 복원
+        document.body.style.overflow = '';
+    }
+}
+
+// 모바일 메뉴 토글
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.classList.toggle('hidden');
+    }
+}
+
 // SweetAlert 아이콘 커스텀 스타일
 const swalStyle = document.createElement('style');
 swalStyle.textContent = `
@@ -431,8 +459,35 @@ swalStyle.textContent = `
     .swal2-container {
         padding: 20px !important;
     }
+    /* 개인정보처리방침 팝업 스타일 */
+    #personal_popup {
+        backdrop-filter: blur(5px);
+    }
+    #personal_popup .relative {
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
 `;
 document.head.appendChild(swalStyle);
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 개인정보처리방침 팝업 외부 클릭 시 닫기
+    const popup = document.getElementById('personal_popup');
+    if (popup) {
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                close_popup();
+            }
+        });
+    }
+    
+    // ESC 키로 팝업 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            close_popup();
+        }
+    });
+});
 </script>
 
 </body>
