@@ -1358,8 +1358,30 @@ function setupPasswordChangeForm() {
             return;
         }
         
-        if (newPassword.length < 8) {
-            updateStatus(statusElement, 'error', '✗ 비밀번호는 8자 이상이어야 합니다.');
+        // 비밀번호 유효성 검사 (영어, 숫자, 특수문자 포함 8자 이상)
+        const hasUpperCase = /[A-Z]/.test(newPassword);
+        const hasLowerCase = /[a-z]/.test(newPassword);
+        const hasNumbers = /\d/.test(newPassword);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+        const isLongEnough = newPassword.length >= 8;
+        
+        let errorMessages = [];
+        
+        if (!isLongEnough) {
+            errorMessages.push('8자 이상');
+        }
+        if (!hasUpperCase && !hasLowerCase) {
+            errorMessages.push('영어 포함');
+        }
+        if (!hasNumbers) {
+            errorMessages.push('숫자 포함');
+        }
+        if (!hasSpecialChar) {
+            errorMessages.push('특수문자 포함');
+        }
+        
+        if (errorMessages.length > 0) {
+            updateStatus(statusElement, 'error', `✗ ${errorMessages.join(', ')}`);
             isNewPasswordValid = false;
         } else {
             updateStatus(statusElement, 'success', '✓ 비밀번호 형식이 올바릅니다.');
@@ -1448,6 +1470,25 @@ function setupPasswordChangeForm() {
                 icon: 'error',
                 title: '입력 오류',
                 text: '모든 필드를 올바르게 입력해주세요.',
+                customClass: {
+                    icon: 'swal2-icon-custom'
+                }
+            });
+            return;
+        }
+        
+        // 새 비밀번호 최종 유효성 검사
+        const hasUpperCase = /[A-Z]/.test(newPassword);
+        const hasLowerCase = /[a-z]/.test(newPassword);
+        const hasNumbers = /\d/.test(newPassword);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+        const isLongEnough = newPassword.length >= 8;
+        
+        if (!isLongEnough || (!hasUpperCase && !hasLowerCase) || !hasNumbers || !hasSpecialChar) {
+            Swal.fire({
+                icon: 'error',
+                title: '비밀번호 형식 오류',
+                text: '비밀번호는 영어, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.',
                 customClass: {
                     icon: 'swal2-icon-custom'
                 }
